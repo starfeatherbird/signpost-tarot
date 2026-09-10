@@ -7,6 +7,7 @@ import { PLANS } from '../../config/products';
 import { isRemoteAnalysis } from '../../services/analysis';
 import { getDrawnCards, type SaveStatus, type SessionAction, type SessionState } from '../../state/session';
 import { formatDateTime } from '../../utils/format';
+import { buildShareText, shareText } from '../../utils/share';
 
 export interface SaveFeedback {
   ok: boolean;
@@ -91,7 +92,19 @@ interface ActionsProps extends ResultProps {
 /** 결과 화면 하단 공통: 저장 / 상황 보충(잘못 이해한 상황 수정) / 새 상담 + 면책 문구 */
 export function ResultActions({ state, dispatch, onSave, onReanalyze, onNew, saveFeedback, saveStatus, supplementHint }: ActionsProps) {
   const [supplementOpen, setSupplementOpen] = useState(false);
+  const [shareNote, setShareNote] = useState<string | null>(null);
   const supplementOver = state.supplement.length > SUPPLEMENT_MAX_LENGTH;
+
+  const share = async () => {
+    const result = state.step === 'deepResult' && state.deepResult ? state.deepResult : state.result ?? state.deepResult;
+    if (!result) return;
+    try {
+      const how = await shareText(buildShareText({ plan: state.plan, concern: state.concern, cards: getDrawnCards(state), result }));
+      setShareNote(how === 'copied' ? '결과를 복사했어요. 원하는 곳에 붙여 넣으세요.' : how === 'shared' ? '공유 창으로 보냈어요.' : null);
+    } catch {
+      setShareNote('공유하지 못했어요. 잠시 뒤 다시 시도해 주세요.');
+    }
+  };
 
   return (
     <>
@@ -108,6 +121,7 @@ export function ResultActions({ state, dispatch, onSave, onReanalyze, onNew, sav
           </button>
         )}
         <div className="btn-pair">
+          <button type="button" className="btn btn--secondary btn--sub" onClick={share}>공유하기</button>
           <button
             type="button"
             className="btn btn--secondary btn--sub"
@@ -117,9 +131,10 @@ export function ResultActions({ state, dispatch, onSave, onReanalyze, onNew, sav
           >
             상황 보충하기
           </button>
-          <button type="button" className="btn btn--secondary btn--sub" onClick={onNew}>새 상담 시작</button>
         </div>
+        <button type="button" className="btn btn--text btn--sub btn--block" onClick={onNew}>새 상담 시작</button>
       </div>
+      {shareNote && <Notice kind="success" role="status">{shareNote}</Notice>}
 
       {supplementOpen && (
         <section className="panel" id="supplement-area" aria-labelledby="supp-title">

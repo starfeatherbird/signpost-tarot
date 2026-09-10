@@ -10,6 +10,7 @@ import { getCard } from '../../data/cards';
 import type { ConsultationRecord } from '../../domain/types';
 import type { RecordsApi } from '../../state/useRecords';
 import { formatDateTime } from '../../utils/format';
+import { buildShareText, shareText } from '../../utils/share';
 
 interface Props {
   records: RecordsApi;
@@ -110,6 +111,16 @@ function RecordDetail({ record, records, onBack }: DetailProps) {
     records.update(record.id, { actionChecks: next });
   };
 
+  const share = async () => {
+    if (!shown) return;
+    try {
+      const how = await shareText(buildShareText({ plan: view === 'deep' && record.deepResult ? 'deep' : 'basic', concern: record.concern, cards: record.cards, result: shown }));
+      if (how !== 'cancelled') setFeedback({ ok: true, message: how === 'copied' ? '결과를 복사했어요. 원하는 곳에 붙여 넣으세요.' : '공유 창으로 보냈어요.' });
+    } catch {
+      setFeedback({ ok: false, message: '공유하지 못했어요. 잠시 뒤 다시 시도해 주세요.' });
+    }
+  };
+
   const remove = () => {
     const result = records.remove(record.id);
     setConfirmDelete(false);
@@ -155,6 +166,8 @@ function RecordDetail({ record, records, onBack }: DetailProps) {
       {view === 'deep' && record.deepResult && record.followUps.length > 0 && (
         <FollowUpPanel followUps={record.followUps} onAsk={async () => {}} readOnly />
       )}
+
+      <button type="button" className="btn btn--secondary btn--sub btn--block" onClick={share}>결과 공유하기</button>
 
       <section className="panel" aria-labelledby="memo-title">
         <h2 className="panel-title" id="memo-title">이후 상황 메모</h2>
