@@ -8,3 +8,4 @@ card_asset
 # 생성물·시안 패키지
 docs/screens
 *.zip
+.claude/
