@@ -108,6 +108,13 @@ npm run build      # dist/ 생성 (정적 파일, 서버 불필요)
 - `npm run dev` 를 켠 상태에서 `node scripts/make-capture-targets.mjs` 로 화면별 상태 목록을 만든 뒤 `npm run capture` → `docs/screens/A01~A14, B01~B10.png` (375px, 2배 해상도, 전체 페이지, 어두운/밝은 테마). Chrome 필요. 이름 일부를 인자로 주면 그 화면만 찍습니다: `node scripts/capture-screens.mjs A09`
 - 개발 모드 전용 `?seed=<base64 JSON>` 로 상담 상태를 주입해 특정 단계를 바로 열 수도 있습니다 (`src/main.tsx`).
 
+## 골든 세트 (상담문 품질 비교)
+
+- `eval/golden-set.json` 에 대표 고민 8개(답변·고정 카드·심층 데이터)가 있습니다. 자유롭게 고쳐 쓰세요.
+- `npm run golden -- --label v1` → 배포된 서버에 전부 보내 `eval/runs/<날짜>-v1/*.md` 와 `summary.md` 로 저장 (실제 AI 비용 발생, 케이스당 25초 안팎).
+  `--deep` 을 붙이면 심층 데이터가 있는 케이스는 심층으로, `--only <id>` 로 하나만 실행합니다.
+- 프롬프트(`supabase/functions/_shared/prompt.ts`)나 후보 모델을 바꾼 뒤 다른 label 로 다시 돌려 두 폴더를 나란히 읽어 비교합니다. 결과 폴더는 git 에 넣지 않습니다.
+
 ## 모의 분석 동작 확인 팁
 
 - `src/config/appConfig.ts` 의 `MOCK_ANALYSIS_FAILURE_RATE` 를 `0.5` 로 올리면 실패·재시도 흐름을 볼 수 있습니다.

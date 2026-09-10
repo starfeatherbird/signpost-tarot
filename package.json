@@ -16,7 +16,8 @@
     "server:deploy": "npm run server:data && npx supabase functions deploy tarot-reading --project-ref fvtarvatvqcozsrfetbf",
     "server:secrets": "npx supabase secrets set --project-ref fvtarvatvqcozsrfetbf",
     "server:logs": "node -e \"console.log('로그: https://supabase.com/dashboard/project/fvtarvatvqcozsrfetbf/functions/tarot-reading/logs')\"",
-    "capture": "node scripts/capture-screens.mjs"
+    "capture": "node scripts/capture-screens.mjs",
+    "golden": "node scripts/run-golden.mjs"
   },
   "dependencies": {
     "react": "^19.1.0",
