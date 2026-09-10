@@ -33,6 +33,7 @@ supabase/functions/
    ```
 
 3. **로그 보기**: 대시보드 → Edge Functions → tarot-reading → Logs (`npm run server:logs` 가 주소를 출력합니다).
+4. **사용량 보기**: `npm run server:usage` (기본 14일, `-- 30` 처럼 일수 지정). 일별 호출·성공·실패·평균 초, 모델별 호출과 후계 전환 수, 최근 실패 10건을 터미널에 표로 보여 줍니다. `npx supabase login` 상태여야 합니다.
    모든 후보가 실패하면 앱에는 안내 문구만 보이고, 응답 JSON 의 `detail` 배열에 "어느 후보가 왜 실패했는지"가 담깁니다(키 값은 포함되지 않음).
 
 4. **앱 연결**: `app/.env` 에 `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`(공개용 anon 키) 가 들어 있습니다.

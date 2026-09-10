@@ -15,7 +15,8 @@
     "server:data": "node scripts/export-cards.mjs",
     "server:deploy": "npm run server:data && npx supabase functions deploy tarot-reading --project-ref fvtarvatvqcozsrfetbf",
     "server:secrets": "npx supabase secrets set --project-ref fvtarvatvqcozsrfetbf",
-    "server:logs": "node -e \"console.log('로그: https://supabase.com/dashboard/project/fvtarvatvqcozsrfetbf/functions/tarot-reading/logs')\"",
+    "server:usage": "node --no-deprecation scripts/server-usage.mjs",
+    "server:logs":"node -e \"console.log('로그: https://supabase.com/dashboard/project/fvtarvatvqcozsrfetbf/functions/tarot-reading/logs')\"",
     "capture": "node scripts/capture-screens.mjs",
     "golden": "node scripts/run-golden.mjs"
   },
@@ -31,6 +32,7 @@
     "sharp": "^0.35.4",
     "typescript": "~5.9.0",
     "vite": "^7.1.0",
+    "vite-plugin-pwa": "^1.3.0",
     "vitest": "^3.2.0"
   }
 }

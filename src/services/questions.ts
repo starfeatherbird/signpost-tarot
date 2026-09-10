@@ -19,6 +19,7 @@ const BASIC_QUESTIONS: Question[] = [
     hint: '같은 고민이라도 원하는 도움에 따라 결과의 무게가 달라져요.',
     options: HELP_MODES.map((m) => m.label),
     allowCustom: false,
+    skipLabel: '골고루 봐 주세요',
   },
   {
     id: 'priority',

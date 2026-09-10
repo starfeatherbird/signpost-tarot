@@ -1,0 +1,1 @@
+{"_tag":"Error","error":{"code":"UnexpectedArgument","message":"Unexpected positional arguments: \"*\", \"from\", \"tarot_usage_daily\", \"where\", \"day\", \"at\", \"time\", \"zone\", \"'Asia/Seoul')::date\", \"-\", \"13\", \"order\", \"by\", \"day\", \"desc,\", \"kind\""}}

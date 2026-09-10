@@ -1,8 +1,11 @@
 import { useState, type Dispatch } from 'react';
 import { FlowTop } from '../../components/FlowTop';
+import { Notice } from '../../components/Notice';
 import { CONCERN_MAX_LENGTH } from '../../config/appConfig';
 import { CONCERN_EXAMPLES, PLANS } from '../../config/products';
+import { isRemoteAnalysis } from '../../services/analysis';
 import type { SessionAction, SessionState } from '../../state/session';
+import { useOnline } from '../../state/useOnline';
 
 interface Props {
   state: SessionState;
@@ -17,13 +20,15 @@ export function InputStep({ state, dispatch, onOpenRecords, onCancel }: Props) {
   const isEmpty = state.concern.trim().length === 0;
   const isOver = length > CONCERN_MAX_LENGTH;
   const limited = !!state.rateLimitedUntil && new Date(state.rateLimitedUntil).getTime() > Date.now();
+  // 서버 분석은 연결이 있어야 시작할 수 있습니다. 적어 둔 고민은 그대로 남습니다.
+  const offline = isRemoteAnalysis && !useOnline();
 
   const start = () => {
     if (isEmpty) {
       setShowError(true);
       return;
     }
-    if (isOver || limited) return;
+    if (isOver || limited || offline) return;
     dispatch({ type: 'goToStep', step: 'questions' });
   };
 
@@ -47,6 +52,12 @@ export function InputStep({ state, dispatch, onOpenRecords, onCancel }: Props) {
           <p className="text-muted" style={{ fontSize: 14 }}>내일 다시 찾아 주세요. 지금까지의 기록은 기록장에서 언제든 볼 수 있어요.</p>
           <button type="button" className="btn btn--secondary btn--sub" onClick={() => onOpenRecords()}>기록장 보기</button>
         </section>
+      )}
+
+      {offline && (
+        <Notice kind="error" role="status">
+          지금은 인터넷 연결이 없어요. 고민은 적어 둘 수 있고, 상담은 연결된 뒤에 시작할 수 있어요. 기록장은 지금도 볼 수 있어요.
+        </Notice>
       )}
 
       <div className="field" style={limited ? { opacity: 0.5 } : undefined}>
@@ -89,8 +100,8 @@ export function InputStep({ state, dispatch, onOpenRecords, onCancel }: Props) {
         </div>
       </div>
 
-      <button type="button" className="btn btn--primary btn--block" onClick={start} disabled={isOver || limited}>
-        함께 정리하기
+      <button type="button" className="btn btn--primary btn--block" onClick={start} disabled={isOver || limited || offline}>
+        {offline ? '연결되면 시작할 수 있어요' : '함께 정리하기'}
       </button>
     </div>
   );

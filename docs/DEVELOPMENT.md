@@ -125,6 +125,13 @@ npm run build      # dist/ 생성 (정적 파일, 서버 불필요)
 - 결과 화면: 패널 4 뒤에 스톤 패널, 마지막에 "며칠 뒤 돌아볼 질문". 기록장: 저장 `REFLECTION_AFTER_DAYS`(3일) 뒤부터 "돌아볼 때" 태그, 기록 상세의 메모 칸이 그 질문의 답이 됩니다(`followUpMemo` 그대로 사용, 답이 있으면 "돌아봄"). 상태 계산은 `services/reflection.ts`.
 - 내 공간 "모은 스톤": 저장된 기록의 스톤을 모아 12종 중 만난 돌만 색으로 보여 줍니다. 보석 그림은 `components/StoneGem.tsx`.
 
+## 오프라인 (서비스 워커)
+
+- `vite-plugin-pwa`(vite.config.ts)가 빌드 때 `sw.js` 를 만듭니다. 앱 껍데기(js/css/html/아이콘/매니페스트)는 미리 저장하고, 카드 이미지는 한 번 본 것만(`card-images`), Google Fonts 는 응답을 저장합니다. 매니페스트는 `public/manifest.webmanifest` 를 그대로 씁니다.
+- 연결이 없어도 기록장·내 공간은 열립니다. 고민 입력 화면은 `useOnline()` 으로 연결이 없으면 안내를 띄우고 시작 버튼을 막습니다(원격 분석 모드일 때만). 실제 요청 실패는 분석 서비스가 따로 처리합니다.
+- 새 배포는 다음 방문 때 자동 반영(`autoUpdate`). 개발 서버(`npm run dev`)에서는 서비스 워커가 꺼져 있고, 확인하려면 `npm run build` 후 `vite preview` 로 봅니다.
+- 주의: Git Bash 에서 `VITE_BASE_PATH=/signpost-tarot/ npm run build` 를 하면 경로가 Windows 경로로 바뀌어 등록 스크립트 주소가 깨집니다. 하위 경로 빌드는 GitHub Actions(Linux)에서만 합니다.
+
 ## 화면 캡처 (디자인 시안·문서용)
 
 - `npm run dev` 를 켠 상태에서 `node scripts/make-capture-targets.mjs` 로 화면별 상태 목록을 만든 뒤 `npm run capture` → `docs/screens/A01~A14, B01~B10.png` (375px, 2배 해상도, 전체 페이지, 어두운/밝은 테마). Chrome 필요. 이름 일부를 인자로 주면 그 화면만 찍습니다: `node scripts/capture-screens.mjs A09`

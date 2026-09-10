@@ -16,13 +16,15 @@ interface Props {
   /** basic: 기본 상황 확인 / deep: 심층 질문 */
   variant: 'basic' | 'deep';
   onCancel?: () => void;
+  /** 아직 답하지 않은 질문에 미리 골라 둘 값 (예: 지난 상담의 "원하는 도움"). 질문 id → 값 */
+  defaults?: Record<string, string>;
 }
 
 /**
  * 상황 확인 단계. 질문은 provider 가 결정하고, 이 화면은 한 번에 하나씩 보여 주기만 합니다.
  * 같은 화면을 기본 상황 확인과 심층 질문에 함께 씁니다.
  */
-export function QuestionsStep({ state, dispatch, variant, onCancel }: Props) {
+export function QuestionsStep({ state, dispatch, variant, onCancel, defaults = {} }: Props) {
   const isDeep = variant === 'deep';
   const provider = isDeep ? deepQuestionProvider : questionProvider;
   const answers = isDeep ? state.deepAnswers : state.answers;
@@ -93,6 +95,7 @@ export function QuestionsStep({ state, dispatch, variant, onCancel }: Props) {
 
   const form = {
     question, existing, isLast, onSubmit: submit, onBack: back,
+    defaultValue: defaults[question.id],
     nextLabel: isLast ? lastLabel : '다음',
     header: (
       <>
@@ -110,6 +113,8 @@ export function QuestionsStep({ state, dispatch, variant, onCancel }: Props) {
 interface FormProps {
   question: Question;
   existing?: Answer;
+  /** 답이 없을 때 미리 골라 둘 선택지 (옵션에 있는 값만 적용) */
+  defaultValue?: string;
   isLast: boolean;
   nextLabel: string;
   header: React.ReactNode;
@@ -129,11 +134,14 @@ function NavButtons({ onNext, nextLabel, nextDisabled, onBack, onSkip }: { onNex
   );
 }
 
-function ChoiceQuestionForm({ question, existing, nextLabel, header, onSubmit, onBack }: FormProps) {
+function ChoiceQuestionForm({ question, existing, defaultValue, nextLabel, header, onSubmit, onBack }: FormProps) {
   const existingValue = existing?.value ?? null;
   const existingIsOption = existingValue !== null && question.options.includes(existingValue);
+  const skipLabel = question.skipLabel ?? UNKNOWN;
   const [choice, setChoice] = useState<string | null>(
-    existing ? (existingIsOption ? existingValue : existingValue === null ? UNKNOWN : null) : null,
+    existing
+      ? (existingIsOption ? existingValue : existingValue === null ? UNKNOWN : null)
+      : (defaultValue && question.options.includes(defaultValue) ? defaultValue : null),
   );
   const [custom, setCustom] = useState(existing && !existingIsOption && existingValue ? existingValue : '');
   const customOver = custom.length > ANSWER_MAX_LENGTH;
@@ -159,7 +167,7 @@ function ChoiceQuestionForm({ question, existing, nextLabel, header, onSubmit, o
           </button>
         ))}
         <button type="button" className={`chip ${choice === UNKNOWN && !customActive ? '' : 'chip--dashed'}`} aria-pressed={choice === UNKNOWN && !customActive} onClick={() => { setChoice(UNKNOWN); setCustom(''); }}>
-          {UNKNOWN}
+          {skipLabel}
         </button>
       </div>
 

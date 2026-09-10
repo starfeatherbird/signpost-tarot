@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type Dispatch } from 'react';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
 import { Notice } from '../../components/Notice';
+import { HELP_QUESTION_ID } from '../../config/helpModes';
 import { AnalysisError, analysisService } from '../../services/analysis';
 import {
   getContentVersion,
@@ -165,6 +166,9 @@ export function CounselScreen({ state, dispatch, records, onOpenRecords }: Props
   };
 
   const hasResult = !!(state.result || state.deepResult);
+  // 지난 상담에서 고른 "원하는 도움"을 미리 골라 둡니다 (가장 최근 기록 기준, 바꿀 수 있음).
+  const lastHelp = records.records[0]?.answers.find((a) => a.questionId === HELP_QUESTION_ID)?.value;
+  const lastHelpDefault = lastHelp ? { [HELP_QUESTION_ID]: lastHelp } : undefined;
   const commonResultProps = { state, dispatch, onSave: () => { save(); }, onReanalyze: runAnalysis, onNew: requestNew, saveFeedback, saveStatus };
 
   let content;
@@ -179,7 +183,7 @@ export function CounselScreen({ state, dispatch, records, onOpenRecords }: Props
       content = <InputStep state={state} dispatch={dispatch} onOpenRecords={onOpenRecords} onCancel={requestCancel} />;
       break;
     case 'questions':
-      content = <QuestionsStep state={state} dispatch={dispatch} variant="basic" onCancel={requestCancel} />;
+      content = <QuestionsStep state={state} dispatch={dispatch} variant="basic" onCancel={requestCancel} defaults={lastHelpDefault} />;
       break;
     case 'deepQuestions':
       content = <QuestionsStep state={state} dispatch={dispatch} variant="deep" onCancel={state.result ? undefined : requestCancel} />;

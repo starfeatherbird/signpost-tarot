@@ -48,6 +48,8 @@ export interface Question {
   hint?: string;
   minItems?: number;
   maxItems?: number;
+  /** "잘 모르겠어요" 대신 쓸 건너뛰기 칩 문구 (예: 원하는 도움 질문의 "골고루 봐 주세요") */
+  skipLabel?: string;
 }
 
 export interface Answer {
