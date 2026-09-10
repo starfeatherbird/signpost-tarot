@@ -56,7 +56,7 @@ npm run server:secrets -- TAROT_MODELS="anthropic:claude-sonnet-5,gemini:auto,an
 
 ## 프롬프트 버전
 
-- counsel-v1: 초기 규칙 · v2: 행동 개인화, 전문가 권유 축소, 카드 주어 문장 축소, 적합 조건 구분 · v3: 정·역방향 해석 규칙 추가 · **v4(현재)**: 상징 스톤(`stone`, 목록은 `_shared/stones.json`)과 며칠 뒤 돌아볼 질문(`reflectionQuestion`) 추가. 둘 다 없어도 결과를 버리지 않습니다.
+- counsel-v1: 초기 규칙 · v2: 행동 개인화, 전문가 권유 축소, 카드 주어 문장 축소, 적합 조건 구분 · v3: 정·역방향 해석 규칙 추가 · v4: 상징 스톤(`stone`, 목록은 `_shared/stones.json`)과 며칠 뒤 돌아볼 질문(`reflectionQuestion`) 추가. 둘 다 없어도 결과를 버리지 않습니다 · **v5(현재)**: "원하는 도움"(답변 questionId `help`, 문구는 앱 `src/config/helpModes.ts` 와 동일) 모드별로 결과의 무게를 바꾸는 지시 추가(마음 정리 / 선택지 비교 / 오늘 할 일).
 - 문구를 바꾸면 `_shared/prompt.ts` 의 `PROMPT_VERSION` 을 올리고 `npm run golden` 으로 전후를 비교하세요.
 
 ## 응답 시간·비용 (2026-09-10 실측, Claude Sonnet 5, effort low)

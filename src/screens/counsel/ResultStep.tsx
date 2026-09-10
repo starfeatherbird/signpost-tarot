@@ -4,7 +4,9 @@ import { Notice } from '../../components/Notice';
 import { ReadingView } from '../../components/ReadingView';
 import { ReflectionPanel } from '../../components/ReflectionPanel';
 import { SUPPLEMENT_MAX_LENGTH } from '../../config/appConfig';
+import { getHelpMode } from '../../config/helpModes';
 import { PLANS } from '../../config/products';
+import type { Answer } from '../../domain/types';
 import { isRemoteAnalysis } from '../../services/analysis';
 import { getDrawnCards, type SaveStatus, type SessionAction, type SessionState } from '../../state/session';
 import { formatDateTime } from '../../utils/format';
@@ -26,13 +28,15 @@ export interface ResultProps {
 }
 
 /** 결과 화면 상단: 태그 + 날짜 + 고민 인용 */
-export function ResultHeader({ plan, isSample, generatedAt, concern }: { plan: 'basic' | 'deep'; isSample: boolean; generatedAt: string; concern: string }) {
+export function ResultHeader({ plan, isSample, generatedAt, concern, answers = [] }: { plan: 'basic' | 'deep'; isSample: boolean; generatedAt: string; concern: string; answers?: Answer[] }) {
+  const helpMode = getHelpMode(answers);
   return (
     <>
       <div className="row-between">
         <div className="tag-row">
           <span className="tag">{PLANS[plan].name}</span>
           <span className="tag tag--strong">{isSample ? '예시 결과' : '분석 결과'}</span>
+          {helpMode && <span className="tag tag--outline">{helpMode.short}</span>}
         </div>
         <span className="caption">{formatDateTime(generatedAt)}</span>
       </div>
@@ -57,7 +61,7 @@ export function ResultStep(props: ResultProps) {
 
   return (
     <div className="screen">
-      <ResultHeader plan="basic" isSample={result.isSample} generatedAt={result.generatedAt} concern={state.concern} />
+      <ResultHeader plan="basic" isSample={result.isSample} generatedAt={result.generatedAt} concern={state.concern} answers={state.answers} />
 
       <ReadingView
         result={result}

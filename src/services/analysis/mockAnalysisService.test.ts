@@ -65,6 +65,12 @@ describe('mockAnalysisService — 기본', () => {
     expect(noAnswer.reflectionQuestion).toContain('확인된 사실');
   });
 
+  it('원하는 도움을 고르면 첫 문장의 무게가 바뀐다', () => {
+    const settle = buildSampleReading({ ...input, answers: [{ questionId: 'help', questionText: 'h', value: '마음을 먼저 정리하기' }, ...input.answers] });
+    expect(settle.priority).toContain('마음을 먼저 정리');
+    expect(buildSampleReading(input).priority).not.toContain('하셨으니');
+  });
+
   it('선택지 답변은 문장에 반영되고, 보충 내용은 접수 안내만 추가된다', () => {
     const result = buildSampleReading({ ...input, supplement: '이번 달 안에 결정해야 해요.' });
     expect(result.priority).toContain('성장·기회');

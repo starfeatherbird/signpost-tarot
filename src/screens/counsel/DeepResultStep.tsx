@@ -27,7 +27,7 @@ export function DeepResultStep(props: Props) {
 
   return (
     <div className="screen">
-      <ResultHeader plan="deep" isSample={result.isSample} generatedAt={result.generatedAt} concern={state.concern} />
+      <ResultHeader plan="deep" isSample={result.isSample} generatedAt={result.generatedAt} concern={state.concern} answers={state.answers} />
 
       <ReadingView
         result={result}

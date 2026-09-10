@@ -14,7 +14,49 @@ import {
  * 상담 프롬프트. 모델과 무관하게 유지되며, 문구를 바꾸면 PROMPT_VERSION 을 올립니다.
  * (기록에 버전이 남아 "어떤 규칙으로 만든 결과인지" 추적할 수 있습니다.)
  */
-export const PROMPT_VERSION = 'counsel-v4';
+export const PROMPT_VERSION = 'counsel-v5';
+
+/**
+ * "원하는 도움" (상황 확인 첫 질문, questionId 'help'). 문구는 앱의 src/config/helpModes.ts 와 같아야 합니다.
+ * 모드마다 결과의 무게를 바꾸는 지시를 붙입니다. 건너뛰면 기본 균형.
+ */
+const HELP_MODES: Record<string, { name: string; guide: string }> = {
+  '마음을 먼저 정리하기': {
+    name: '마음 정리',
+    guide: [
+      '- 결정을 재촉하지 않습니다. 먼저 사용자가 느끼는 감정과 실제 상황을 나눠 정리해 줍니다.',
+      '- priority 는 "지금 무엇을 먼저 돌볼지"에 대한 제안입니다 (선택지 추천이 아니어도 됩니다).',
+      '- reasons 는 지금 마음이 그렇게 움직이는 이유를 카드와 상황으로 풀어 줍니다.',
+      '- actions 는 마음을 다루는 작은 행동(적어 보기, 한 사람에게 말하기, 쉬기 등) 위주로 씁니다.',
+      '- perspectives 를 조금 더 정성껏 씁니다.',
+    ].join('\n'),
+  },
+  '선택지를 비교하기': {
+    name: '선택지 비교',
+    guide: [
+      '- priority 는 한쪽을 분명히 추천하고, 그 근거를 사용자의 조건으로 댑니다.',
+      '- alternatives 는 "이 조건이면 다른 쪽이 낫다"를 구체적인 조건으로 씁니다 (2개 이상).',
+      '- actions 는 비교를 끝내는 데 필요한 확인·정보 수집 행동 위주로 씁니다.',
+      '- 감정 위로 문장은 짧게 줄입니다.',
+    ].join('\n'),
+  },
+  '오늘 할 일 정하기': {
+    name: '오늘 할 일',
+    guide: [
+      '- priority 는 두 문장 이내로, 오늘의 초점 한 가지만 말합니다.',
+      '- actions 는 4개, 모두 오늘이나 내일 안에 할 수 있는 크기로, 대상·시간·장소가 드러나게 씁니다 (예: "저녁에 친구에게 두 줄 메시지 보내기").',
+      '- reasons·alternatives·perspectives 는 각 2~3문장으로 짧게 씁니다.',
+      '- 돌아볼 질문은 "그 행동을 실제로 했는지"를 묻습니다.',
+    ].join('\n'),
+  },
+};
+
+function describeHelpMode(answers: Answer[]): string {
+  const value = answers.find((a) => a.questionId === 'help')?.value?.trim();
+  const mode = value ? HELP_MODES[value] : undefined;
+  if (!mode) return '';
+  return `[사용자가 원하는 도움: ${mode.name}]\n아래 지시에 맞춰 결과의 무게를 조절합니다.\n${mode.guide}`;
+}
 
 const CARDS = cardsJson as CardData[];
 const CARD_BY_ID = new Map(CARDS.map((c) => [c.id, c]));
@@ -70,8 +112,9 @@ function describeCards(cards: DrawnCard[]): string {
 }
 
 function describeAnswers(title: string, answers: Answer[]): string {
-  if (answers.length === 0) return `${title}: (없음)`;
-  const lines = answers.map((a) => {
+  const shown = answers.filter((a) => a.questionId !== 'help'); // 원하는 도움은 별도 블록으로
+  if (shown.length === 0) return `${title}: (없음)`;
+  const lines = shown.map((a) => {
     const value = a.values?.length ? a.values.join(' / ') : a.value ?? '(건너뜀)';
     return `- ${a.questionText} → ${value}`;
   });
@@ -101,6 +144,7 @@ export function buildUserMessage(request: ReadingRequest): string {
   const { input } = request;
   const common = [
     `[사용자의 고민]\n${input.concern.trim()}`,
+    describeHelpMode(input.answers),
     describeAnswers('[상황 확인 답변]', input.answers),
     input.supplement?.trim() ? `[사용자가 보충한 내용 — 이전 이해를 바로잡는 정보이니 반드시 반영]\n${input.supplement.trim()}` : '',
     `[뽑힌 카드 세 장]\n${describeCards(input.cards)}`,

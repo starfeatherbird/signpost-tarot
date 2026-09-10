@@ -33,6 +33,7 @@ const useDeep = flag('--deep');
 const cases = set.cases.filter((c) => (!only || c.id.includes(only)) && (!useDeep || c.deep)); // --deep 이면 심층 데이터가 있는 케이스만
 
 const QUESTION_TEXT = {
+  help: '이번 상담에서 어떤 도움을 받고 싶으세요?', // 값은 src/config/helpModes.ts 의 label 과 같아야 함
   priority: '이번 고민에서 가장 지키고 싶은 것은 무엇인가요?',
   constraint: '선택하기 어렵게 만드는 조건이 있나요?',
   options: '지금 고려하고 있는 선택지를 2~3개 적어 주세요.',

@@ -1,3 +1,4 @@
+import { HELP_MODES, HELP_QUESTION_ID } from '../config/helpModes';
 import type { Question } from '../domain/types';
 
 /**
@@ -9,8 +10,16 @@ export interface QuestionProvider {
   getQuestions(concern: string): Promise<Question[]>;
 }
 
-/** 무료·심층 공통: 기본 상황 확인 */
+/** 무료·심층 공통: 기본 상황 확인. 첫 질문은 "원하는 도움" — 결과의 무게를 정합니다. */
 const BASIC_QUESTIONS: Question[] = [
+  {
+    id: HELP_QUESTION_ID,
+    kind: 'choice',
+    text: '이번 상담에서 어떤 도움을 받고 싶으세요?',
+    hint: '같은 고민이라도 원하는 도움에 따라 결과의 무게가 달라져요.',
+    options: HELP_MODES.map((m) => m.label),
+    allowCustom: false,
+  },
   {
     id: 'priority',
     kind: 'choice',

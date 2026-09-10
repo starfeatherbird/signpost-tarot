@@ -109,6 +109,16 @@ describe('validate', () => {
     expect(unknown.stone).toBeUndefined();
   });
 
+  it('원하는 도움 답변은 별도 블록의 지시로 바뀌고, 없으면 블록이 없다', () => {
+    const withHelp = buildUserMessage({ kind: 'basic', input: { concern: '고민', answers: [{ questionId: 'help', questionText: '도움', value: '오늘 할 일 정하기' }, { questionId: 'priority', questionText: '지키고 싶은 것', value: '관계' }], cards } });
+    expect(withHelp).toContain('[사용자가 원하는 도움: 오늘 할 일]');
+    expect(withHelp).toContain('오늘이나 내일 안에');
+    expect(withHelp).not.toContain('도움 → 오늘 할 일 정하기'); // 일반 답변 목록에는 넣지 않음
+    expect(withHelp).toContain('지키고 싶은 것 → 관계');
+    const without = buildUserMessage({ kind: 'basic', input: { concern: '고민', answers: [], cards } });
+    expect(without).not.toContain('원하는 도움');
+  });
+
   it('스키마와 프롬프트에 스톤 목록이 들어 있다', () => {
     expect(JSON.stringify(BASIC_SCHEMA)).toContain('"moonstone"');
     expect(JSON.stringify(DEEP_SCHEMA)).toContain('reflectionQuestion');

@@ -2,6 +2,7 @@ import { MOCK_ANALYSIS_DELAY_MS, MOCK_ANALYSIS_FAILURE_RATE } from '../../config
 import { getCard } from '../../data/cards';
 import { POSITION_BY_ID } from '../../data/positions';
 import { STONES } from '../../data/stones';
+import { getHelpMode } from '../../config/helpModes';
 import type {
   AnalysisInput,
   Answer,
@@ -123,10 +124,19 @@ export function buildSampleReading(input: AnalysisInput, generatedAt = new Date(
 
   const priorityAnswer = findAnswer(input.answers, 'priority');
   const constraintAnswer = findAnswer(input.answers, 'constraint');
+  const helpMode = getHelpMode(input.answers);
 
-  const priority = priorityAnswer
+  // 원하는 도움에 따라 첫 문장의 무게만 바꿉니다 (예시 결과라 본문 구조는 같습니다).
+  const helpLead = helpMode?.id === 'settle'
+    ? '결정을 서두르기보다 마음을 먼저 정리하고 싶다고 하셨으니, '
+    : helpMode?.id === 'compare'
+      ? '선택지를 비교하고 싶다고 하셨으니 한쪽을 분명히 제안드릴게요. '
+      : helpMode?.id === 'act'
+        ? '오늘 할 일을 정하고 싶다고 하셨으니 초점 하나만 짚을게요. '
+        : '';
+  const priority = helpLead + (priorityAnswer
     ? `현재 말씀해 주신 조건에서는, '${priorityAnswer}'${objectParticle(priorityAnswer)} 지키는 쪽을 기준으로 삼아 「${next.card.nameKo}」 카드가 가리키는 방향을 먼저 제안드려요. ${next.card.perspectives.next}`
-    : `현재 말씀해 주신 조건에서는 「${next.card.nameKo}」 카드가 가리키는 방향을 먼저 제안드려요. ${next.card.perspectives.next}`;
+    : `현재 말씀해 주신 조건에서는 「${next.card.nameKo}」 카드가 가리키는 방향을 먼저 제안드려요. ${next.card.perspectives.next}`);
 
   const reasons = [
     `현재의 핵심 자리에 나온 「${core.label}」는 ${core.essence} ${core.card.perspectives.core}`,
