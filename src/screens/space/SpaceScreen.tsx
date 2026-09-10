@@ -5,17 +5,20 @@ import { StoneGem } from '../../components/StoneGem';
 import { APP_NAME, APP_VERSION } from '../../config/appConfig';
 import { STONES } from '../../data/stones';
 import { getRecordStone } from '../../services/reflection';
+import type { AuthApi } from '../../state/useAuth';
 import type { RecordsApi } from '../../state/useRecords';
 import type { Theme } from '../../state/useTheme';
 import { pickTextFile, saveTextFile } from '../../utils/download';
+import { formatDateTime } from '../../utils/format';
 
 interface Props {
   records: RecordsApi;
+  auth: AuthApi;
   theme: Theme;
   onToggleTheme: () => void;
 }
 
-export function SpaceScreen({ records, theme, onToggleTheme }: Props) {
+export function SpaceScreen({ records, auth, theme, onToggleTheme }: Props) {
   const [confirmClear, setConfirmClear] = useState(false);
   const [feedback, setFeedback] = useState<{ ok: boolean; message: string } | null>(null);
   const [busy, setBusy] = useState(false);
@@ -68,16 +71,22 @@ export function SpaceScreen({ records, theme, onToggleTheme }: Props) {
         <h1 className="screen-title">설정과 안내</h1>
       </div>
 
-      <Notice>{APP_NAME}는 아직 시제품이에요. 계정 없이 사용하며, 기록은 서버로 보내지 않아요.</Notice>
+      <Notice>{APP_NAME}는 아직 시제품이에요. 로그인 없이도 쓸 수 있고, 로그인하면 기록을 다른 기기에서도 이어 볼 수 있어요.</Notice>
 
       {feedback && <Notice kind={feedback.ok ? 'success' : 'error'} role="status">{feedback.message}</Notice>}
+
+      {auth.available && <AccountPanel auth={auth} records={records} />}
 
       <StoneCollection records={records} />
 
       <section className="panel panel--flat" aria-label="기록">
         <div className="setting-row" style={{ alignItems: 'flex-start', flexDirection: 'column', gap: 0 }}>
           <span className="setting-title">기록 저장 위치</span>
-          <span className="setting-desc">상담 기록은 이 기기의 브라우저 안에만 저장돼요. 브라우저 데이터를 지우거나 다른 기기에서 열면 보이지 않아요. 아래에서 파일로 저장해 두면 옮기거나 되살릴 수 있어요.</span>
+          <span className="setting-desc">
+            {records.synced
+              ? '상담 기록은 이 기기와 계정 양쪽에 저장돼요. 같은 계정으로 로그인한 다른 기기에서도 이어 볼 수 있어요. 파일로도 따로 보관할 수 있어요.'
+              : '상담 기록은 이 기기의 브라우저 안에만 저장돼요. 브라우저 데이터를 지우거나 다른 기기에서 열면 보이지 않아요. 위에서 로그인하거나, 아래에서 파일로 저장해 두면 옮기거나 되살릴 수 있어요.'}
+          </span>
         </div>
         <button type="button" className="setting-row" onClick={exportRecords} disabled={count === 0 || busy}>
           <span className="setting-title" style={{ fontWeight: 600, fontSize: 15, color: count === 0 ? 'var(--color-text-faint)' : 'var(--color-accent-text)' }}>기록 파일로 저장</span>
@@ -116,6 +125,92 @@ export function SpaceScreen({ records, theme, onToggleTheme }: Props) {
         onDismiss={() => setConfirmClear(false)}
       />
     </div>
+  );
+}
+
+/** 계정: 로그인(Google / 이메일 링크)과 동기화 상태. 로그인은 선택입니다. */
+function AccountPanel({ auth, records }: { auth: AuthApi; records: RecordsApi }) {
+  const [email, setEmail] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [note, setNote] = useState<{ ok: boolean; message: string } | null>(null);
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+
+  const google = async () => {
+    setBusy(true);
+    setNote(null);
+    const err = await auth.signInWithGoogle();
+    if (err) { setNote({ ok: false, message: `Google 로그인을 시작하지 못했어요. ${err}` }); setBusy(false); }
+    // 성공하면 Google 페이지로 이동하므로 busy 를 풀 필요가 없습니다.
+  };
+
+  const sendLink = async () => {
+    if (!emailValid || busy) return;
+    setBusy(true);
+    setNote(null);
+    const err = await auth.signInWithEmail(email.trim());
+    setNote(err ? { ok: false, message: `메일을 보내지 못했어요. ${err}` } : { ok: true, message: `${email.trim()} 으로 로그인 링크를 보냈어요. 메일의 링크를 이 기기에서 열어 주세요.` });
+    setBusy(false);
+  };
+
+  const logout = async () => {
+    setBusy(true);
+    const err = await auth.signOut();
+    setNote(err ? { ok: false, message: `로그아웃하지 못했어요. ${err}` } : { ok: true, message: '로그아웃했어요. 이 기기의 기록은 그대로 남아 있어요.' });
+    setBusy(false);
+  };
+
+  const { syncStatus } = records;
+  const syncLine = syncStatus.state === 'syncing'
+    ? '기록을 맞추는 중이에요…'
+    : syncStatus.state === 'error'
+      ? `서버와 맞추지 못했어요. ${syncStatus.error ?? ''}`
+      : syncStatus.lastSyncAt
+        ? `기록 ${records.records.length}개 · ${formatDateTime(syncStatus.lastSyncAt)}에 맞춤`
+        : '';
+
+  if (!auth.ready) return null;
+
+  return (
+    <section className="panel" aria-labelledby="account-title">
+      <h2 className="panel-title" id="account-title">계정</h2>
+      {auth.user ? (
+        <>
+          <div className="account-row">
+            <span className="account-email">{auth.user.email ?? '로그인됨'}</span>
+            <span className="tag tag--outline">{auth.user.provider === 'google' ? 'Google' : '이메일'}</span>
+          </div>
+          {syncLine && <p className={`text-muted ${syncStatus.state === 'error' ? 'account-error' : ''}`} style={{ fontSize: 13 }}>{syncLine}</p>}
+          {note && <Notice kind={note.ok ? 'success' : 'error'} role="status">{note.message}</Notice>}
+          <div className="btn-pair">
+            <button type="button" className="btn btn--secondary btn--sub" onClick={() => void records.sync()} disabled={syncStatus.state === 'syncing'}>다시 맞추기</button>
+            <button type="button" className="btn btn--text btn--sub" onClick={logout} disabled={busy}>로그아웃</button>
+          </div>
+        </>
+      ) : (
+        <>
+          <p className="text-muted" style={{ fontSize: 13 }}>로그인하면 이 기기의 기록이 계정에 올라가고, 다른 기기에서도 이어 볼 수 있어요. 상담 횟수도 기기 대신 계정 기준으로 세요.</p>
+          <button type="button" className="btn btn--secondary btn--block" onClick={google} disabled={busy}>Google로 계속하기</button>
+          <div className="field">
+            <label className="field-label" htmlFor="login-email">이메일로 로그인 링크 받기</label>
+            <div className="account-email-row">
+              <input
+                id="login-email"
+                className="text-input"
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                value={email}
+                placeholder="you@example.com"
+                onChange={(e) => { setEmail(e.target.value); setNote(null); }}
+                onKeyDown={(e) => { if (e.key === 'Enter') void sendLink(); }}
+              />
+              <button type="button" className="btn btn--outline-accent btn--sub" onClick={sendLink} disabled={!emailValid || busy}>보내기</button>
+            </div>
+          </div>
+          {note && <Notice kind={note.ok ? 'success' : 'error'} role="status">{note.message}</Notice>}
+        </>
+      )}
+    </section>
   );
 }
 

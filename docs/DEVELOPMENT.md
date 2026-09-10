@@ -125,6 +125,13 @@ npm run build      # dist/ 생성 (정적 파일, 서버 불필요)
 - 결과 화면: 패널 4 뒤에 스톤 패널, 마지막에 "며칠 뒤 돌아볼 질문". 기록장: 저장 `REFLECTION_AFTER_DAYS`(3일) 뒤부터 "돌아볼 때" 태그, 기록 상세의 메모 칸이 그 질문의 답이 됩니다(`followUpMemo` 그대로 사용, 답이 있으면 "돌아봄"). 상태 계산은 `services/reflection.ts`.
 - 내 공간 "모은 스톤": 저장된 기록의 스톤을 모아 12종 중 만난 돌만 색으로 보여 줍니다. 보석 그림은 `components/StoneGem.tsx`.
 
+## 로그인과 기록 동기화
+
+- 클라이언트: `services/supabase.ts`(공용 supabase-js, .env 없으면 null). 인증 상태는 `state/useAuth.ts`(Google OAuth, 이메일 링크). 로그인은 선택이며 안 해도 지금과 같이 기기 저장으로 동작합니다.
+- 기록: `useRecords(userId)` 가 기기 저장을 기본으로 하고, 로그인하면 `services/recordsRemote.ts` 로 서버 표(`tarot_records`)와 맞춥니다. 병합 규칙은 `services/records.ts` 의 `mergeRemote`(수정 시각이 최근인 쪽, 서버 삭제 표시가 더 최근이면 기기에서도 삭제, 기기가 더 최근이면 되살림). 각 쓰기는 기기 저장 뒤 서버에 뒤따라 반영하고, 실패는 `syncStatus` 로만 알립니다.
+- 분석 호출은 로그인 토큰을 붙여(`getAccessToken`) 서버가 사람 기준으로 횟수를 세게 합니다. 서버 쪽 설정은 `supabase/README.md` 의 "로그인과 기록 동기화".
+- 로그인 뒤 돌아올 주소는 `authRedirectUrl()`(origin + BASE_URL). Supabase Redirect URLs 와 같아야 합니다.
+
 ## 오프라인 (서비스 워커)
 
 - `vite-plugin-pwa`(vite.config.ts)가 빌드 때 `sw.js` 를 만듭니다. 앱 껍데기(js/css/html/아이콘/매니페스트)는 미리 저장하고, 카드 이미지는 한 번 본 것만(`card-images`), Google Fonts 는 응답을 저장합니다. 매니페스트는 `public/manifest.webmanifest` 를 그대로 씁니다.

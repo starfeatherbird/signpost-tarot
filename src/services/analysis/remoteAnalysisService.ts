@@ -17,6 +17,8 @@ export interface RemoteConfig {
   anonKey: string;
   functionName?: string;
   timeoutMs?: number;
+  /** 로그인 토큰 제공자. 있으면 서버가 IP 대신 사람 기준으로 횟수를 셉니다. */
+  getAccessToken?: () => Promise<string | null>;
 }
 
 interface ServerResponse<T> {
@@ -36,12 +38,13 @@ export function createRemoteAnalysisService(config: RemoteConfig): AnalysisServi
     signal?.addEventListener('abort', () => controller.abort());
     let res: Response;
     try {
+      const token = (await config.getAccessToken?.().catch(() => null)) ?? config.anonKey;
       res = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           apikey: config.anonKey,
-          Authorization: `Bearer ${config.anonKey}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ kind, input }),
         signal: controller.signal,

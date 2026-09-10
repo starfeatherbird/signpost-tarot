@@ -55,6 +55,18 @@ npm run server:secrets -- TAROT_MODELS="anthropic:claude-sonnet-5,gemini:auto,an
 - 신모델이 나오면: 1순위에 새 모델을 넣고, 기존 모델을 2순위로 내려 잠시 두었다가 지웁니다.
   프롬프트 문구를 바꿨다면 `prompt.ts` 의 `PROMPT_VERSION` 을 올려 기록에서 구분되게 합니다.
 
+## 로그인과 기록 동기화 (2026-09-10)
+
+로그인은 선택입니다. 로그인하면 (1) 기록이 `tarot_records` 표에 저장되어 다른 기기에서도 보이고, (2) 호출 한도가 IP 대신 사용자 기준(`TAROT_LIMIT_USER_HOUR`/`TAROT_LIMIT_USER_DAY`, 기본 10/10)으로 적용되며, (3) 사용 기록표에 `user_id` 가 남습니다.
+
+- 표·정책: `supabase/sql/records.sql` (본인 행만 읽고 쓰는 RLS, 삭제는 `deleted_at` 표시). 실행: `npx supabase db query --linked --project-ref fvtarvatvqcozsrfetbf -f supabase/sql/records.sql`
+- 함수는 `Authorization: Bearer <로그인 토큰>` 이면 `auth.getUser` 로 사용자를 확인하고, anon 키면 익명으로 처리합니다.
+- **대시보드에서 직접 할 것** (Authentication):
+  1. URL Configuration → Site URL `https://starfeatherbird.github.io/signpost-tarot/`, Redirect URLs 에 같은 주소와 `http://localhost:5173/` 추가.
+  2. Providers → Email: 켜기(비밀번호 없이 링크만 쓰므로 "Confirm email" 은 기본값 그대로). 무료 메일 발송은 시간당 몇 통으로 제한되니 시제품 동안만 씁니다.
+  3. Providers → Google: Google Cloud Console 에서 OAuth 클라이언트(웹)를 만들고, 승인된 리디렉션 URI 에 `https://fvtarvatvqcozsrfetbf.supabase.co/auth/v1/callback` 을 넣은 뒤 Client ID/Secret 을 Supabase 에 입력.
+- 로그아웃해도 기기의 기록은 남습니다(계정에서 지우려면 로그인 상태에서 삭제).
+
 ## 프롬프트 버전
 
 - counsel-v1: 초기 규칙 · v2: 행동 개인화, 전문가 권유 축소, 카드 주어 문장 축소, 적합 조건 구분 · v3: 정·역방향 해석 규칙 추가 · v4: 상징 스톤(`stone`, 목록은 `_shared/stones.json`)과 며칠 뒤 돌아볼 질문(`reflectionQuestion`) 추가. 둘 다 없어도 결과를 버리지 않습니다 · **v5(현재)**: "원하는 도움"(답변 questionId `help`, 문구는 앱 `src/config/helpModes.ts` 와 동일) 모드별로 결과의 무게를 바꾸는 지시 추가(마음 정리 / 선택지 비교 / 오늘 할 일).

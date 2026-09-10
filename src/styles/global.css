@@ -1650,6 +1650,33 @@ button.setting-row { cursor: pointer; }
   border-left: 3px solid var(--color-accent);
 }
 
+/* 계정 */
+.account-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.account-email {
+  font-size: 15px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-error { color: var(--color-danger); }
+
+.account-email-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.account-email-row .text-input { flex: 1; min-width: 0; }
+.account-email-row .btn { flex: 0 0 auto; }
+
 /* 호출 제한 패널 */
 .limit-panel {
   align-items: center;

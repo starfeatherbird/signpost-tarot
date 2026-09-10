@@ -1,3 +1,4 @@
+import { getAccessToken } from '../supabase';
 import { createMockAnalysisService } from './mockAnalysisService';
 import { createRemoteAnalysisService } from './remoteAnalysisService';
 import type { AnalysisService } from './types';
@@ -17,5 +18,5 @@ const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
 export const isRemoteAnalysis = Boolean(supabaseUrl && anonKey);
 
 export const analysisService: AnalysisService = isRemoteAnalysis
-  ? createRemoteAnalysisService({ supabaseUrl: supabaseUrl!, anonKey: anonKey! })
+  ? createRemoteAnalysisService({ supabaseUrl: supabaseUrl!, anonKey: anonKey!, getAccessToken })
   : createMockAnalysisService();

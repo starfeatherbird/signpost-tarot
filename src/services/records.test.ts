@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { STORAGE_KEYS } from '../config/appConfig';
 import type { ConsultationRecord, DeepReadingResult, ReadingResult } from '../domain/types';
-import { loadRecords, saveRecords, updateMemo, upsertRecord, type RecordDraft } from './records';
+import { loadRecords, mergeRemote, saveRecords, updateMemo, upsertRecord, type RecordDraft } from './records';
 
 // node 환경에서 localStorage 를 흉내 냅니다.
 function installFakeStorage() {
@@ -112,6 +112,25 @@ describe('records', () => {
     const loaded = loadRecords();
     expect(loaded).toHaveLength(1);
     expect(loaded[0].id).toBe('r1');
+  });
+
+  it('서버 병합: 최근 수정이 이기고, 삭제 표시는 더 최근일 때만 지우며, 기기에만 있는 것은 올린다', () => {
+    const mk = (id: string, updatedAt: string, memo = ''): ConsultationRecord => ({ ...draft, id, consultationId: `c-${id}`, createdAt: '2026-09-01T00:00:00.000Z', updatedAt, followUpMemo: memo });
+    const local = [mk('same-old', '2026-09-02T00:00:00.000Z'), mk('mine-newer', '2026-09-05T00:00:00.000Z', '기기'), mk('deleted-remote', '2026-09-02T00:00:00.000Z'), mk('resurrect', '2026-09-06T00:00:00.000Z', '살림'), mk('local-only', '2026-09-03T00:00:00.000Z')];
+    const remote = [
+      { id: 'same-old', updated_at: '2026-09-04T00:00:00.000Z', deleted_at: null, data: mk('same-old', '2026-09-04T00:00:00.000Z', '서버') },
+      { id: 'mine-newer', updated_at: '2026-09-04T00:00:00.000Z', deleted_at: null, data: mk('mine-newer', '2026-09-04T00:00:00.000Z', '서버') },
+      { id: 'deleted-remote', updated_at: '2026-09-03T00:00:00.000Z', deleted_at: '2026-09-03T00:00:00.000Z', data: mk('deleted-remote', '2026-09-02T00:00:00.000Z') },
+      { id: 'resurrect', updated_at: '2026-09-05T00:00:00.000Z', deleted_at: '2026-09-05T00:00:00.000Z', data: mk('resurrect', '2026-09-04T00:00:00.000Z') },
+      { id: 'remote-only', updated_at: '2026-09-02T00:00:00.000Z', deleted_at: null, data: mk('remote-only', '2026-09-02T00:00:00.000Z') },
+      { id: 'broken', updated_at: '2026-09-02T00:00:00.000Z', deleted_at: null, data: { nope: true } },
+    ];
+    const { records, toUpload } = mergeRemote(local, remote);
+    const ids = records.map((r) => r.id).sort();
+    expect(ids).toEqual(['local-only', 'mine-newer', 'remote-only', 'resurrect', 'same-old']);
+    expect(records.find((r) => r.id === 'same-old')?.followUpMemo).toBe('서버');
+    expect(records.find((r) => r.id === 'mine-newer')?.followUpMemo).toBe('기기');
+    expect(toUpload.map((r) => r.id).sort()).toEqual(['local-only', 'mine-newer', 'resurrect']);
   });
 
   it('저장 실패를 정직하게 알린다', () => {

@@ -12,6 +12,8 @@ export interface UsageRow {
   error_kind: string | null;
   fallback_count: number;
   ip_hash: string | null;
+  /** 로그인한 요청의 사용자 id (아니면 null) */
+  user_id: string | null;
 }
 
 export function buildUsageRow(input: {
@@ -24,6 +26,7 @@ export function buildUsageRow(input: {
   errorKind?: string;
   fallbackCount?: number;
   ipHash?: string;
+  userId?: string | null;
 }): UsageRow {
   return {
     kind: input.kind,
@@ -35,5 +38,6 @@ export function buildUsageRow(input: {
     error_kind: input.errorKind ? input.errorKind.slice(0, 60) : null,
     fallback_count: input.fallbackCount ?? 0,
     ip_hash: input.ipHash ?? null,
+    user_id: input.userId ?? null,
   };
 }

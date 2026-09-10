@@ -18,7 +18,18 @@ describe('rateLimit', () => {
   it('시크릿 값이 없거나 잘못되면 기본 한도를 쓴다', () => {
     expect(parseLimits({})).toEqual(DEFAULT_LIMITS);
     expect(parseLimits({ ipHour: 'abc', ipDay: '-3', globalDay: '0' })).toEqual(DEFAULT_LIMITS);
-    expect(parseLimits({ ipHour: '5', ipDay: '10', globalDay: '99' })).toEqual({ perIpHour: 5, perIpDay: 10, globalDay: 99 });
+    expect(parseLimits({ ipHour: '5', ipDay: '10', userHour: '3', userDay: '4', globalDay: '99' })).toEqual({ perIpHour: 5, perIpDay: 10, perUserHour: 3, perUserDay: 4, globalDay: 99 });
+  });
+
+  it('로그인한 요청은 IP 대신 사용자 기준으로 세고, 다른 사용자·익명과 섞이지 않는다', async () => {
+    const hit = fakeHit();
+    const limits = { perIpHour: 10, perIpDay: 10, perUserHour: 1, perUserDay: 10, globalDay: 100 };
+    expect((await checkRateLimit(hit, { ipHash: 'same', userId: 'u1' }, limits)).allowed).toBe(true);
+    const blocked = await checkRateLimit(hit, { ipHash: 'same', userId: 'u1' }, limits);
+    expect(blocked.allowed).toBe(false);
+    expect(blocked.scope).toBe('user-hour');
+    expect((await checkRateLimit(hit, { ipHash: 'same', userId: 'u2' }, limits)).allowed).toBe(true); // 같은 IP 의 다른 사용자
+    expect((await checkRateLimit(hit, { ipHash: 'same', userId: null }, limits)).allowed).toBe(true); // 같은 IP 의 익명
   });
 
   it('프록시 헤더에서 첫 IP 를 읽고, 없으면 unknown', () => {
@@ -36,7 +47,7 @@ describe('rateLimit', () => {
 
   it('시간당 한도를 넘으면 ip-hour 로 막힌다', async () => {
     const hit = fakeHit();
-    const limits = { perIpHour: 2, perIpDay: 10, globalDay: 100 };
+    const limits = { perIpHour: 2, perIpDay: 10, perUserHour: 10, perUserDay: 10, globalDay: 100 };
     expect((await checkRateLimit(hit, 'abc', limits)).allowed).toBe(true);
     expect((await checkRateLimit(hit, 'abc', limits)).allowed).toBe(true);
     const third = await checkRateLimit(hit, 'abc', limits);
@@ -49,7 +60,7 @@ describe('rateLimit', () => {
 
   it('전체 하루 한도는 모든 IP 를 합쳐 센다', async () => {
     const hit = fakeHit();
-    const limits = { perIpHour: 10, perIpDay: 10, globalDay: 2 };
+    const limits = { perIpHour: 10, perIpDay: 10, perUserHour: 10, perUserDay: 10, globalDay: 2 };
     expect((await checkRateLimit(hit, 'a', limits)).allowed).toBe(true);
     expect((await checkRateLimit(hit, 'b', limits)).allowed).toBe(true);
     const blocked = await checkRateLimit(hit, 'c', limits);

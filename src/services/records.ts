@@ -157,6 +157,45 @@ export function mergeRecords(existing: ConsultationRecord[], incoming: Consultat
   return { records, added, updated };
 }
 
+// ---- 서버 동기화 병합 (로그인 시) ----
+
+export interface RemoteRowLike {
+  id: string;
+  updated_at: string;
+  deleted_at: string | null;
+  data: unknown;
+}
+
+/**
+ * 서버에서 받은 행과 기기의 기록을 합칩니다.
+ * - 같은 id 는 더 최근에 수정된 쪽이 남습니다.
+ * - 서버의 삭제 표시(deleted_at)가 기기 수정보다 최근이면 기기에서도 지웁니다. 기기 쪽이 더 최근이면 되살려 다시 올립니다.
+ * - 기기에만 있거나 기기가 더 최근인 기록은 toUpload 로 돌려줘 서버에 올립니다.
+ */
+export function mergeRemote(local: ConsultationRecord[], remote: RemoteRowLike[]): { records: ConsultationRecord[]; toUpload: ConsultationRecord[] } {
+  const byId = new Map(local.map((r) => [r.id, r]));
+  const toUpload: ConsultationRecord[] = [];
+  const seen = new Set<string>();
+  for (const row of remote) {
+    seen.add(row.id);
+    const mine = byId.get(row.id);
+    const remoteTime = Date.parse(row.updated_at);
+    if (row.deleted_at) {
+      if (mine && Date.parse(mine.updatedAt) > Date.parse(row.deleted_at)) toUpload.push(mine); // 삭제 뒤에 기기에서 고침 → 되살림
+      else byId.delete(row.id);
+      continue;
+    }
+    if (!isRecordLike(row.data)) continue; // 읽을 수 없는 행은 무시
+    const theirs = normalizeRecord(row.data);
+    if (!mine) byId.set(row.id, theirs);
+    else if (Date.parse(mine.updatedAt) > remoteTime) toUpload.push(mine);
+    else if (remoteTime > Date.parse(mine.updatedAt)) byId.set(row.id, theirs);
+  }
+  for (const r of local) if (!seen.has(r.id)) toUpload.push(r);
+  const records = [...byId.values()].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
+  return { records, toUpload };
+}
+
 export function createId(): string {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID();

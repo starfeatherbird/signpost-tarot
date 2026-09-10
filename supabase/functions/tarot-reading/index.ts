@@ -80,6 +80,23 @@ function parseRequest(body: Record<string, unknown>): ReadingRequest {
   throw new ProviderError('알 수 없는 요청 종류예요.', 'bad_request', 400);
 }
 
+/**
+ * Authorization 헤더의 토큰이 로그인한 사용자의 것이면 그 id 를 돌려줍니다.
+ * anon 키(로그인 안 함)나 확인 실패면 null → IP 기준으로 처리합니다.
+ */
+async function resolveUserId(admin: ReturnType<typeof createClient>, headers: Headers): Promise<string | null> {
+  const auth = headers.get('authorization') ?? '';
+  const token = auth.startsWith('Bearer ') ? auth.slice(7).trim() : '';
+  if (!token || token === (Deno.env.get('SUPABASE_ANON_KEY') ?? '')) return null;
+  try {
+    const { data, error } = await admin.auth.getUser(token);
+    if (error || !data.user) return null;
+    return data.user.id;
+  } catch {
+    return null;
+  }
+}
+
 function schemaFor(kind: ReadingRequest['kind']): JsonSchema {
   return kind === 'basic' ? BASIC_SCHEMA : kind === 'deep' ? DEEP_SCHEMA : FOLLOWUP_SCHEMA;
 }
@@ -98,6 +115,7 @@ Deno.serve(async (req) => {
 
   const admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
   const ipHash = await hashIp(clientIp(req.headers));
+  const userId = await resolveUserId(admin, req.headers);
   const startedAt = Date.now();
 
   /** 사용 기록(고민 내용은 저장하지 않음). 실패해도 응답에는 영향 없음. */
@@ -124,13 +142,15 @@ Deno.serve(async (req) => {
     const limits = parseLimits({
       ipHour: Deno.env.get('TAROT_LIMIT_IP_HOUR'),
       ipDay: Deno.env.get('TAROT_LIMIT_IP_DAY'),
+      userHour: Deno.env.get('TAROT_LIMIT_USER_HOUR'),
+      userDay: Deno.env.get('TAROT_LIMIT_USER_DAY'),
       globalDay: Deno.env.get('TAROT_LIMIT_GLOBAL_DAY'),
     });
-    const decision = await checkRateLimit(hit, ipHash, limits);
+    const decision = await checkRateLimit(hit, { ipHash, userId }, limits);
     if (!decision.allowed) {
       const retryAfter = retryAfterSeconds(decision.resetAt);
       console.log(`[tarot-reading] rate limited scope=${decision.scope} retryAfter=${retryAfter}s`);
-      await logUsage(buildUsageRow({ kind: request.kind, ok: false, errorKind: `rate_limited:${decision.scope}`, durationMs: Date.now() - startedAt, ipHash }));
+      await logUsage(buildUsageRow({ kind: request.kind, ok: false, errorKind: `rate_limited:${decision.scope}`, durationMs: Date.now() - startedAt, ipHash, userId }));
       return new Response(JSON.stringify({ error: decision.message, scope: decision.scope, retryAfterSeconds: retryAfter }), {
         status: 429,
         headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': String(retryAfter) },
@@ -181,14 +201,14 @@ Deno.serve(async (req) => {
     const result = outcome.value;
     if (result.source && outcome.fallbackFrom.length > 0) result.source.fallbackFrom = outcome.fallbackFrom;
     console.log(`[tarot-reading] ok kind=${request.kind} via ${candidateLabel(outcome.candidate)}`);
-    await logUsage(buildUsageRow({ kind: request.kind, ok: true, provider: result.source?.provider, model: result.source?.model, promptVersion: result.source?.promptVersion, durationMs: Date.now() - startedAt, fallbackCount: outcome.fallbackFrom.length, ipHash }));
+    await logUsage(buildUsageRow({ kind: request.kind, ok: true, provider: result.source?.provider, model: result.source?.model, promptVersion: result.source?.promptVersion, durationMs: Date.now() - startedAt, fallbackCount: outcome.fallbackFrom.length, ipHash, userId }));
     return json({ kind: request.kind, result });
   } catch (err) {
     console.error('[tarot-reading] all candidates failed', err);
     const message = err instanceof ProviderError && err.kind === 'config'
       ? '분석 서비스가 아직 준비되지 않았어요. (서버 키 설정 필요)'
       : '지금은 결과를 정리하지 못했어요. 잠시 후 다시 시도해 주세요.';
-    await logUsage(buildUsageRow({ kind: request.kind, ok: false, errorKind: err instanceof ProviderError ? err.kind : 'unknown', durationMs: Date.now() - startedAt, fallbackCount: attempts.length, ipHash }));
+    await logUsage(buildUsageRow({ kind: request.kind, ok: false, errorKind: err instanceof ProviderError ? err.kind : 'unknown', durationMs: Date.now() - startedAt, fallbackCount: attempts.length, ipHash, userId }));
     // detail: 어떤 후보가 왜 실패했는지 (대시보드 로그와 같은 내용). 키 값은 포함되지 않습니다.
     return json({ error: message, detail: attempts }, 502);
   }

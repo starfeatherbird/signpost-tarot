@@ -5,13 +5,15 @@ import { CounselScreen } from './screens/counsel/CounselScreen';
 import { RecordsScreen } from './screens/records/RecordsScreen';
 import { SpaceScreen } from './screens/space/SpaceScreen';
 import { loadSession, persistSession, sessionReducer } from './state/session';
+import { useAuth } from './state/useAuth';
 import { useRecords } from './state/useRecords';
 import { useTheme } from './state/useTheme';
 
 export default function App() {
   const [tab, setTab] = useState<Tab>('counsel');
   const [session, dispatch] = useReducer(sessionReducer, undefined, loadSession);
-  const records = useRecords();
+  const auth = useAuth();
+  const records = useRecords(auth.user?.id ?? null);
   const { theme, toggle: toggleTheme } = useTheme();
 
   // 진행 중인 상담을 임시 보관해 새로고침 시 복구합니다.
@@ -37,7 +39,7 @@ export default function App() {
       <main className="app-main" id="main">
         {tab === 'counsel' && <CounselScreen state={session} dispatch={dispatch} records={records} onOpenRecords={(id) => changeTab('records', id ?? null)} />}
         {tab === 'records' && <RecordsScreen records={records} initialId={openRecordId} onStartNew={() => changeTab('counsel')} />}
-        {tab === 'space' && <SpaceScreen records={records} theme={theme} onToggleTheme={toggleTheme} />}
+        {tab === 'space' && <SpaceScreen records={records} auth={auth} theme={theme} onToggleTheme={toggleTheme} />}
       </main>
       <BottomNav current={tab} onChange={changeTab} />
     </div>

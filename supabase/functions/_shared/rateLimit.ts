@@ -8,12 +8,17 @@
 export interface RateLimits {
   perIpHour: number;
   perIpDay: number;
+  /** 로그인한 사용자 기준 (IP 대신 적용) */
+  perUserHour: number;
+  perUserDay: number;
   globalDay: number;
 }
 
 export const DEFAULT_LIMITS: RateLimits = {
   perIpHour: 20,
   perIpDay: 60,
+  perUserHour: 10,
+  perUserDay: 10,
   globalDay: 300,
 };
 
@@ -25,10 +30,12 @@ function positiveInt(value: string | undefined | null, fallback: number): number
   return Number.isInteger(n) && n > 0 ? n : fallback;
 }
 
-export function parseLimits(env: { ipHour?: string | null; ipDay?: string | null; globalDay?: string | null }): RateLimits {
+export function parseLimits(env: { ipHour?: string | null; ipDay?: string | null; userHour?: string | null; userDay?: string | null; globalDay?: string | null }): RateLimits {
   return {
     perIpHour: positiveInt(env.ipHour, DEFAULT_LIMITS.perIpHour),
     perIpDay: positiveInt(env.ipDay, DEFAULT_LIMITS.perIpDay),
+    perUserHour: positiveInt(env.userHour, DEFAULT_LIMITS.perUserHour),
+    perUserDay: positiveInt(env.userDay, DEFAULT_LIMITS.perUserDay),
     globalDay: positiveInt(env.globalDay, DEFAULT_LIMITS.globalDay),
   };
 }
@@ -59,7 +66,7 @@ export interface HitResult {
 /** RPC 호출 함수 형태. 테스트에서는 가짜를 넣습니다. */
 export type HitFn = (key: string, windowSeconds: number, limit: number) => Promise<HitResult>;
 
-export type LimitScope = 'ip-hour' | 'ip-day' | 'global-day';
+export type LimitScope = 'ip-hour' | 'ip-day' | 'user-hour' | 'user-day' | 'global-day';
 
 export interface RateLimitDecision {
   allowed: boolean;
@@ -71,19 +78,36 @@ export interface RateLimitDecision {
 const MESSAGES: Record<LimitScope, string> = {
   'ip-hour': '짧은 시간에 상담을 많이 요청했어요. 잠시 쉬었다가 다시 시도해 주세요.',
   'ip-day': '오늘 상담 횟수를 모두 사용했어요. 내일 다시 찾아 주세요.',
+  'user-hour': '짧은 시간에 상담을 많이 요청했어요. 잠시 쉬었다가 다시 시도해 주세요.',
+  'user-day': '오늘 상담 횟수를 모두 사용했어요. 내일 다시 찾아 주세요.',
   'global-day': '지금은 상담 요청이 많아 잠시 쉬고 있어요. 내일 다시 시도해 주세요.',
 };
 
+export interface Caller {
+  ipHash: string;
+  /** 로그인한 사용자 id. 있으면 IP 대신 사용자 기준으로 셉니다. */
+  userId?: string | null;
+}
+
 /**
- * 세 가지 한도를 모두 세고, 하나라도 넘으면 막습니다.
+ * 한도를 모두 세고, 하나라도 넘으면 막습니다.
+ * - 로그인하지 않은 요청: IP 시간당/하루 + 전체 하루
+ * - 로그인한 요청: 사용자 시간당/하루 + 전체 하루 (같은 와이파이의 다른 사람에게 막히지 않도록 IP 는 세지 않음)
  * (막힌 요청도 횟수에 포함되므로, 계속 두드려도 창이 지나야 풀립니다.)
  */
-export async function checkRateLimit(hit: HitFn, ipHash: string, limits: RateLimits): Promise<RateLimitDecision> {
-  const checks: { scope: LimitScope; key: string; window: number; limit: number }[] = [
-    { scope: 'ip-hour', key: `ip:${ipHash}:hour`, window: HOUR, limit: limits.perIpHour },
-    { scope: 'ip-day', key: `ip:${ipHash}:day`, window: DAY, limit: limits.perIpDay },
-    { scope: 'global-day', key: 'global:day', window: DAY, limit: limits.globalDay },
-  ];
+export async function checkRateLimit(hit: HitFn, caller: Caller | string, limits: RateLimits): Promise<RateLimitDecision> {
+  const { ipHash, userId } = typeof caller === 'string' ? { ipHash: caller, userId: null } : caller;
+  const checks: { scope: LimitScope; key: string; window: number; limit: number }[] = userId
+    ? [
+        { scope: 'user-hour', key: `user:${userId}:hour`, window: HOUR, limit: limits.perUserHour },
+        { scope: 'user-day', key: `user:${userId}:day`, window: DAY, limit: limits.perUserDay },
+        { scope: 'global-day', key: 'global:day', window: DAY, limit: limits.globalDay },
+      ]
+    : [
+        { scope: 'ip-hour', key: `ip:${ipHash}:hour`, window: HOUR, limit: limits.perIpHour },
+        { scope: 'ip-day', key: `ip:${ipHash}:day`, window: DAY, limit: limits.perIpDay },
+        { scope: 'global-day', key: 'global:day', window: DAY, limit: limits.globalDay },
+      ];
   let blocked: RateLimitDecision | null = null;
   for (const c of checks) {
     const result = await hit(c.key, c.window, c.limit);
