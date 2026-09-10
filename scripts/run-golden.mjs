@@ -30,7 +30,7 @@ const set = JSON.parse(readFileSync(resolve(root, 'eval', 'golden-set.json'), 'u
 const label = opt('--label', 'run');
 const only = opt('--only', null);
 const useDeep = flag('--deep');
-const cases = set.cases.filter((c) => !only || c.id.includes(only));
+const cases = set.cases.filter((c) => (!only || c.id.includes(only)) && (!useDeep || c.deep)); // --deep 이면 심층 데이터가 있는 케이스만
 
 const QUESTION_TEXT = {
   priority: '이번 고민에서 가장 지키고 싶은 것은 무엇인가요?',
