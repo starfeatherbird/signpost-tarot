@@ -1,6 +1,6 @@
 # GitHub Pages 자동 배포: main 에 push 하면 빌드해서 Pages 에 올립니다.
 # Supabase 주소·anon 키는 .env.production 에서 읽습니다(공개용 값). AI 키는 서버 시크릿에만 있습니다.
-# Pages 는 configure-pages 의 enablement 가 첫 실행 때 자동으로 켭니다. 안 켜지면 Settings → Pages → Source: GitHub Actions.
+# 처음 한 번은 저장소 Settings → Pages → Source 를 "GitHub Actions" 로 켜 두어야 합니다 (토큰 권한상 워크플로가 직접 켤 수 없음).
 name: Deploy to GitHub Pages
 
 on:
@@ -35,8 +35,6 @@ jobs:
           # 저장소 이름이 곧 하위 경로입니다: https://<user>.github.io/<repo>/
           VITE_BASE_PATH: /${{ github.event.repository.name }}/
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
