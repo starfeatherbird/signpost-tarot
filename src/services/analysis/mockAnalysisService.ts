@@ -1,6 +1,7 @@
 import { MOCK_ANALYSIS_DELAY_MS, MOCK_ANALYSIS_FAILURE_RATE } from '../../config/appConfig';
 import { getCard } from '../../data/cards';
 import { POSITION_BY_ID } from '../../data/positions';
+import { STONES } from '../../data/stones';
 import type {
   AnalysisInput,
   Answer,
@@ -159,7 +160,15 @@ export function buildSampleReading(input: AnalysisInput, generatedAt = new Date(
   const notes: string[] = [SAMPLE_NOTE];
   if (input.supplement && input.supplement.trim()) notes.push(SUPPLEMENT_NOTE);
 
-  return { priority, reasons, alternatives, actions, perspectives, isSample: true, notes, generatedAt };
+  // 스톤은 '다음 움직임' 카드 번호로 정해 같은 입력이면 같은 돌이 나옵니다. 약속은 첫 번째 행동과 잇습니다.
+  const stone = STONES[next.card.number % STONES.length];
+  const stonePick = { stoneId: stone.id, promise: `이 돌을 볼 때 '${actions[0]}'${objectParticle(actions[0])} 떠올리기로 해요.` };
+
+  const reflectionQuestion = priorityAnswer
+    ? `며칠이 지난 지금, '${priorityAnswer}'${subjectParticle(priorityAnswer)} 여전히 가장 지키고 싶은 것인가요? 그 사이 실제로 확인된 사실이 있었나요?`
+    : '그 사이 실제로 확인된 사실이나 해 본 행동이 있었나요? 처음 생각과 달라진 점은 무엇인가요?';
+
+  return { priority, reasons, alternatives, actions, perspectives, isSample: true, notes, generatedAt, stone: stonePick, reflectionQuestion };
 }
 
 // ---------- 유료 심층 상담 ----------
@@ -277,6 +286,14 @@ export function copula(word: string): string {
   const code = last.charCodeAt(0);
   if (code < 0xac00 || code > 0xd7a3) return '(이)에요';
   return (code - 0xac00) % 28 === 0 ? '예요' : '이에요';
+}
+
+/** 받침 유무에 따라 '이' / '가' 를 고릅니다. 한글이 아니면 '이(가)' 로 둡니다. */
+export function subjectParticle(word: string): string {
+  const last = word.trim().slice(-1);
+  const code = last.charCodeAt(0);
+  if (code < 0xac00 || code > 0xd7a3) return '이(가)';
+  return (code - 0xac00) % 28 === 0 ? '가' : '이';
 }
 
 /** 받침 유무에 따라 '을' / '를' 을 고릅니다. 한글이 아니면 '을(를)' 로 둡니다. */

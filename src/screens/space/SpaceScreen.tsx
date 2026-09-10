@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
 import { Notice } from '../../components/Notice';
+import { StoneGem } from '../../components/StoneGem';
 import { APP_NAME, APP_VERSION } from '../../config/appConfig';
+import { STONES } from '../../data/stones';
+import { getRecordStone } from '../../services/reflection';
 import type { RecordsApi } from '../../state/useRecords';
 import type { Theme } from '../../state/useTheme';
 import { pickTextFile, saveTextFile } from '../../utils/download';
@@ -69,6 +72,8 @@ export function SpaceScreen({ records, theme, onToggleTheme }: Props) {
 
       {feedback && <Notice kind={feedback.ok ? 'success' : 'error'} role="status">{feedback.message}</Notice>}
 
+      <StoneCollection records={records} />
+
       <section className="panel panel--flat" aria-label="기록">
         <div className="setting-row" style={{ alignItems: 'flex-start', flexDirection: 'column', gap: 0 }}>
           <span className="setting-title">기록 저장 위치</span>
@@ -111,5 +116,56 @@ export function SpaceScreen({ records, theme, onToggleTheme }: Props) {
         onDismiss={() => setConfirmClear(false)}
       />
     </div>
+  );
+}
+
+/** 저장한 상담에서 만난 상징 스톤 모음. 아직 만나지 않은 돌은 흐리게 보입니다. */
+function StoneCollection({ records }: { records: RecordsApi }) {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const counts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const r of records.records) {
+      const pick = getRecordStone(r);
+      if (pick) map.set(pick.stoneId, (map.get(pick.stoneId) ?? 0) + 1);
+    }
+    return map;
+  }, [records.records]);
+  const met = STONES.filter((s) => counts.has(s.id)).length;
+  const selected = STONES.find((s) => s.id === selectedId) ?? null;
+
+  return (
+    <section className="panel" aria-labelledby="stones-title">
+      <div className="row-between">
+        <h2 className="panel-title" id="stones-title">모은 스톤</h2>
+        <span className="caption">{met} / {STONES.length}</span>
+      </div>
+      <p className="text-muted" style={{ fontSize: 13 }}>상담 결과마다 약속을 떠올리게 하는 돌 하나가 함께 와요. 기록을 저장하면 여기에 모여요.</p>
+      <div className="stone-grid" role="list">
+        {STONES.map((s) => {
+          const count = counts.get(s.id) ?? 0;
+          return (
+            <button
+              type="button"
+              role="listitem"
+              key={s.id}
+              className="stone-cell"
+              aria-pressed={selectedId === s.id}
+              aria-label={`${s.nameKo}, ${count > 0 ? `${count}번 만남` : '아직 만나지 않음'}`}
+              onClick={() => setSelectedId((v) => (v === s.id ? null : s.id))}
+            >
+              <StoneGem stone={s} size={36} dim={count === 0} />
+              <span className="stone-cell-name">{s.nameKo}</span>
+            </button>
+          );
+        })}
+      </div>
+      {selected && (
+        <div className="stone-detail" role="status">
+          <strong>{selected.nameKo}</strong> · {selected.symbol}
+          <span className="caption"> · {counts.get(selected.id) ? `${counts.get(selected.id)}번 만남` : '아직 만나지 않음'}</span>
+          <p className="text-muted" style={{ fontSize: 13, marginTop: 4 }}>{selected.description}</p>
+        </div>
+      )}
+    </section>
   );
 }

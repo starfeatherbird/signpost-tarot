@@ -1539,6 +1539,86 @@ button {
 .setting-row--danger .setting-title { color: var(--color-danger); font-size: 15px; font-weight: 600; }
 button.setting-row { cursor: pointer; }
 
+/* ==========================================================================
+   상징 스톤 · 이후 돌아보기
+   ========================================================================== */
+.stone-gem { display: block; flex: 0 0 auto; }
+.stone-gem.is-dim { opacity: 0.28; filter: grayscale(0.6); }
+
+.panel--stone {
+  background: var(--color-deep-panel-bg);
+  border-color: var(--color-border);
+}
+
+.stone-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.stone-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.stone-symbol { font-size: 13px; color: var(--color-text-muted); }
+
+.stone-promise {
+  font-size: 15px;
+  line-height: 1.6;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.stone-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.stone-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 4px 8px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.stone-cell[aria-pressed='true'] {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+  color: var(--color-accent-text);
+}
+
+.stone-cell-name {
+  font-size: 11px;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.stone-detail {
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.panel--reflection {
+  border-color: var(--color-panel-strong-border);
+}
+
+.reflection-question {
+  font-size: 16px;
+  line-height: 1.6;
+  font-weight: 600;
+  color: var(--color-text);
+  padding-left: 12px;
+  border-left: 3px solid var(--color-accent);
+}
+
 /* 호출 제한 패널 */
 .limit-panel {
   align-items: center;

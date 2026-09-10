@@ -94,6 +94,13 @@ export interface Provenance {
   fallbackFrom?: string[];
 }
 
+/** 상징 스톤 선택: 결과에서 고른 태도·행동을 떠올리게 하는 상징물 */
+export interface StonePick {
+  stoneId: string;
+  /** "이 돌을 볼 때 ~하기로 해요" 꼴의 한 문장 약속 */
+  promise: string;
+}
+
 /** 기본 상담 결과 (구조화) */
 export interface ReadingResult {
   /** 실제 분석 결과의 출처 (모의 결과에는 없음) */
@@ -108,6 +115,10 @@ export interface ReadingResult {
   /** 보충 내용 접수 등 서비스가 사용자에게 알리고 싶은 문구 */
   notes: string[];
   generatedAt: string;
+  /** 상징 스톤 (예전 결과에는 없을 수 있음) */
+  stone?: StonePick;
+  /** 며칠 뒤 돌아볼 질문 (예전 결과에는 없을 수 있음) */
+  reflectionQuestion?: string;
 }
 
 export interface OptionComparison {
@@ -168,6 +179,6 @@ export interface ConsultationRecord {
   actionChecks: string[];
   /** 저장 시점 결과가 예시였는지 */
   isSample: boolean;
-  /** 이후 상황 메모 */
+  /** 이후 상황 메모. 결과에 돌아볼 질문이 있으면 그 질문에 대한 답이 됩니다. */
   followUpMemo: string;
 }

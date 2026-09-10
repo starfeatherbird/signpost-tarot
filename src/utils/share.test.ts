@@ -20,7 +20,15 @@ describe('결과 공유 텍스트', () => {
     expect(t.indexOf('먼저 제안드리는 방향')).toBeLessThan(t.indexOf('이렇게 제안하는 이유'));
     expect(t).toContain('☐ 행동1');
     expect(t).not.toContain('선택지 비교');
+    expect(t).not.toContain('상징 스톤');
     expect(t).toContain('최종 선택은 스스로');
+  });
+
+  it('스톤과 돌아볼 질문이 있으면 마지막에 붙는다', () => {
+    const t = buildShareText({ plan: 'basic', concern: '고민', cards, result: { ...basic, stone: { stoneId: 'moonstone', promise: '이 돌을 볼 때 단정하지 않기로 해요.' }, reflectionQuestion: '그 사이 확인된 사실이 있었나요?' } });
+    expect(t).toContain('■ 상징 스톤: 문스톤 (단정하지 않기)');
+    expect(t).toContain('이 돌을 볼 때 단정하지 않기로 해요.');
+    expect(t.indexOf('■ 며칠 뒤 돌아볼 질문')).toBeGreaterThan(t.indexOf('■ 상징 스톤'));
   });
 
   it('심층 결과는 비교·실행 순서·장애물까지 붙는다', () => {

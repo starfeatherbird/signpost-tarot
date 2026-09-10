@@ -1,5 +1,5 @@
 import { ProviderError } from './registry.ts';
-import { getCardData } from './prompt.ts';
+import { getCardData, getStoneData } from './prompt.ts';
 import type {
   DeepReadingResult,
   DrawnCard,
@@ -7,6 +7,7 @@ import type {
   PositionId,
   Provenance,
   ReadingResult,
+  StonePick,
 } from './types.ts';
 
 /**
@@ -65,7 +66,18 @@ function perspectives(value: unknown, cards: DrawnCard[]) {
   });
 }
 
+/** 스톤은 있으면 좋고 없어도 결과를 버리지 않습니다 (목록에 없는 id 면 제외). */
+function stone(value: unknown): StonePick | undefined {
+  if (!value || typeof value !== 'object') return undefined;
+  const raw = value as Record<string, unknown>;
+  const stoneId = typeof raw.stoneId === 'string' ? raw.stoneId.trim() : '';
+  const promise = text(raw.promise, 'stone.promise', false);
+  if (!getStoneData(stoneId) || !promise) return undefined;
+  return { stoneId, promise };
+}
+
 function base(raw: Record<string, unknown>, cards: DrawnCard[], source: Provenance, generatedAt: string): ReadingResult {
+  const reflectionQuestion = text(raw.reflectionQuestion, 'reflectionQuestion', false);
   return {
     priority: text(raw.priority, 'priority'),
     reasons: list(raw.reasons, 'reasons'),
@@ -76,6 +88,8 @@ function base(raw: Record<string, unknown>, cards: DrawnCard[], source: Provenan
     isSample: false,
     generatedAt,
     source,
+    stone: stone(raw.stone),
+    reflectionQuestion: reflectionQuestion || undefined,
   };
 }
 

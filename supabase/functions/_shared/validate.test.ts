@@ -97,6 +97,26 @@ describe('validate', () => {
     expect(result.perspectives.map((p) => p.positionId)).toEqual(['core', 'blindspot', 'next']);
     expect(result.perspectives[0].cardId).toBe('tower');
     expect(result.perspectives[1].text.length).toBeGreaterThan(10); // lovers 기본 의미로 채움
+    expect(result.stone).toBeUndefined(); // 스톤·질문은 없어도 결과를 버리지 않음
+    expect(result.reflectionQuestion).toBeUndefined();
+  });
+
+  it('스톤은 목록에 있는 id 만 받고, 돌아볼 질문은 그대로 담는다', () => {
+    const ok = normalizeBasic(JSON.stringify({ ...basicJson, stone: { stoneId: 'moonstone', promise: '이 돌을 볼 때 단정하지 않기로 해요.' }, reflectionQuestion: '그 사이 확인된 사실이 있었나요?' }), cards, source);
+    expect(ok.stone).toEqual({ stoneId: 'moonstone', promise: '이 돌을 볼 때 단정하지 않기로 해요.' });
+    expect(ok.reflectionQuestion).toBe('그 사이 확인된 사실이 있었나요?');
+    const unknown = normalizeBasic(JSON.stringify({ ...basicJson, stone: { stoneId: 'diamond', promise: 'x' } }), cards, source);
+    expect(unknown.stone).toBeUndefined();
+  });
+
+  it('스키마와 프롬프트에 스톤 목록이 들어 있다', () => {
+    expect(JSON.stringify(BASIC_SCHEMA)).toContain('"moonstone"');
+    expect(JSON.stringify(DEEP_SCHEMA)).toContain('reflectionQuestion');
+    const msg = buildUserMessage({ kind: 'basic', input: { concern: '고민', answers: [], cards } });
+    expect(msg).toContain('[상징 스톤 목록]');
+    expect(msg).toContain('moonstone: 문스톤');
+    const followUp = buildUserMessage({ kind: 'followUp', input: { concern: '고민', answers: [], deepAnswers: [], cards, question: 'q', deepResult: { priority: 'p', reasons: [], alternatives: [], actions: [], perspectives: [], isSample: false, notes: [], generatedAt: 'x', kind: 'deep', criteriaSummary: 'c', comparisons: [], fitConditions: [], executionSteps: [], obstacles: [] } } });
+    expect(followUp).not.toContain('[상징 스톤 목록]');
   });
 
   it('코드 블록으로 감싼 JSON 도 읽는다', () => {

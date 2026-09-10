@@ -55,6 +55,16 @@ describe('mockAnalysisService — 기본', () => {
     expect(result.notes.some((n) => n.includes('예시'))).toBe(true);
   });
 
+  it('상징 스톤과 돌아볼 질문이 함께 오고, 같은 입력이면 같은 돌이 나온다', () => {
+    const a = buildSampleReading(input);
+    const b = buildSampleReading(input);
+    expect(a.stone?.stoneId).toBe(b.stone?.stoneId);
+    expect(a.stone?.promise).toContain(a.actions[0]);
+    expect(a.reflectionQuestion).toContain('성장·기회');
+    const noAnswer = buildSampleReading({ ...input, answers: [] });
+    expect(noAnswer.reflectionQuestion).toContain('확인된 사실');
+  });
+
   it('선택지 답변은 문장에 반영되고, 보충 내용은 접수 안내만 추가된다', () => {
     const result = buildSampleReading({ ...input, supplement: '이번 달 안에 결정해야 해요.' });
     expect(result.priority).toContain('성장·기회');

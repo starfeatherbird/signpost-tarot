@@ -72,6 +72,8 @@ function toMarkdown(c, req, res, ms) {
     '## 4. 지금 할 수 있는 일', ...r.actions.map((x) => `- [ ] ${x}`), '',
     '## 5. 카드별 관점', ...r.perspectives.map((p) => `- **${p.positionId} · ${p.cardId}**: ${p.text}`), '',
   ];
+  if (r.stone) lines.push('## 상징 스톤', `- ${r.stone.stoneId}: ${r.stone.promise}`, '');
+  if (r.reflectionQuestion) lines.push('## 돌아볼 질문', r.reflectionQuestion, '');
   if (r.notes?.length) lines.push('## 안내', ...r.notes.map((x) => `- ${x}`), '');
   if (req.kind === 'deep') {
     lines.push('## 6. 기준과 제약', r.criteriaSummary, '', `## 7. 선택지 비교 (우선: ${r.recommendedOption ?? '-'})`);

@@ -39,7 +39,12 @@ const fallbackBasic = {
   ],
   isSample: false, notes: [], generatedAt: '2026-09-10T01:00:00.000Z',
 };
-const basic = readBody('res-basic.txt') ?? fallbackBasic;
+const basic = {
+  // 스톤·돌아볼 질문은 예전 응답 파일에 없을 수 있어 예시로 채웁니다.
+  stone: { stoneId: 'lapis-lazuli', promise: '이 돌을 볼 때 친구에게 서운했던 마음을 솔직하게 말해보기로 해요.' },
+  reflectionQuestion: '그 사이 친구에게 서운한 마음을 실제로 말해봤는지, 말했다면 어떤 반응이 돌아왔는지 돌아봐 주세요.',
+  ...(readBody('res-basic.txt') ?? fallbackBasic),
+};
 const deep = readBody('res2-deep.txt') ?? {
   ...basic, kind: 'deep', criteriaSummary: '기준 요약 예시', recommendedOption: '친구에게 솔직하게 말하기',
   comparisons: [

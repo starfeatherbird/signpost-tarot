@@ -2,6 +2,7 @@ import { useState, type Dispatch } from 'react';
 import { ConcernBox } from '../../components/ConcernBox';
 import { Notice } from '../../components/Notice';
 import { ReadingView } from '../../components/ReadingView';
+import { ReflectionPanel } from '../../components/ReflectionPanel';
 import { SUPPLEMENT_MAX_LENGTH } from '../../config/appConfig';
 import { PLANS } from '../../config/products';
 import { isRemoteAnalysis } from '../../services/analysis';
@@ -64,6 +65,7 @@ export function ResultStep(props: ResultProps) {
         actionChecks={state.actionChecks}
         onToggleAction={(action) => dispatch({ type: 'toggleAction', action })}
       />
+      {result.reflectionQuestion && <ReflectionPanel question={result.reflectionQuestion} />}
 
       {!state.deepResult ? (
         <section className="panel panel--deep" aria-labelledby="upgrade-title">

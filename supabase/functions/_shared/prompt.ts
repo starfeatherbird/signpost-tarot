@@ -1,4 +1,5 @@
 import cardsJson from './cards.json' with { type: 'json' };
+import stonesJson from './stones.json' with { type: 'json' };
 import {
   POSITION_TITLES,
   type Answer,
@@ -6,19 +7,25 @@ import {
   type DeepReadingResult,
   type DrawnCard,
   type ReadingRequest,
+  type StoneData,
 } from './types.ts';
 
 /**
  * 상담 프롬프트. 모델과 무관하게 유지되며, 문구를 바꾸면 PROMPT_VERSION 을 올립니다.
  * (기록에 버전이 남아 "어떤 규칙으로 만든 결과인지" 추적할 수 있습니다.)
  */
-export const PROMPT_VERSION = 'counsel-v3';
+export const PROMPT_VERSION = 'counsel-v4';
 
 const CARDS = cardsJson as CardData[];
 const CARD_BY_ID = new Map(CARDS.map((c) => [c.id, c]));
+const STONES = stonesJson as StoneData[];
 
 export function getCardData(id: string): CardData | undefined {
   return CARD_BY_ID.get(id);
+}
+
+export function getStoneData(id: string): StoneData | undefined {
+  return STONES.find((s) => s.id === id);
 }
 
 export const SYSTEM_PROMPT = `당신은 한국어 타로 상담 앱의 상담사입니다. 사용자가 적은 고민과 뽑힌 카드 세 장을 바탕으로, 막막한 고민을 정리하고 선택 가능한 방향과 다음 행동을 제안합니다.
@@ -35,7 +42,13 @@ export const SYSTEM_PROMPT = `당신은 한국어 타로 상담 앱의 상담사
 - 각 항목은 2~4문장, 행동 항목은 한 줄로 실행 가능하게 씁니다. 전체적으로 읽기 편한 길이를 유지합니다.
 - 카드 데이터의 "작은 행동 예시"는 힌트일 뿐입니다. 행동 항목(actions)은 사용자가 적은 고민의 구체적인 대상·상황·표현을 그대로 살려 새로 씁니다(예: "친구에게", "이직 준비", "동생"처럼). 예시 문장을 그대로 옮기거나 여러 상담에 똑같이 쓸 법한 일반 문장은 피합니다.
 - 문장 주어를 다양하게 씁니다. "○○ 카드는 ~을 보여줘요/말해줘요" 같은 카드 주어 문장은 항목당 한 번 정도로 줄이고, 나머지는 사용자의 상황을 주어로 씁니다.
+- 상징 스톤은 "지금 할 수 있는 일" 가운데 하나(또는 제안한 태도)를 떠올리게 하는 상징물입니다. 제공된 목록에서만 고르고, 돌이 마음을 고치거나 운을 바꾼다고 말하지 않습니다. promise 는 "이 돌을 볼 때 ~하기로 해요" 꼴의 한 문장으로, 고민의 구체적인 대상·상황을 담아 씁니다.
+- 돌아볼 질문(reflectionQuestion)은 며칠 뒤 사용자가 스스로 답할 질문 한 개입니다. 미래를 묻지 말고, 그 사이 실제로 확인된 사실·해 본 행동·달라진 생각을 묻습니다. 고민의 구체적인 상황을 담아 한 문장으로 씁니다.
 - 출력은 지정된 JSON 형식만 사용하고, 형식 밖의 텍스트나 마크다운을 넣지 않습니다.`;
+
+function describeStones(): string {
+  return STONES.map((s) => `- ${s.id}: ${s.nameKo}(${s.nameEn}) — 상징: ${s.symbol} / 어울리는 상황: ${s.themes.join(', ')}`).join('\n');
+}
 
 function describeCards(cards: DrawnCard[]): string {
   return cards
@@ -71,7 +84,9 @@ const BASIC_FORMAT = `출력 JSON 항목:
 - alternatives: 다른 선택이 나은 조건 2개
 - actions: 지금 할 수 있는 작은 행동 3~4개 (오늘·이번 주에 가능한 크기)
 - perspectives: 카드별로 살펴볼 관점. 세 자리(core, blindspot, next) 각각 하나씩, text 는 3~5문장
-- notes: 사용자가 알아야 할 안내 (예: 보충 내용을 반영했다는 점, 정보가 부족했던 점). 없으면 빈 배열`;
+- notes: 사용자가 알아야 할 안내 (예: 보충 내용을 반영했다는 점, 정보가 부족했던 점). 없으면 빈 배열
+- stone: 상징 스톤. stoneId 는 아래 목록의 id 중 하나, promise 는 "이 돌을 볼 때 ~하기로 해요" 꼴 한 문장 (actions 중 하나와 이어지게)
+- reflectionQuestion: 며칠 뒤 돌아볼 질문 한 문장 (예: "그 사이 친구에게서 실제로 확인한 말이 있었나요?")`;
 
 const DEEP_FORMAT = `${BASIC_FORMAT}
 - criteriaSummary: 사용자가 밝힌 기준과 제약을 2~3문장으로 정리
@@ -89,6 +104,7 @@ export function buildUserMessage(request: ReadingRequest): string {
     describeAnswers('[상황 확인 답변]', input.answers),
     input.supplement?.trim() ? `[사용자가 보충한 내용 — 이전 이해를 바로잡는 정보이니 반드시 반영]\n${input.supplement.trim()}` : '',
     `[뽑힌 카드 세 장]\n${describeCards(input.cards)}`,
+    request.kind === 'followUp' ? '' : `[상징 스톤 목록]\n${describeStones()}`,
   ].filter(Boolean);
 
   if (request.kind === 'basic') {

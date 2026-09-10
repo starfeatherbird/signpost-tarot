@@ -44,6 +44,12 @@ export interface Provenance {
   fallbackFrom?: string[];
 }
 
+/** 상징 스톤 선택 */
+export interface StonePick {
+  stoneId: string;
+  promise: string;
+}
+
 export interface ReadingResult {
   priority: string;
   reasons: string[];
@@ -54,6 +60,8 @@ export interface ReadingResult {
   notes: string[];
   generatedAt: string;
   source?: Provenance;
+  stone?: StonePick;
+  reflectionQuestion?: string;
 }
 
 export interface OptionComparison {
@@ -107,6 +115,14 @@ export interface CardData {
   reversedEssence: string;
   perspectives: Record<PositionId, string>;
   actions: string[];
+}
+
+export interface StoneData {
+  id: string;
+  nameKo: string;
+  nameEn: string;
+  symbol: string;
+  themes: string[];
 }
 
 export const POSITION_TITLES: Record<PositionId, string> = {

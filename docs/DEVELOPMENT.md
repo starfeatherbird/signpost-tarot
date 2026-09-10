@@ -117,6 +117,13 @@ npm run build      # dist/ 생성 (정적 파일, 서버 불필요)
 - 화면에서는 카드 전체를 180도 돌려 보여 주고 "역방향" 태그를 붙입니다(`CardFace` 의 `reversed`).
 - 골든 세트에서는 카드 ID 뒤에 `!` 를 붙이면 역방향입니다 (`"tower!"`).
 
+## 상징 스톤 · 이후 돌아보기
+
+- 스톤 목록은 `src/data/stones.ts`(12종, 색·상징·어울리는 상황·설명). 서버에는 `npm run server:data` 로 `_shared/stones.json` 을 내보냅니다. 스톤은 행동을 떠올리게 하는 상징물이며 효능을 말하지 않습니다.
+- 결과(`ReadingResult`)에 `stone{stoneId, promise}` 와 `reflectionQuestion` 이 붙습니다(프롬프트 counsel-v4, 모의 분석도 생성). 예전 결과에는 없으므로 화면은 있을 때만 보여 줍니다.
+- 결과 화면: 패널 4 뒤에 스톤 패널, 마지막에 "며칠 뒤 돌아볼 질문". 기록장: 저장 `REFLECTION_AFTER_DAYS`(3일) 뒤부터 "돌아볼 때" 태그, 기록 상세의 메모 칸이 그 질문의 답이 됩니다(`followUpMemo` 그대로 사용, 답이 있으면 "돌아봄"). 상태 계산은 `services/reflection.ts`.
+- 내 공간 "모은 스톤": 저장된 기록의 스톤을 모아 12종 중 만난 돌만 색으로 보여 줍니다. 보석 그림은 `components/StoneGem.tsx`.
+
 ## 화면 캡처 (디자인 시안·문서용)
 
 - `npm run dev` 를 켠 상태에서 `node scripts/make-capture-targets.mjs` 로 화면별 상태 목록을 만든 뒤 `npm run capture` → `docs/screens/A01~A14, B01~B10.png` (375px, 2배 해상도, 전체 페이지, 어두운/밝은 테마). Chrome 필요. 이름 일부를 인자로 주면 그 화면만 찍습니다: `node scripts/capture-screens.mjs A09`

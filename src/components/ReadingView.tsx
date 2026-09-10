@@ -1,8 +1,10 @@
 import { getCard } from '../data/cards';
 import { POSITION_BY_ID } from '../data/positions';
+import { getStone } from '../data/stones';
 import type { DrawnCard, ReadingResult } from '../domain/types';
 import { CardFace } from './CardFace';
 import { Notice } from './Notice';
+import { StoneGem } from './StoneGem';
 
 interface Props {
   result: ReadingResult;
@@ -12,8 +14,9 @@ interface Props {
   onToggleAction?: (action: string) => void;
 }
 
-/** 상담 결과 본문(패널 1~5). 결과 화면과 기록 상세에서 함께 사용합니다. */
+/** 상담 결과 본문(패널 1~5 + 상징 스톤). 결과 화면과 기록 상세에서 함께 사용합니다. */
 export function ReadingView({ result, cards, actionChecks = [], onToggleAction }: Props) {
+  const stone = result.stone ? getStone(result.stone.stoneId) : undefined;
   return (
     <>
       <div className="mini-cards" aria-label="선택한 카드">
@@ -77,6 +80,20 @@ export function ReadingView({ result, cards, actionChecks = [], onToggleAction }
           })}
         </ul>
       </section>
+
+      {stone && result.stone && (
+        <section className="panel panel--stone" aria-labelledby="sec-stone">
+          <div className="stone-row">
+            <StoneGem stone={stone} size={48} />
+            <div className="stone-text">
+              <h2 className="panel-title" id="sec-stone" style={{ fontSize: 15 }}>상징 스톤 · {stone.nameKo}</h2>
+              <p className="stone-symbol">{stone.symbol}</p>
+            </div>
+          </div>
+          <p className="stone-promise">{result.stone.promise}</p>
+          <p className="faint">돌은 위 약속을 떠올리게 하는 상징이에요. 효능을 약속하지는 않아요.</p>
+        </section>
+      )}
 
       <section className="panel" aria-labelledby="sec-cards" style={{ gap: 0 }}>
         <h2 className="panel-title" id="sec-cards" style={{ marginBottom: 6 }}><span className="num" aria-hidden="true">5</span>카드별로 살펴볼 관점</h2>

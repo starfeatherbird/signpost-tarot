@@ -4,13 +4,23 @@ import { DeepReadingView } from '../../components/DeepReadingView';
 import { FollowUpPanel } from '../../components/FollowUpPanel';
 import { Notice } from '../../components/Notice';
 import { ReadingView } from '../../components/ReadingView';
+import { StoneGem } from '../../components/StoneGem';
 import { MEMO_MAX_LENGTH } from '../../config/appConfig';
 import { PLANS } from '../../config/products';
 import { getCard } from '../../data/cards';
+import { getStone } from '../../data/stones';
 import type { ConsultationRecord } from '../../domain/types';
+import { getRecordStone, getReflectionQuestion, getReflectionStatus, type ReflectionStatus } from '../../services/reflection';
 import type { RecordsApi } from '../../state/useRecords';
 import { formatDateTime } from '../../utils/format';
 import { buildShareText, shareText } from '../../utils/share';
+
+const REFLECTION_TAG: Record<ReflectionStatus, { label: string; className: string } | null> = {
+  none: null,
+  waiting: null,
+  due: { label: '돌아볼 때', className: 'tag tag--accent' },
+  done: { label: '돌아봄', className: 'tag tag--success' },
+};
 
 interface Props {
   records: RecordsApi;
@@ -52,11 +62,18 @@ export function RecordsScreen({ records, onStartNew }: Props) {
       <ul className="record-list">
         {records.records.map((r) => {
           const preview = r.deepResult?.priority ?? r.result?.priority ?? '';
+          const reflectionTag = REFLECTION_TAG[getReflectionStatus(r)];
+          const stonePick = getRecordStone(r);
+          const stone = stonePick ? getStone(stonePick.stoneId) : undefined;
           return (
             <li key={r.id}>
               <button type="button" className="record-item" onClick={() => setSelectedId(r.id)}>
                 <span className="row-between">
-                  <span className={`tag ${r.plan === 'deep' ? '' : 'tag--outline'}`}>{PLANS[r.plan].name}</span>
+                  <span className="tag-row">
+                    <span className={`tag ${r.plan === 'deep' ? '' : 'tag--outline'}`}>{PLANS[r.plan].name}</span>
+                    {reflectionTag && <span className={reflectionTag.className}>{reflectionTag.label}</span>}
+                    {stone && <StoneGem stone={stone} size={18} />}
+                  </span>
                   <span className="caption">{formatDateTime(r.createdAt)}</span>
                 </span>
                 <span className="record-title">{r.concern}</span>
@@ -89,6 +106,8 @@ function RecordDetail({ record, records, onBack }: DetailProps) {
   const hasBoth = !!record.result && !!record.deepResult;
   const shown = view === 'deep' && record.deepResult ? record.deepResult : record.result;
   const answers = [...record.answers, ...record.deepAnswers].filter((a) => a.value || a.values?.length);
+  const reflectionQuestion = getReflectionQuestion(record);
+  const reflectionStatus = getReflectionStatus(record);
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
@@ -103,7 +122,7 @@ function RecordDetail({ record, records, onBack }: DetailProps) {
   const saveMemo = () => {
     if (memoOver) return;
     const result = records.updateMemo(record.id, memo);
-    setFeedback(result.ok ? { ok: true, message: '메모를 저장했어요.' } : { ok: false, message: `저장하지 못했어요. ${result.reason}` });
+    setFeedback(result.ok ? { ok: true, message: reflectionQuestion ? '돌아본 내용을 저장했어요.' : '메모를 저장했어요.' } : { ok: false, message: `저장하지 못했어요. ${result.reason}` });
   };
 
   const toggleAction = (action: string) => {
@@ -169,18 +188,29 @@ function RecordDetail({ record, records, onBack }: DetailProps) {
 
       <button type="button" className="btn btn--secondary btn--sub btn--block" onClick={share}>결과 공유하기</button>
 
-      <section className="panel" aria-labelledby="memo-title">
-        <h2 className="panel-title" id="memo-title">이후 상황 메모</h2>
-        <p className="text-muted" style={{ fontSize: 13 }}>그 뒤로 어떻게 되었는지, 무엇을 해 봤는지 적어 두면 나중에 돌아보기 좋아요.</p>
+      <section className={`panel ${reflectionQuestion ? 'panel--reflection' : ''}`} aria-labelledby="memo-title">
+        <div className="row-between">
+          <h2 className="panel-title" id="memo-title">{reflectionQuestion ? '이후 돌아보기' : '이후 상황 메모'}</h2>
+          {reflectionStatus === 'due' && <span className="tag tag--accent">돌아볼 때</span>}
+          {reflectionStatus === 'done' && <span className="tag tag--success">돌아봄</span>}
+        </div>
+        {reflectionQuestion ? (
+          <>
+            <p className="reflection-question">{reflectionQuestion}</p>
+            {reflectionStatus === 'waiting' && <p className="text-muted" style={{ fontSize: 13 }}>아직 며칠 지나지 않았어요. 지금 떠오르는 게 있다면 미리 적어 두어도 괜찮아요.</p>}
+          </>
+        ) : (
+          <p className="text-muted" style={{ fontSize: 13 }}>그 뒤로 어떻게 되었는지, 무엇을 해 봤는지 적어 두면 나중에 돌아보기 좋아요.</p>
+        )}
         <div className="field">
-          <label className="visually-hidden" htmlFor="memo">이후 상황 메모</label>
+          <label className="visually-hidden" htmlFor="memo">{reflectionQuestion ? '돌아보기 답' : '이후 상황 메모'}</label>
           <div className="textarea-wrap">
             <textarea
               id="memo"
               className="textarea"
               style={{ minHeight: 96 }}
               value={memo}
-              placeholder="예) 결국 친구에게 이야기했고, 생각보다 편하게 풀렸어요."
+              placeholder={reflectionQuestion ? '예) 직접 물어보니 그냥 바빴던 거였어요. 혼자 넘겨짚었던 것 같아요.' : '예) 결국 친구에게 이야기했고, 생각보다 편하게 풀렸어요.'}
               onChange={(e) => { setMemo(e.target.value); setFeedback(null); }}
               aria-invalid={memoOver || undefined}
             />
@@ -188,7 +218,7 @@ function RecordDetail({ record, records, onBack }: DetailProps) {
           </div>
         </div>
         {feedback && <Notice kind={feedback.ok ? 'success' : 'error'} role="status">{feedback.message}</Notice>}
-        <button type="button" className="btn btn--outline-accent btn--sub" onClick={saveMemo} disabled={!memoDirty || memoOver}>메모 저장</button>
+        <button type="button" className="btn btn--outline-accent btn--sub" onClick={saveMemo} disabled={!memoDirty || memoOver}>{reflectionQuestion ? '답 저장' : '메모 저장'}</button>
       </section>
 
       <button type="button" className="btn btn--danger btn--sub btn--block" style={{ marginTop: -8 }} onClick={() => setConfirmDelete(true)}>기록 삭제</button>

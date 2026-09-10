@@ -20,6 +20,9 @@ export const STORAGE_KEYS = {
 /** 역방향으로 나올 확률(0~1). 상담 시작 시 카드마다 정해지고 이후 바뀌지 않습니다. */
 export const REVERSED_RATE = 0.4;
 
+/** 저장 뒤 며칠이 지나면 기록장에서 "돌아볼 때" 라고 알릴지 */
+export const REFLECTION_AFTER_DAYS = 3;
+
 /** 모의 분석 대기 시간(ms). 실제 서비스 연결 시 의미가 없어집니다. */
 export const MOCK_ANALYSIS_DELAY_MS = 1400;
 /**

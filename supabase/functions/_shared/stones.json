@@ -1,0 +1,146 @@
+[
+  {
+    "id": "moonstone",
+    "nameKo": "문스톤",
+    "nameEn": "Moonstone",
+    "symbol": "단정하지 않기",
+    "themes": [
+      "불확실함",
+      "추측",
+      "기다림",
+      "상대의 마음을 모를 때"
+    ]
+  },
+  {
+    "id": "rose-quartz",
+    "nameKo": "로즈쿼츠",
+    "nameEn": "Rose Quartz",
+    "symbol": "나에게 다정하기",
+    "themes": [
+      "자책",
+      "관계의 온기",
+      "지친 마음",
+      "위로"
+    ]
+  },
+  {
+    "id": "amethyst",
+    "nameKo": "자수정",
+    "nameEn": "Amethyst",
+    "symbol": "잠시 멈추기",
+    "themes": [
+      "불안",
+      "조급함",
+      "가라앉히기",
+      "답장 전에 멈추기"
+    ]
+  },
+  {
+    "id": "citrine",
+    "nameKo": "시트린",
+    "nameEn": "Citrine",
+    "symbol": "시작할 용기",
+    "themes": [
+      "새 시작",
+      "망설임",
+      "자신감",
+      "첫걸음"
+    ]
+  },
+  {
+    "id": "black-tourmaline",
+    "nameKo": "블랙 투르말린",
+    "nameEn": "Black Tourmaline",
+    "symbol": "경계 지키기",
+    "themes": [
+      "거절",
+      "경계",
+      "무리한 부탁",
+      "나를 지키기"
+    ]
+  },
+  {
+    "id": "clear-quartz",
+    "nameKo": "백수정",
+    "nameEn": "Clear Quartz",
+    "symbol": "사실 확인하기",
+    "themes": [
+      "명료함",
+      "정보 부족",
+      "사실 확인",
+      "헷갈릴 때"
+    ]
+  },
+  {
+    "id": "tiger-eye",
+    "nameKo": "타이거아이",
+    "nameEn": "Tiger's Eye",
+    "symbol": "한 걸음씩 꾸준히",
+    "themes": [
+      "끈기",
+      "준비",
+      "긴 과정",
+      "지루한 반복"
+    ]
+  },
+  {
+    "id": "lapis-lazuli",
+    "nameKo": "라피스 라줄리",
+    "nameEn": "Lapis Lazuli",
+    "symbol": "솔직하게 말하기",
+    "themes": [
+      "표현",
+      "대화",
+      "말하지 못한 것",
+      "오해"
+    ]
+  },
+  {
+    "id": "aventurine",
+    "nameKo": "아벤추린",
+    "nameEn": "Aventurine",
+    "symbol": "새로운 시도",
+    "themes": [
+      "기회",
+      "변화",
+      "이직",
+      "낯선 길"
+    ]
+  },
+  {
+    "id": "carnelian",
+    "nameKo": "카넬리안",
+    "nameEn": "Carnelian",
+    "symbol": "미루지 않기",
+    "themes": [
+      "결단",
+      "행동력",
+      "미루기",
+      "에너지"
+    ]
+  },
+  {
+    "id": "jade",
+    "nameKo": "옥",
+    "nameEn": "Jade",
+    "symbol": "균형 찾기",
+    "themes": [
+      "균형",
+      "과로",
+      "쉼",
+      "무리하지 않기"
+    ]
+  },
+  {
+    "id": "aquamarine",
+    "nameKo": "아쿠아마린",
+    "nameEn": "Aquamarine",
+    "symbol": "흐름에 맡기기",
+    "themes": [
+      "기다림",
+      "통제할 수 없는 일",
+      "내려놓기",
+      "시간이 필요할 때"
+    ]
+  }
+]

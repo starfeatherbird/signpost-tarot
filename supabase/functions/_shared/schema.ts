@@ -3,6 +3,9 @@
  * - Anthropic: output_config.format 에 그대로 사용 (additionalProperties:false + required 필수)
  * - Gemini: responseSchema 는 additionalProperties 를 지원하지 않으므로 toGeminiSchema 로 걷어냅니다.
  */
+import stonesJson from './stones.json' with { type: 'json' };
+import type { StoneData } from './types.ts';
+
 export type JsonSchema = Record<string, unknown>;
 
 const str = { type: 'string' } as const;
@@ -17,22 +20,29 @@ const perspective = obj({
   text: str,
 });
 
-export const BASIC_SCHEMA: JsonSchema = obj({
-  priority: str,
-  reasons: strList,
-  alternatives: strList,
-  actions: strList,
-  perspectives: { type: 'array', items: perspective },
-  notes: strList,
+export const STONE_IDS = (stonesJson as StoneData[]).map((s) => s.id);
+
+const stone = obj({
+  stoneId: { type: 'string', enum: STONE_IDS },
+  promise: str,
 });
 
-export const DEEP_SCHEMA: JsonSchema = obj({
+/** 기본·심층이 함께 쓰는 항목 */
+const COMMON = {
   priority: str,
   reasons: strList,
   alternatives: strList,
   actions: strList,
   perspectives: { type: 'array', items: perspective },
   notes: strList,
+  stone,
+  reflectionQuestion: str,
+};
+
+export const BASIC_SCHEMA: JsonSchema = obj({ ...COMMON });
+
+export const DEEP_SCHEMA: JsonSchema = obj({
+  ...COMMON,
   criteriaSummary: str,
   recommendedOption: str,
   comparisons: {

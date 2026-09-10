@@ -2,6 +2,7 @@ import { DeepReadingView } from '../../components/DeepReadingView';
 import { FollowUpPanel } from '../../components/FollowUpPanel';
 import { Notice } from '../../components/Notice';
 import { ReadingView } from '../../components/ReadingView';
+import { ReflectionPanel } from '../../components/ReflectionPanel';
 import { isRemoteAnalysis } from '../../services/analysis';
 import { getDrawnCards } from '../../state/session';
 import { ResultActions, ResultHeader, type ResultProps } from './ResultStep';
@@ -35,6 +36,7 @@ export function DeepResultStep(props: Props) {
         onToggleAction={(action) => dispatch({ type: 'toggleAction', action })}
       />
       <DeepReadingView result={result} deepAnswers={state.deepAnswers} />
+      {result.reflectionQuestion && <ReflectionPanel question={result.reflectionQuestion} />}
 
       <FollowUpPanel followUps={state.followUps} onAsk={onAskFollowUp} />
 
