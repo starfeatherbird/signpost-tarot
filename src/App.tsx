@@ -23,7 +23,11 @@ export default function App() {
     document.title = APP_NAME;
   }, []);
 
-  const changeTab = (next: Tab) => {
+  // 상담실에서 특정 기록을 바로 열 때 사용. 탭을 바꿀 때마다 지워 다음 방문에는 목록부터 보이게 합니다.
+  const [openRecordId, setOpenRecordId] = useState<string | null>(null);
+
+  const changeTab = (next: Tab, recordId: string | null = null) => {
+    setOpenRecordId(recordId);
     setTab(next);
     window.scrollTo({ top: 0 });
   };
@@ -31,8 +35,8 @@ export default function App() {
   return (
     <div className="app-shell">
       <main className="app-main" id="main">
-        {tab === 'counsel' && <CounselScreen state={session} dispatch={dispatch} records={records} onOpenRecords={() => changeTab('records')} />}
-        {tab === 'records' && <RecordsScreen records={records} onStartNew={() => changeTab('counsel')} />}
+        {tab === 'counsel' && <CounselScreen state={session} dispatch={dispatch} records={records} onOpenRecords={(id) => changeTab('records', id ?? null)} />}
+        {tab === 'records' && <RecordsScreen records={records} initialId={openRecordId} onStartNew={() => changeTab('counsel')} />}
         {tab === 'space' && <SpaceScreen records={records} theme={theme} onToggleTheme={toggleTheme} />}
       </main>
       <BottomNav current={tab} onChange={changeTab} />

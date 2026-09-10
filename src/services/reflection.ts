@@ -22,6 +22,13 @@ export function getRecordStone(record: Pick<ConsultationRecord, 'result' | 'deep
   return record.deepResult?.stone ?? record.result?.stone;
 }
 
+/** 돌아볼 때가 된 기록만 최신순으로 */
+export function getDueRecords<T extends Pick<ConsultationRecord, 'result' | 'deepResult' | 'createdAt' | 'followUpMemo'>>(records: T[], now: Date = new Date()): T[] {
+  return records
+    .filter((r) => getReflectionStatus(r, now) === 'due')
+    .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
+}
+
 export function getReflectionStatus(
   record: Pick<ConsultationRecord, 'result' | 'deepResult' | 'createdAt' | 'followUpMemo'>,
   now: Date = new Date(),

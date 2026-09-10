@@ -81,6 +81,7 @@ const keys = { draft: 'tarot-counsel.draft.v1', records: 'tarot-counsel.records.
 const targets = [];
 const add = (name, theme, extra) => targets.push({ name, theme, ...extra });
 add('A01-plan', 'dark', { draft: { ...base, step: 'plan' } });
+add('A01b-plan-due', 'dark', { draft: { ...base, step: 'plan' }, records: [{ ...records[1], createdAt: new Date(Date.now() - 5 * 86400e3).toISOString(), followUpMemo: '' }, records[0]] }); // 돌아볼 때가 된 고민 안내
 add('A02-input', 'dark', { draft: base });
 add('A03-questions', 'dark', { draft: { ...base, step: 'questions' } });
 add('A04-deep-questions', 'dark', { draft: { ...withAnswers, plan: 'deep', step: 'deepQuestions' } });

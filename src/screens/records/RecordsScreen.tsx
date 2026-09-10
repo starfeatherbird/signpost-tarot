@@ -24,11 +24,13 @@ const REFLECTION_TAG: Record<ReflectionStatus, { label: string; className: strin
 
 interface Props {
   records: RecordsApi;
+  /** 탭에 들어올 때 바로 열 기록 (상담실의 "돌아볼 고민" 에서 진입) */
+  initialId?: string | null;
   onStartNew: () => void;
 }
 
-export function RecordsScreen({ records, onStartNew }: Props) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+export function RecordsScreen({ records, initialId = null, onStartNew }: Props) {
+  const [selectedId, setSelectedId] = useState<string | null>(initialId);
   const selected = records.records.find((r) => r.id === selectedId) ?? null;
 
   if (selected) {

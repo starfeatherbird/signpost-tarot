@@ -45,7 +45,7 @@ export function InputStep({ state, dispatch, onOpenRecords, onCancel }: Props) {
           <span className="limit-icon" aria-hidden="true">!</span>
           <h2 style={{ fontSize: 17, fontWeight: 700 }}>오늘 상담 횟수를 모두 사용했어요.</h2>
           <p className="text-muted" style={{ fontSize: 14 }}>내일 다시 찾아 주세요. 지금까지의 기록은 기록장에서 언제든 볼 수 있어요.</p>
-          <button type="button" className="btn btn--secondary btn--sub" onClick={onOpenRecords}>기록장 보기</button>
+          <button type="button" className="btn btn--secondary btn--sub" onClick={() => onOpenRecords()}>기록장 보기</button>
         </section>
       )}
 

@@ -1610,6 +1610,37 @@ button.setting-row { cursor: pointer; }
   border-color: var(--color-panel-strong-border);
 }
 
+.due-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.due-item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-soft);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.due-item:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+
+.due-concern {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
 .reflection-question {
   font-size: 16px;
   line-height: 1.6;

@@ -2,15 +2,24 @@ import type { Dispatch } from 'react';
 import { Notice } from '../../components/Notice';
 import { APP_NAME } from '../../config/appConfig';
 import { PLANS } from '../../config/products';
+import type { ConsultationRecord } from '../../domain/types';
 import { isRemoteAnalysis } from '../../services/analysis';
+import { getDueRecords } from '../../services/reflection';
 import type { SessionAction } from '../../state/session';
+import { formatDateTime, summarize } from '../../utils/format';
 
 interface Props {
   dispatch: Dispatch<SessionAction>;
+  records?: ConsultationRecord[];
+  /** 기록장에서 해당 기록을 바로 엽니다. id 없이 부르면 목록으로. */
+  onOpenRecord?: (recordId?: string) => void;
 }
 
-/** 상담 시작 화면: 무료 기본(강조 패널) / 유료 심층(기본 패널) */
-export function PlanStep({ dispatch }: Props) {
+const DUE_PREVIEW_COUNT = 3;
+
+/** 상담 시작 화면: 돌아볼 고민 안내 + 무료 기본(강조 패널) / 유료 심층(기본 패널) */
+export function PlanStep({ dispatch, records = [], onOpenRecord }: Props) {
+  const due = getDueRecords(records);
   return (
     <div className="screen">
       <div className="screen-head">
@@ -24,6 +33,29 @@ export function PlanStep({ dispatch }: Props) {
           ? '지금은 시제품이에요. 상담 결과는 AI가 카드와 적어 주신 내용을 바탕으로 정리하고, 기록은 이 브라우저에만 저장돼요.'
           : '지금은 시제품이에요. 상담 결과는 카드 의미를 바탕으로 한 예시 문장이고, 기록은 이 브라우저에만 저장돼요.'}
       </Notice>
+
+      {due.length > 0 && onOpenRecord && (
+        <section className="panel panel--reflection" aria-labelledby="due-title">
+          <div className="row-between">
+            <h2 className="panel-title" id="due-title">돌아볼 때가 된 고민</h2>
+            <span className="tag tag--accent">{due.length}개</span>
+          </div>
+          <p className="text-muted" style={{ fontSize: 13 }}>며칠이 지났어요. 그 사이 어떻게 되었는지 한 줄만 남겨 보세요.</p>
+          <ul className="due-list">
+            {due.slice(0, DUE_PREVIEW_COUNT).map((r) => (
+              <li key={r.id}>
+                <button type="button" className="due-item" onClick={() => onOpenRecord(r.id)}>
+                  <span className="due-concern">{summarize(r.concern, 48)}</span>
+                  <span className="caption">{formatDateTime(r.createdAt)} 상담 · 돌아보기 ›</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+          {due.length > DUE_PREVIEW_COUNT && (
+            <button type="button" className="link-button" onClick={() => onOpenRecord()}>기록장에서 {due.length - DUE_PREVIEW_COUNT}개 더 보기</button>
+          )}
+        </section>
+      )}
 
       <section className="panel panel--strong" aria-labelledby="plan-basic">
         <div className="row-between">

@@ -25,7 +25,8 @@ interface Props {
   state: SessionState;
   dispatch: Dispatch<SessionAction>;
   records: RecordsApi;
-  onOpenRecords: () => void;
+  /** 기록장 탭으로 이동. id 를 주면 그 기록을 바로 엽니다. */
+  onOpenRecords: (recordId?: string) => void;
 }
 
 /** 상담실 탭. 단계 화면을 고르고, 분석 실행·저장·새 상담 같은 흐름 제어를 맡습니다. */
@@ -169,7 +170,7 @@ export function CounselScreen({ state, dispatch, records, onOpenRecords }: Props
   let content;
   switch (state.step) {
     case 'plan':
-      content = <PlanStep dispatch={dispatch} />;
+      content = <PlanStep dispatch={dispatch} records={records.records} onOpenRecord={onOpenRecords} />;
       break;
     case 'deepIntro':
       content = <DeepIntroStep state={state} dispatch={dispatch} />;
