@@ -2,6 +2,7 @@ import { useEffect, useState, type Dispatch } from 'react';
 import { CardBack } from '../../components/CardBack';
 import { CardFace } from '../../components/CardFace';
 import { ConcernBox } from '../../components/ConcernBox';
+import { FlowTop } from '../../components/FlowTop';
 import { CARDS, getCard } from '../../data/cards';
 import { CARDS_TO_PICK, POSITIONS } from '../../data/positions';
 import type { SessionAction, SessionState } from '../../state/session';
@@ -10,9 +11,10 @@ interface Props {
   state: SessionState;
   dispatch: Dispatch<SessionAction>;
   onAnalyze: () => void;
+  onCancel: () => void;
 }
 
-export function CardsStep({ state, dispatch, onAnalyze }: Props) {
+export function CardsStep({ state, dispatch, onAnalyze, onCancel }: Props) {
   const count = state.selected.length;
   const complete = count === CARDS_TO_PICK;
   const remaining = CARDS_TO_PICK - count;
@@ -21,7 +23,7 @@ export function CardsStep({ state, dispatch, onAnalyze }: Props) {
     return (
       <div className="screen">
         <div className="screen-head">
-          <p className="section-label">카드 공개</p>
+          <FlowTop label="카드 공개" onCancel={onCancel} />
           <h1 className="screen-title">세 장의 카드가 펼쳐졌어요</h1>
         </div>
         <ConcernBox text={state.concern} />
@@ -35,7 +37,7 @@ export function CardsStep({ state, dispatch, onAnalyze }: Props) {
   return (
     <div className="screen">
       <div className="screen-head">
-        <p className="section-label">카드 선택</p>
+        <FlowTop label="카드 선택" onCancel={onCancel} />
         <h1 className="screen-title">마음이 가는 카드 세 장을 골라 주세요</h1>
       </div>
 

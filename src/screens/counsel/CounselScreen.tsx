@@ -35,6 +35,7 @@ export function CounselScreen({ state, dispatch, records, onOpenRecords }: Props
   const [saveFeedback, setSaveFeedback] = useState<SaveFeedback | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [confirmNew, setConfirmNew] = useState(false);
+  const [confirmCancel, setConfirmCancel] = useState(false);
 
   // 저장했던 기록이 기록장에서 삭제되었으면 다시 '미저장'으로 봅니다.
   const savedRecordExists = !!state.savedRecordId && records.records.some((r) => r.id === state.savedRecordId);
@@ -156,6 +157,12 @@ export function CounselScreen({ state, dispatch, records, onOpenRecords }: Props
     window.scrollTo({ top: 0 });
   };
 
+  /** 상담 취소: 적은 것이 없으면 바로, 있으면 확인 뒤 상담실 첫 화면으로 */
+  const requestCancel = () => {
+    if (hasProgress(state)) setConfirmCancel(true);
+    else startNew();
+  };
+
   const hasResult = !!(state.result || state.deepResult);
   const commonResultProps = { state, dispatch, onSave: () => { save(); }, onReanalyze: runAnalysis, onNew: requestNew, saveFeedback, saveStatus };
 
@@ -168,16 +175,16 @@ export function CounselScreen({ state, dispatch, records, onOpenRecords }: Props
       content = <DeepIntroStep state={state} dispatch={dispatch} />;
       break;
     case 'input':
-      content = <InputStep state={state} dispatch={dispatch} onOpenRecords={onOpenRecords} />;
+      content = <InputStep state={state} dispatch={dispatch} onOpenRecords={onOpenRecords} onCancel={requestCancel} />;
       break;
     case 'questions':
-      content = <QuestionsStep state={state} dispatch={dispatch} variant="basic" />;
+      content = <QuestionsStep state={state} dispatch={dispatch} variant="basic" onCancel={requestCancel} />;
       break;
     case 'deepQuestions':
-      content = <QuestionsStep state={state} dispatch={dispatch} variant="deep" />;
+      content = <QuestionsStep state={state} dispatch={dispatch} variant="deep" onCancel={state.result ? undefined : requestCancel} />;
       break;
     case 'cards':
-      content = <CardsStep state={state} dispatch={dispatch} onAnalyze={runAnalysis} />;
+      content = <CardsStep state={state} dispatch={dispatch} onAnalyze={runAnalysis} onCancel={requestCancel} />;
       break;
     case 'analyzing':
       content = (
@@ -206,6 +213,16 @@ export function CounselScreen({ state, dispatch, records, onOpenRecords }: Props
           <Notice kind="success" role="status">{toast}</Notice>
         </div>
       )}
+      <ConfirmDialog
+        open={confirmCancel}
+        title="상담을 그만둘까요?"
+        description="지금까지 적은 내용과 고른 카드가 사라지고 상담실 첫 화면으로 돌아가요."
+        actions={[
+          { label: '그만두기', kind: 'danger', onClick: () => { setConfirmCancel(false); startNew(); } },
+          { label: '계속하기', kind: 'secondary', onClick: () => setConfirmCancel(false) },
+        ]}
+        onDismiss={() => setConfirmCancel(false)}
+      />
       <ConfirmDialog
         open={confirmNew}
         title="새 상담을 시작할까요?"

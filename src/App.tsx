@@ -30,9 +30,6 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <header className="app-header">
-        <span className="brand">{APP_NAME}</span>
-      </header>
       <main className="app-main" id="main">
         {tab === 'counsel' && <CounselScreen state={session} dispatch={dispatch} records={records} onOpenRecords={() => changeTab('records')} />}
         {tab === 'records' && <RecordsScreen records={records} onStartNew={() => changeTab('counsel')} />}

@@ -1,4 +1,5 @@
 import { useState, type Dispatch } from 'react';
+import { FlowTop } from '../../components/FlowTop';
 import { CONCERN_MAX_LENGTH } from '../../config/appConfig';
 import { CONCERN_EXAMPLES, PLANS } from '../../config/products';
 import type { SessionAction, SessionState } from '../../state/session';
@@ -7,9 +8,10 @@ interface Props {
   state: SessionState;
   dispatch: Dispatch<SessionAction>;
   onOpenRecords: () => void;
+  onCancel: () => void;
 }
 
-export function InputStep({ state, dispatch, onOpenRecords }: Props) {
+export function InputStep({ state, dispatch, onOpenRecords, onCancel }: Props) {
   const [showError, setShowError] = useState(false);
   const length = state.concern.length;
   const isEmpty = state.concern.trim().length === 0;
@@ -33,7 +35,7 @@ export function InputStep({ state, dispatch, onOpenRecords }: Props) {
   return (
     <div className="screen">
       <div className="screen-head">
-        <p className="section-label">{state.plan === 'deep' ? PLANS.deep.name : '기본 상담'}</p>
+        <FlowTop label={state.plan === 'deep' ? PLANS.deep.name : '기본 상담'} onCancel={onCancel} />
         <h1 className="screen-title">어떤 고민을 함께 정리해 볼까요?</h1>
         <p className="screen-lead">떠오르는 대로 편하게 적어 주세요. 정리는 함께 해요.</p>
       </div>

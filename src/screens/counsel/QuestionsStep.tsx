@@ -1,4 +1,5 @@
 import { useEffect, useState, type Dispatch } from 'react';
+import { FlowTop } from '../../components/FlowTop';
 import { Notice } from '../../components/Notice';
 import { ProgressHeader } from '../../components/ProgressHeader';
 import { ANSWER_MAX_LENGTH } from '../../config/appConfig';
@@ -13,13 +14,14 @@ interface Props {
   dispatch: Dispatch<SessionAction>;
   /** basic: 기본 상황 확인 / deep: 심층 질문 */
   variant: 'basic' | 'deep';
+  onCancel?: () => void;
 }
 
 /**
  * 상황 확인 단계. 질문은 provider 가 결정하고, 이 화면은 한 번에 하나씩 보여 주기만 합니다.
  * 같은 화면을 기본 상황 확인과 심층 질문에 함께 씁니다.
  */
-export function QuestionsStep({ state, dispatch, variant }: Props) {
+export function QuestionsStep({ state, dispatch, variant, onCancel }: Props) {
   const isDeep = variant === 'deep';
   const provider = isDeep ? deepQuestionProvider : questionProvider;
   const answers = isDeep ? state.deepAnswers : state.answers;
@@ -92,7 +94,12 @@ export function QuestionsStep({ state, dispatch, variant }: Props) {
   const form = {
     question, existing, isLast, onSubmit: submit, onBack: back,
     nextLabel: isLast ? lastLabel : '다음',
-    header: <ProgressHeader label={isDeep ? '심층 질문' : '상황 확인'} current={index + 1} total={questions.length} hint="답하지 않아도 진행할 수 있어요" />,
+    header: (
+      <>
+        {onCancel && <FlowTop onCancel={onCancel} />}
+        <ProgressHeader label={isDeep ? '심층 질문' : '상황 확인'} current={index + 1} total={questions.length} hint="답하지 않아도 진행할 수 있어요" />
+      </>
+    ),
   };
 
   return question.kind === 'list'
