@@ -1,0 +1,10 @@
+node_modules
+dist
+.env
+.env.local
+
+# 원본 카드 그림(60MB)은 저장소에 넣지 않습니다. 웹용 변환본(public/cards)만 커밋합니다.
+card_asset
+# 생성물·시안 패키지
+docs/screens
+*.zip

@@ -1,0 +1,156 @@
+/*
+ * 디자인 토큰 — 시안(design_handoff_ijeongpyo/README.md) 의 값 그대로.
+ * 시안 A(어두운 남색)가 기본, 시안 B(밝은 아이보리)는 [data-theme="light"] 로 교체.
+ * 구조·간격·타이포는 두 테마가 같고 색만 다릅니다.
+ */
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-bg: #0f1a2e;
+  --color-bg-deep: #0a1222;
+  --color-surface: #162540;
+  --color-surface-strong: #1c2f4f;
+  --color-border: #2b4268;
+  --color-border-soft: #1f3355;
+
+  --color-accent: #1d559c;
+  --color-accent-soft: #163f76;
+  --color-accent-text: #8fb4e8;
+
+  --color-text: #f3eee4;
+  --color-text-muted: #b8bfcc;
+  --color-text-faint: #7e889b;
+
+  --color-danger: #d9736b;
+  --color-danger-bg: #3a2226;
+  --color-danger-border: #7a3e3e;
+  --color-success: #6fbf8e;
+  --color-success-bg: #17322a;
+  --color-success-border: #2f5b44;
+  --color-card-title: #c9d3e3;
+
+  /* 테마별로 달라지는 보조 값 */
+  --color-input-bg: var(--color-bg-deep);
+  --color-tab-bg: var(--color-bg-deep);
+  --color-secondary-bg: transparent;
+  --color-disabled-bg: var(--color-surface-strong);
+  --color-select-border: var(--color-accent-tint-1); /* 선택 칩·선택 카드 테두리 */
+  --color-panel-strong-bg: var(--color-surface-strong);
+  --color-panel-strong-border: var(--color-border);
+  --color-deep-panel-bg: var(--color-bg-deep);
+  --color-compare-bg: var(--color-bg);
+  --color-bubble-user-bg: var(--color-accent-soft);
+  --color-bubble-user-text: var(--color-text);
+  --color-tag-strong-bg: var(--color-surface-strong);
+  --color-tag-strong-text: var(--color-text);
+  --color-card-back: #1c2f4f;
+  --color-card-back-stripe: #22385c;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.45);
+  --focus-ring: 0 0 0 3px rgba(29, 85, 156, 0.35);
+  --slot-ring: 0 0 0 3px rgba(29, 85, 156, 0.25);
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+
+  --color-bg: #f6f4ef;
+  --color-bg-deep: #eceae3;
+  --color-surface: #ffffff;
+  --color-surface-strong: #eef3fa;
+  --color-border: #cfd6e1;
+  --color-border-soft: #e3e7ee;
+
+  --color-accent: #1d559c;
+  --color-accent-soft: #e4edf8;
+  --color-accent-text: #1d559c;
+
+  --color-text: #14243d;
+  --color-text-muted: #4a5a73;
+  --color-text-faint: #74819a;
+
+  --color-danger: #b8524a;
+  --color-danger-bg: #fbeae8;
+  --color-danger-border: #e8b9b4;
+  --color-success: #2f8f5b;
+  --color-success-bg: #e6f4eb;
+  --color-success-border: #e6f4eb;
+  --color-card-title: #3e4e68;
+
+  --color-input-bg: #ffffff;
+  --color-tab-bg: #ffffff;
+  --color-secondary-bg: #ffffff;
+  --color-disabled-bg: #e3e7ee;
+  --color-select-border: var(--color-accent);
+  --color-panel-strong-bg: #ffffff;
+  --color-panel-strong-border: var(--color-accent);
+  --color-deep-panel-bg: var(--color-bg-deep);
+  --color-compare-bg: var(--color-bg);
+  --color-bubble-user-bg: var(--color-accent);
+  --color-bubble-user-text: #ffffff;
+  --color-tag-strong-bg: #14243d;
+  --color-tag-strong-text: #ffffff;
+  --color-card-back: #dde4ee;
+  --color-card-back-stripe: #e8edf4;
+
+  --shadow-sm: 0 2px 8px rgba(20, 36, 61, 0.08);
+  --shadow-lg: 0 12px 32px rgba(20, 36, 61, 0.2);
+  --focus-ring: 0 0 0 3px rgba(29, 85, 156, 0.25);
+  --slot-ring: 0 0 0 3px rgba(29, 85, 156, 0.25);
+}
+
+:root {
+  /* 포인트 스케일 (#1D559C 기준) — 테마와 무관 */
+  --color-accent-tint-3: #d6e4f7;
+  --color-accent-tint-2: #8fb4e8;
+  --color-accent-tint-1: #4f82c4;
+  --color-accent-shade-1: #163f76;
+  --color-accent-shade-2: #0f2b52;
+  --color-danger-fill: #b85b54;
+  --color-on-accent: #ffffff;
+  --color-overlay: rgba(5, 10, 20, 0.55);
+  --color-card-reveal-border: #8a98ae;
+
+  /* 글꼴 */
+  --font-body: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+  --font-card: 'Cinzel', 'Times New Roman', serif;
+
+  /* 타이포 스케일 (size / line) */
+  --text-display: 700 24px/32px var(--font-body);
+  --text-title: 700 19px/27px var(--font-body);
+  --text-body: 400 16px/26px var(--font-body);
+  --text-body-panel: 400 15px/1.65 var(--font-body);
+  --text-small: 500 14px/21px var(--font-body);
+  --text-caption: 600 12px/17px var(--font-body);
+
+  /* 간격 6단계 */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  /* 모서리 */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+
+  --nav-height: 64px;
+  --header-height: 52px;
+  --content-max-width: 640px;
+  --touch-target: 44px;
+
+  --duration-select: 180ms;
+  --duration-flip: 400ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-select: 0ms;
+    --duration-flip: 0ms;
+  }
+}

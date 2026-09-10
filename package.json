@@ -1,0 +1,35 @@
+{
+  "name": "signpost-tarot",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "cards": "node scripts/sync-cards.mjs",
+    "predev": "node scripts/sync-cards.mjs",
+    "dev": "vite",
+    "prebuild": "node scripts/sync-cards.mjs",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b",
+    "test": "vitest run",
+    "server:data": "node scripts/export-cards.mjs",
+    "server:deploy": "npm run server:data && npx supabase functions deploy tarot-reading --project-ref fvtarvatvqcozsrfetbf",
+    "server:secrets": "npx supabase secrets set --project-ref fvtarvatvqcozsrfetbf",
+    "server:logs": "node -e \"console.log('로그: https://supabase.com/dashboard/project/fvtarvatvqcozsrfetbf/functions/tarot-reading/logs')\"",
+    "capture": "node scripts/capture-screens.mjs"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.2",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "sharp": "^0.35.4",
+    "typescript": "~5.9.0",
+    "vite": "^7.1.0",
+    "vitest": "^3.2.0"
+  }
+}
