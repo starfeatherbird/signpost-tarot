@@ -13,6 +13,7 @@ import { BASIC_SCHEMA, DEEP_SCHEMA, FOLLOWUP_SCHEMA, type JsonSchema } from '../
 import type { DeepReadingResult, Provenance, ReadingRequest } from '../_shared/types.ts';
 import { assertCards, normalizeBasic, normalizeDeep, normalizeFollowUp } from '../_shared/validate.ts';
 import { checkRateLimit, clientIp, hashIp, parseLimits, retryAfterSeconds, type HitResult } from '../_shared/rateLimit.ts';
+import { buildUsageRow, type UsageRow } from '../_shared/usage.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const corsHeaders = {
@@ -95,11 +96,24 @@ Deno.serve(async (req) => {
     return json({ error: message }, 400);
   }
 
+  const admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+  const ipHash = await hashIp(clientIp(req.headers));
+  const startedAt = Date.now();
+
+  /** 사용 기록(고민 내용은 저장하지 않음). 실패해도 응답에는 영향 없음. */
+  const logUsage = async (row: UsageRow) => {
+    try {
+      const { error } = await admin.from('tarot_usage_log').insert(row);
+      if (error) console.warn('[tarot-reading] usage log failed', error.message);
+    } catch (err) {
+      console.warn('[tarot-reading] usage log failed', err);
+    }
+  };
+
   // ── 호출 횟수 제한 ──────────────────────────────
   // IP 별 시간당/하루 + 전체 하루 한도. 횟수 기록은 service role 로만 접근하는 테이블에 둡니다.
   // 기록 테이블에 문제가 있으면(미생성 등) 로그만 남기고 통과시킵니다(앱이 멈추지 않게).
   try {
-    const admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
     const hit = async (key: string, windowSeconds: number, limit: number): Promise<HitResult> => {
       const { data, error } = await admin.rpc('tarot_rate_limit_hit', { p_key: key, p_window_seconds: windowSeconds, p_limit: limit });
       if (error) throw new Error(error.message);
@@ -112,10 +126,11 @@ Deno.serve(async (req) => {
       ipDay: Deno.env.get('TAROT_LIMIT_IP_DAY'),
       globalDay: Deno.env.get('TAROT_LIMIT_GLOBAL_DAY'),
     });
-    const decision = await checkRateLimit(hit, await hashIp(clientIp(req.headers)), limits);
+    const decision = await checkRateLimit(hit, ipHash, limits);
     if (!decision.allowed) {
       const retryAfter = retryAfterSeconds(decision.resetAt);
       console.log(`[tarot-reading] rate limited scope=${decision.scope} retryAfter=${retryAfter}s`);
+      await logUsage(buildUsageRow({ kind: request.kind, ok: false, errorKind: `rate_limited:${decision.scope}`, durationMs: Date.now() - startedAt, ipHash }));
       return new Response(JSON.stringify({ error: decision.message, scope: decision.scope, retryAfterSeconds: retryAfter }), {
         status: 429,
         headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': String(retryAfter) },
@@ -166,12 +181,14 @@ Deno.serve(async (req) => {
     const result = outcome.value;
     if (result.source && outcome.fallbackFrom.length > 0) result.source.fallbackFrom = outcome.fallbackFrom;
     console.log(`[tarot-reading] ok kind=${request.kind} via ${candidateLabel(outcome.candidate)}`);
+    await logUsage(buildUsageRow({ kind: request.kind, ok: true, provider: result.source?.provider, model: result.source?.model, promptVersion: result.source?.promptVersion, durationMs: Date.now() - startedAt, fallbackCount: outcome.fallbackFrom.length, ipHash }));
     return json({ kind: request.kind, result });
   } catch (err) {
     console.error('[tarot-reading] all candidates failed', err);
     const message = err instanceof ProviderError && err.kind === 'config'
       ? '분석 서비스가 아직 준비되지 않았어요. (서버 키 설정 필요)'
       : '지금은 결과를 정리하지 못했어요. 잠시 후 다시 시도해 주세요.';
+    await logUsage(buildUsageRow({ kind: request.kind, ok: false, errorKind: err instanceof ProviderError ? err.kind : 'unknown', durationMs: Date.now() - startedAt, fallbackCount: attempts.length, ipHash }));
     // detail: 어떤 후보가 왜 실패했는지 (대시보드 로그와 같은 내용). 키 값은 포함되지 않습니다.
     return json({ error: message, detail: attempts }, 502);
   }

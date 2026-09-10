@@ -94,6 +94,16 @@ npm run server:secrets -- TAROT_MODELS="anthropic:claude-sonnet-5,gemini:auto,an
 - 기록 테이블에 문제가 생기면(예: 테이블 미생성) 로그만 남기고 요청을 통과시킵니다. 앱이 멈추지 않게 하기 위한 선택이니, 대시보드 로그에 `rate limit check failed` 가 보이면 SQL 을 다시 실행하세요.
 - 한도를 바꾸려면 시크릿만 바꾸면 됩니다: `npm run server:secrets -- TAROT_LIMIT_IP_DAY=100`
 
+## 사용 기록 (비용·이용량 파악)
+
+상담 한 건마다 `tarot_usage_log` 표에 한 줄을 남깁니다: 종류(basic/deep/followUp), 제공자·모델·프롬프트 버전, 소요 시간, 성공 여부·실패 종류, 전환 횟수, IP 해시. **고민 내용·결과는 저장하지 않습니다.**
+
+- 표 생성(한 번): `npx supabase db query --linked --project-ref fvtarvatvqcozsrfetbf -f supabase/sql/usage_log.sql`
+- 보는 곳: 대시보드 → Table Editor → `tarot_usage_log`, 또는 SQL Editor 에서 `select * from tarot_usage_daily order by day desc` (일별 건수·평균 시간·실패 수 뷰)
+- 표가 없어도 상담은 정상 동작하고 로그에 `usage log failed` 만 남습니다.
+- 이 프로젝트는 "Automatically expose new tables" 를 꺼 두었으므로, 새 표를 만들면 서버 함수 역할에 `grant … to service_role` 을 직접 줘야 합니다(SQL 파일 끝 참고). 안 주면 조용히 실패합니다.
+- 비용 어림: Sonnet 5 기준 기본 상담 1건 ≈ 15~25원, 심층 ≈ 30~45원 수준(입력·출력 토큰에 따라 다름). 월 건수 × 단가로 잡으면 됩니다.
+
 ## 주의
 
 - 요청 본문은 길이 제한을 두고 필요한 필드만 추립니다 (`index.ts` 의 `parseRequest`).

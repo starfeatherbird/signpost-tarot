@@ -1,7 +1,11 @@
 import { useCallback, useState } from 'react';
 import type { ConsultationRecord } from '../domain/types';
+import { APP_NAME } from '../config/appConfig';
 import {
+  buildExport,
   clearAllRecords,
+  mergeRecords,
+  parseImport,
   deleteRecord as deleteFrom,
   loadRecords,
   patchRecord,
@@ -47,13 +51,32 @@ export function useRecords() {
 
   const remove = useCallback((id: string) => commit(deleteFrom(records, id)), [records, commit]);
 
+  /** 기록 전체를 JSON 문자열로 */
+  const exportJson = useCallback(() => JSON.stringify(buildExport(records, APP_NAME), null, 2), [records]);
+
+  /** 파일 내용을 읽어 합칩니다. 형식 오류는 ok:false 로 알립니다. */
+  const importFromText = useCallback(
+    (text: string): StorageResult & { added?: number; updated?: number } => {
+      let incoming;
+      try {
+        incoming = parseImport(text);
+      } catch (err) {
+        return { ok: false, reason: err instanceof Error ? err.message : '기록 파일 형식이 아니에요.' };
+      }
+      const merged = mergeRecords(records, incoming);
+      const result = commit(merged.records);
+      return result.ok ? { ok: true, added: merged.added, updated: merged.updated } : result;
+    },
+    [records, commit],
+  );
+
   const clearAll = useCallback((): StorageResult => {
     const result = clearAllRecords();
     if (result.ok) setRecords([]);
     return result;
   }, []);
 
-  return { records, save, updateMemo, update, remove, clearAll };
+  return { records, save, updateMemo, update, remove, clearAll, exportJson, importFromText };
 }
 
 export type RecordsApi = ReturnType<typeof useRecords>;

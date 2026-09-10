@@ -106,6 +106,57 @@ export function clearAllRecords(): StorageResult {
   return removeKey(STORAGE_KEYS.records);
 }
 
+// ---- 내보내기 / 가져오기 (브라우저에만 있는 기록의 백업·이동용) ----
+
+export const EXPORT_FORMAT = 1;
+
+export interface RecordsExport {
+  app: string;
+  format: number;
+  exportedAt: string;
+  records: ConsultationRecord[];
+}
+
+export function buildExport(records: ConsultationRecord[], appName: string): RecordsExport {
+  return { app: appName, format: EXPORT_FORMAT, exportedAt: new Date().toISOString(), records };
+}
+
+/** 내보낸 파일 내용을 기록 목록으로 읽습니다. 형식이 아니면 예외를 던집니다. */
+export function parseImport(text: string): ConsultationRecord[] {
+  let value: unknown;
+  try {
+    value = JSON.parse(text);
+  } catch {
+    throw new Error('기록 파일 형식이 아니에요.');
+  }
+  const list = Array.isArray(value) ? value : (value as { records?: unknown })?.records;
+  if (!Array.isArray(list)) throw new Error('기록 파일 형식이 아니에요.');
+  const records = list.filter(isRecordLike).map(normalizeRecord);
+  if (records.length === 0) throw new Error('파일 안에 읽을 수 있는 기록이 없어요.');
+  return records;
+}
+
+/**
+ * 가져온 기록을 기존 목록에 합칩니다. 같은 id 는 더 최근에 수정된 쪽을 남깁니다.
+ */
+export function mergeRecords(existing: ConsultationRecord[], incoming: ConsultationRecord[]): { records: ConsultationRecord[]; added: number; updated: number } {
+  const byId = new Map(existing.map((r) => [r.id, r]));
+  let added = 0;
+  let updated = 0;
+  for (const r of incoming) {
+    const current = byId.get(r.id);
+    if (!current) {
+      byId.set(r.id, r);
+      added += 1;
+    } else if (Date.parse(r.updatedAt) > Date.parse(current.updatedAt)) {
+      byId.set(r.id, r);
+      updated += 1;
+    }
+  }
+  const records = [...byId.values()].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
+  return { records, added, updated };
+}
+
 export function createId(): string {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID();

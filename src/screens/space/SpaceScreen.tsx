@@ -4,6 +4,7 @@ import { Notice } from '../../components/Notice';
 import { APP_NAME, APP_VERSION } from '../../config/appConfig';
 import type { RecordsApi } from '../../state/useRecords';
 import type { Theme } from '../../state/useTheme';
+import { pickTextFile, saveTextFile } from '../../utils/download';
 
 interface Props {
   records: RecordsApi;
@@ -14,12 +15,47 @@ interface Props {
 export function SpaceScreen({ records, theme, onToggleTheme }: Props) {
   const [confirmClear, setConfirmClear] = useState(false);
   const [feedback, setFeedback] = useState<{ ok: boolean; message: string } | null>(null);
+  const [busy, setBusy] = useState(false);
   const count = records.records.length;
 
   const clearAll = () => {
     const result = records.clearAll();
     setConfirmClear(false);
     setFeedback(result.ok ? { ok: true, message: '모든 기록을 삭제했어요.' } : { ok: false, message: `삭제하지 못했어요. ${result.reason}` });
+  };
+
+  const exportRecords = async () => {
+    if (count === 0 || busy) return;
+    setBusy(true);
+    setFeedback(null);
+    try {
+      const stamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      const how = await saveTextFile(`${APP_NAME}-기록-${stamp}.json`, records.exportJson());
+      setFeedback({ ok: true, message: how === 'shared' ? `기록 ${count}개를 파일로 공유했어요.` : `기록 ${count}개를 파일로 저장했어요.` });
+    } catch (err) {
+      if (!(err instanceof Error && err.name === 'AbortError')) setFeedback({ ok: false, message: '파일을 저장하지 못했어요.' });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const importRecords = async () => {
+    if (busy) return;
+    setBusy(true);
+    setFeedback(null);
+    try {
+      const text = await pickTextFile();
+      if (text === null) return;
+      const result = records.importFromText(text);
+      if (result.ok) {
+        const parts = [`${result.added ?? 0}개 추가`, ...(result.updated ? [`${result.updated}개 갱신`] : [])];
+        setFeedback({ ok: true, message: `기록을 불러왔어요. ${parts.join(', ')}.` });
+      } else {
+        setFeedback({ ok: false, message: result.reason });
+      }
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -36,8 +72,16 @@ export function SpaceScreen({ records, theme, onToggleTheme }: Props) {
       <section className="panel panel--flat" aria-label="기록">
         <div className="setting-row" style={{ alignItems: 'flex-start', flexDirection: 'column', gap: 0 }}>
           <span className="setting-title">기록 저장 위치</span>
-          <span className="setting-desc">상담 기록은 이 기기의 브라우저 안에만 저장돼요. 브라우저 데이터를 지우거나 다른 기기에서 열면 보이지 않아요.</span>
+          <span className="setting-desc">상담 기록은 이 기기의 브라우저 안에만 저장돼요. 브라우저 데이터를 지우거나 다른 기기에서 열면 보이지 않아요. 아래에서 파일로 저장해 두면 옮기거나 되살릴 수 있어요.</span>
         </div>
+        <button type="button" className="setting-row" onClick={exportRecords} disabled={count === 0 || busy}>
+          <span className="setting-title" style={{ fontWeight: 600, fontSize: 15, color: count === 0 ? 'var(--color-text-faint)' : 'var(--color-accent-text)' }}>기록 파일로 저장</span>
+          <span className="setting-value">{count}개</span>
+        </button>
+        <button type="button" className="setting-row" onClick={importRecords} disabled={busy}>
+          <span className="setting-title" style={{ fontWeight: 600, fontSize: 15, color: 'var(--color-accent-text)' }}>파일에서 불러오기</span>
+          <span className="setting-value">.json</span>
+        </button>
         <button type="button" className="setting-row setting-row--tall setting-row--danger" onClick={() => setConfirmClear(true)} disabled={count === 0}>
           <span className="setting-title">전체 기록 삭제</span>
           <span className="setting-value">{count}개</span>
@@ -59,7 +103,7 @@ export function SpaceScreen({ records, theme, onToggleTheme }: Props) {
       <ConfirmDialog
         open={confirmClear}
         title="모든 기록을 삭제할까요?"
-        description={`저장된 상담 ${count}개가 이 기기에서 지워지고 되돌릴 수 없어요.`}
+        description={`저장된 상담 ${count}개가 이 기기에서 지워지고 되돌릴 수 없어요. 먼저 파일로 저장해 둘 수도 있어요.`}
         actions={[
           { label: '삭제하기', kind: 'danger', onClick: clearAll },
           { label: '취소', kind: 'secondary', onClick: () => setConfirmClear(false) },
