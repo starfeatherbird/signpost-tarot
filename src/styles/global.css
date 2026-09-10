@@ -1155,14 +1155,17 @@ button {
 .mini-card .mini-label { font-size: 11px; line-height: 1.35; color: var(--color-card-title); }
 .mini-card .mini-label strong { display: block; font-weight: 700; color: var(--color-text); font-size: 12px; }
 
-/* 로딩 화면의 작은 뒷면 3장 */
+/* 로딩 화면의 작은 뒷면 3장: 카드 사이를 넉넉히 띄우고 살짝 부채꼴로 */
 .loading-cards {
   display: flex;
-  gap: var(--space-2);
+  gap: 20px;
   justify-content: center;
+  margin-top: var(--space-2);
 }
 
-.loading-cards .card-face-wrap { width: 40px; }
+.loading-cards .card-face-wrap { width: 44px; box-shadow: var(--shadow-sm); }
+.loading-cards .card-face-wrap:nth-child(1) { transform: rotate(-8deg) translateY(4px); }
+.loading-cards .card-face-wrap:nth-child(3) { transform: rotate(8deg) translateY(4px); }
 
 /* ==========================================================================
    로딩
