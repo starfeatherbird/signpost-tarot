@@ -11,4 +11,4 @@ docs/screens
 .claude/
 
 # 스톤 그림 원본 (public/stones 로 변환됨)
-stone_asset/
+stone_source/

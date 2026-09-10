@@ -3,7 +3,7 @@
  * 스톤은 결과에서 고른 태도·행동을 떠올리게 하는 "상징물"입니다. 치료 효능이나 운을 약속하지 않습니다.
  * 서버 함수도 같은 목록을 씁니다 (scripts/export-cards.mjs → supabase/functions/_shared/stones.json).
  * id 는 저장된 기록·서버 스키마에 쓰이므로 바꾸지 않습니다(표시 이름만 바꿉니다).
- * 그림: app/stone_asset/<id>.png 를 두면 scripts/sync-stones.mjs 가 public/stones/<id>.webp 로 줄여 넣고,
+ * 그림: app/stone_source/<id>.png 를 두면 scripts/sync-stones.mjs 가 public/stones/<id>.webp 로 줄여 넣고,
  * 없으면 대표 색으로 그린 보석 모양(StoneGem)을 씁니다.
  */
 export interface Stone {

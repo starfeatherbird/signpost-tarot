@@ -1,5 +1,5 @@
 /**
- * app/stone_asset/ 의 스톤 그림 PNG 를 웹용으로 다듬어 public/stones/ 에 넣습니다.
+ * app/stone_source/ 의 스톤 그림 PNG 를 웹용으로 다듬어 public/stones/ 에 넣습니다.
  * - 파일명은 스톤 id 와 같아야 합니다 (예: moonstone.png, rose-quartz.png). 대소문자·공백은 정리합니다.
  * - 단색 배경(검정 등)에서 뽑은 그림이면 배경을 지웁니다. 네 모서리 색을 배경색으로 보고, 가장자리에서 이어진
  *   배경 픽셀만 지우므로 돌 안쪽의 어두운 부분(흑요석 등)은 남습니다.
@@ -21,7 +21,7 @@ const BAND = 3;         // 배경과 맞닿은 이 픽셀 폭까지 디프린지
 const PAD_RATIO = 0.08; // 잘라낸 돌 주변 여백 비율
 
 const here = dirname(fileURLToPath(import.meta.url));
-const SOURCE_DIR = resolve(here, '..', 'stone_asset');
+const SOURCE_DIR = resolve(here, '..', 'stone_source');
 const TARGET_DIR = resolve(here, '..', 'public', 'stones');
 
 let sharp;
