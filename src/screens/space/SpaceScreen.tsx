@@ -180,9 +180,10 @@ function AccountPanel({ auth, records }: { auth: AuthApi; records: RecordsApi })
             <span className="tag tag--outline">{auth.user.provider === 'google' ? 'Google' : '이메일'}</span>
           </div>
           {syncLine && <p className={`text-muted ${syncStatus.state === 'error' ? 'account-error' : ''}`} style={{ fontSize: 13 }}>{syncLine}</p>}
+          <p className="faint">기록은 저장할 때마다 계정에 자동으로 올라가요. 다른 기기에서 남긴 기록이 보이지 않으면 아래에서 다시 불러올 수 있어요.</p>
           {note && <Notice kind={note.ok ? 'success' : 'error'} role="status">{note.message}</Notice>}
           <div className="btn-pair">
-            <button type="button" className="btn btn--secondary btn--sub" onClick={() => void records.sync()} disabled={syncStatus.state === 'syncing'}>다시 맞추기</button>
+            <button type="button" className="btn btn--secondary btn--sub" onClick={() => void records.sync()} disabled={syncStatus.state === 'syncing'}>기록 다시 불러오기</button>
             <button type="button" className="btn btn--text btn--sub" onClick={logout} disabled={busy}>로그아웃</button>
           </div>
         </>

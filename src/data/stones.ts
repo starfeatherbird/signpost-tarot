@@ -2,12 +2,15 @@
  * 상징 스톤 데이터.
  * 스톤은 결과에서 고른 태도·행동을 떠올리게 하는 "상징물"입니다. 치료 효능이나 운을 약속하지 않습니다.
  * 서버 함수도 같은 목록을 씁니다 (scripts/export-cards.mjs → supabase/functions/_shared/stones.json).
+ * id 는 저장된 기록·서버 스키마에 쓰이므로 바꾸지 않습니다(표시 이름만 바꿉니다).
+ * 그림: app/stone_asset/<id>.png 를 두면 scripts/sync-stones.mjs 가 public/stones/<id>.webp 로 줄여 넣고,
+ * 없으면 대표 색으로 그린 보석 모양(StoneGem)을 씁니다.
  */
 export interface Stone {
   id: string;
   nameKo: string;
   nameEn: string;
-  /** 보석 그림에 쓰는 대표 색 */
+  /** 보석 그림(그림 파일이 없을 때)과 강조에 쓰는 대표 색 */
   color: string;
   /** 이 돌이 상징하는 태도 (짧은 명사구) */
   symbol: string;
@@ -56,7 +59,7 @@ export const STONES: Stone[] = [
   },
   {
     id: 'black-tourmaline',
-    nameKo: '블랙 투르말린',
+    nameKo: '블랙 투어멀린',
     nameEn: 'Black Tourmaline',
     color: '#4A4658',
     symbol: '경계 지키기',
@@ -92,7 +95,7 @@ export const STONES: Stone[] = [
   },
   {
     id: 'aventurine',
-    nameKo: '아벤추린',
+    nameKo: '아벤츄린',
     nameEn: 'Aventurine',
     color: '#5DBB8A',
     symbol: '새로운 시도',
@@ -110,7 +113,7 @@ export const STONES: Stone[] = [
   },
   {
     id: 'jade',
-    nameKo: '옥',
+    nameKo: '제이드',
     nameEn: 'Jade',
     color: '#6FA88C',
     symbol: '균형 찾기',
@@ -125,6 +128,69 @@ export const STONES: Stone[] = [
     symbol: '흐름에 맡기기',
     themes: ['기다림', '통제할 수 없는 일', '내려놓기', '시간이 필요할 때'],
     description: '내가 정할 수 없는 부분은 흐름에 맡기고 지켜보기로 한 태도의 상징이에요.',
+  },
+  {
+    id: 'amazonite',
+    nameKo: '아마조나이트',
+    nameEn: 'Amazonite',
+    color: '#7FCBB8',
+    symbol: '내 기준으로 보기',
+    themes: ['남의 시선', '비교', '눈치', '자기 기준'],
+    description: '다른 사람의 평가보다 내가 정한 기준으로 판단하기로 한 마음의 상징이에요.',
+  },
+  {
+    id: 'larimar',
+    nameKo: '라리마',
+    nameEn: 'Larimar',
+    color: '#8FD0E6',
+    symbol: '부드럽게 말하기',
+    themes: ['다툼', '감정이 격해질 때', '차분한 대화', '화'],
+    description: '감정이 올라올 때도 목소리를 낮추고 차분하게 전하기로 한 약속의 상징이에요.',
+  },
+  {
+    id: 'labradorite',
+    nameKo: '라브라도라이트',
+    nameEn: 'Labradorite',
+    color: '#5E6F9A',
+    symbol: '직감 믿어 보기',
+    themes: ['과한 분석', '결정 미루기', '직감', '머리로만 재기'],
+    description: '따져 보기만 하다 멈춰 있을 때, 처음 느낀 방향도 근거로 삼아 보기로 한 마음의 상징이에요.',
+  },
+  {
+    id: 'garnet',
+    nameKo: '가넷',
+    nameEn: 'Garnet',
+    color: '#9B2335',
+    symbol: '초심 떠올리기',
+    themes: ['의욕 저하', '권태', '초심', '지친 일에 의미 찾기'],
+    description: '지쳐 버린 일에서 처음 시작했던 이유를 다시 꺼내 보기로 한 약속의 상징이에요.',
+  },
+  {
+    id: 'pietersite',
+    nameKo: '피터사이트',
+    nameEn: 'Pietersite',
+    color: '#4A5568',
+    symbol: '혼란 속 중심 잡기',
+    themes: ['혼란', '갑작스러운 변화', '정보 과잉', '소음'],
+    description: '주변이 어수선할수록 내가 지킬 한 가지를 먼저 정하기로 한 마음의 상징이에요.',
+  },
+  {
+    id: 'selenite',
+    nameKo: '셀레나이트',
+    nameEn: 'Selenite',
+    color: '#EDEDF2',
+    symbol: '머리 비우기',
+    themes: ['생각 과다', '잠 못 드는 밤', '정리', '쌓인 걱정'],
+    description: '꼬리를 무는 생각을 종이에 옮기고 머리를 비워 두기로 한 약속의 상징이에요.',
+  },
+  {
+    id: 'obsidian',
+    nameKo: '흑요석',
+    nameEn: 'Obsidian',
+    color: '#1F1D26',
+    symbol: '불편한 사실 마주하기',
+    themes: ['회피', '미뤄 둔 문제', '직면', '피하고 싶은 진실'],
+    description: '피해 온 사실을 한 번은 정면으로 보기로 한 마음의 상징이에요.',
   },
 ];
 

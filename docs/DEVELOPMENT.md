@@ -123,7 +123,8 @@ npm run build      # dist/ 생성 (정적 파일, 서버 불필요)
 - 스톤 목록은 `src/data/stones.ts`(12종, 색·상징·어울리는 상황·설명). 서버에는 `npm run server:data` 로 `_shared/stones.json` 을 내보냅니다. 스톤은 행동을 떠올리게 하는 상징물이며 효능을 말하지 않습니다.
 - 결과(`ReadingResult`)에 `stone{stoneId, promise}` 와 `reflectionQuestion` 이 붙습니다(프롬프트 counsel-v4, 모의 분석도 생성). 예전 결과에는 없으므로 화면은 있을 때만 보여 줍니다.
 - 결과 화면: 패널 4 뒤에 스톤 패널, 마지막에 "며칠 뒤 돌아볼 질문". 기록장: 저장 `REFLECTION_AFTER_DAYS`(3일) 뒤부터 "돌아볼 때" 태그, 기록 상세의 메모 칸이 그 질문의 답이 됩니다(`followUpMemo` 그대로 사용, 답이 있으면 "돌아봄"). 상태 계산은 `services/reflection.ts`.
-- 내 공간 "모은 스톤": 저장된 기록의 스톤을 모아 12종 중 만난 돌만 색으로 보여 줍니다. 보석 그림은 `components/StoneGem.tsx`.
+- 내 공간 "모은 스톤": 저장된 기록의 스톤을 모아 19종 중 만난 돌만 색으로 보여 줍니다. `components/StoneGem.tsx` 는 `public/stones/<id>.webp`(없으면 .png)를 먼저 찾고, 없으면 대표 색 보석 모양을 그립니다.
+- 스톤 그림 원본은 `app/stone_asset/<id>.png`(투명 배경, 정사각형)에 두면 `scripts/sync-stones.mjs`(predev/prebuild, `npm run stones`)가 320px WebP 로 줄여 `public/stones/` 에 넣습니다. 원본 폴더는 git 제외. 파일명은 스톤 id 와 같아야 합니다. 생성용 프롬프트: `docs/스톤_이미지_프롬프트.md`.
 
 ## 로그인과 기록 동기화
 

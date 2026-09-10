@@ -49,7 +49,7 @@
   },
   {
     "id": "black-tourmaline",
-    "nameKo": "블랙 투르말린",
+    "nameKo": "블랙 투어멀린",
     "nameEn": "Black Tourmaline",
     "symbol": "경계 지키기",
     "themes": [
@@ -97,7 +97,7 @@
   },
   {
     "id": "aventurine",
-    "nameKo": "아벤추린",
+    "nameKo": "아벤츄린",
     "nameEn": "Aventurine",
     "symbol": "새로운 시도",
     "themes": [
@@ -121,7 +121,7 @@
   },
   {
     "id": "jade",
-    "nameKo": "옥",
+    "nameKo": "제이드",
     "nameEn": "Jade",
     "symbol": "균형 찾기",
     "themes": [
@@ -141,6 +141,90 @@
       "통제할 수 없는 일",
       "내려놓기",
       "시간이 필요할 때"
+    ]
+  },
+  {
+    "id": "amazonite",
+    "nameKo": "아마조나이트",
+    "nameEn": "Amazonite",
+    "symbol": "내 기준으로 보기",
+    "themes": [
+      "남의 시선",
+      "비교",
+      "눈치",
+      "자기 기준"
+    ]
+  },
+  {
+    "id": "larimar",
+    "nameKo": "라리마",
+    "nameEn": "Larimar",
+    "symbol": "부드럽게 말하기",
+    "themes": [
+      "다툼",
+      "감정이 격해질 때",
+      "차분한 대화",
+      "화"
+    ]
+  },
+  {
+    "id": "labradorite",
+    "nameKo": "라브라도라이트",
+    "nameEn": "Labradorite",
+    "symbol": "직감 믿어 보기",
+    "themes": [
+      "과한 분석",
+      "결정 미루기",
+      "직감",
+      "머리로만 재기"
+    ]
+  },
+  {
+    "id": "garnet",
+    "nameKo": "가넷",
+    "nameEn": "Garnet",
+    "symbol": "초심 떠올리기",
+    "themes": [
+      "의욕 저하",
+      "권태",
+      "초심",
+      "지친 일에 의미 찾기"
+    ]
+  },
+  {
+    "id": "pietersite",
+    "nameKo": "피터사이트",
+    "nameEn": "Pietersite",
+    "symbol": "혼란 속 중심 잡기",
+    "themes": [
+      "혼란",
+      "갑작스러운 변화",
+      "정보 과잉",
+      "소음"
+    ]
+  },
+  {
+    "id": "selenite",
+    "nameKo": "셀레나이트",
+    "nameEn": "Selenite",
+    "symbol": "머리 비우기",
+    "themes": [
+      "생각 과다",
+      "잠 못 드는 밤",
+      "정리",
+      "쌓인 걱정"
+    ]
+  },
+  {
+    "id": "obsidian",
+    "nameKo": "흑요석",
+    "nameEn": "Obsidian",
+    "symbol": "불편한 사실 마주하기",
+    "themes": [
+      "회피",
+      "미뤄 둔 문제",
+      "직면",
+      "피하고 싶은 진실"
     ]
   }
 ]
