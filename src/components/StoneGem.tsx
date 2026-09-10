@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import type { Stone } from '../data/stones';
 import { useImageFallback } from './useImageFallback';
 
@@ -11,15 +12,37 @@ interface Props {
 /** 스톤 그림 위치 (public/stones/<id>.webp, 없으면 .png, 둘 다 없으면 보석 모양) */
 const STONE_IMAGE_DIR = `${import.meta.env.BASE_URL}stones/`;
 
-/** 스톤 그림. 그림 파일이 있으면 그것을, 없으면 대표 색으로 그린 보석 모양을 보여 줍니다. */
+/**
+ * 스톤 그림. 그림 파일이 있으면 그것을, 없으면 대표 색으로 그린 보석 모양을 보여 줍니다.
+ * 그림이 실제로 읽히기 전까지는 보석 모양을 보여 줘 깨진 이미지 아이콘이 비치지 않게 합니다.
+ */
 export function StoneGem({ stone, size = 40, dim = false }: Props) {
   const { src, onError } = useImageFallback([`${STONE_IMAGE_DIR}${stone.id}.webp`, `${STONE_IMAGE_DIR}${stone.id}.png`]);
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => setLoaded(false), [src]);
   const className = `stone-gem ${dim ? 'is-dim' : ''}`;
 
-  if (src) {
-    return <img className={className} src={src} width={size} height={size} alt={stone.nameKo} draggable={false} onError={onError} />;
-  }
+  return (
+    <>
+      {src && (
+        <img
+          className={className}
+          src={src}
+          width={size}
+          height={size}
+          alt={stone.nameKo}
+          draggable={false}
+          hidden={!loaded}
+          onLoad={() => setLoaded(true)}
+          onError={onError}
+        />
+      )}
+      {!(src && loaded) && <GemShape stone={stone} size={size} className={className} />}
+    </>
+  );
+}
 
+function GemShape({ stone, size, className }: { stone: Stone; size: number; className: string }) {
   const id = `gem-${stone.id}`;
   return (
     <svg className={className} width={size} height={size} viewBox="0 0 40 40" role="img" aria-label={stone.nameKo} focusable="false">
