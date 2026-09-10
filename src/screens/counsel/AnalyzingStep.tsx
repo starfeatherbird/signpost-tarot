@@ -1,4 +1,5 @@
 import { CardBack } from '../../components/CardBack';
+import { LoadingSymbol } from '../../components/LoadingSymbol';
 import type { AnalysisStatus } from '../../state/session';
 
 interface Props {
@@ -38,8 +39,7 @@ export function AnalyzingStep({ status, error, onRetry, onBack, deep = false }: 
 
   return (
     <div className="loading" role="status" aria-live="polite" aria-busy={status === 'loading'}>
-      <div className="spinner" aria-hidden="true" />
-      <div className="spinner-dots" aria-hidden="true"><span /><span /><span /></div>
+      <LoadingSymbol size={64} />
       <p className="loading-title">{'선택한 카드를 바탕으로\n고민을 정리하고 있어요.'}</p>
       <p className="muted" style={{ fontSize: 14 }}>
         {deep && <>심층 상담은 1분 안팎 걸릴 수 있어요.<br /></>}

@@ -1,5 +1,6 @@
 import { useEffect, useState, type Dispatch } from 'react';
 import { FlowTop } from '../../components/FlowTop';
+import { LoadingSymbol } from '../../components/LoadingSymbol';
 import { Notice } from '../../components/Notice';
 import { ProgressHeader } from '../../components/ProgressHeader';
 import { ANSWER_MAX_LENGTH } from '../../config/appConfig';
@@ -64,8 +65,7 @@ export function QuestionsStep({ state, dispatch, variant, onCancel }: Props) {
   if (!questions || questions.length === 0) {
     return (
       <div className="loading" aria-busy="true">
-        <div className="spinner" aria-hidden="true" />
-        <div className="spinner-dots" aria-hidden="true"><span /><span /><span /></div>
+        <LoadingSymbol size={48} />
         <p className="muted">질문을 준비하고 있어요.</p>
       </div>
     );

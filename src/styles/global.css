@@ -1193,6 +1193,23 @@ button {
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* 아이콘 디자인의 표지판 심볼: 기둥 아래를 축으로 ±6° 흔들림 */
+.loading-symbol {
+  display: inline-block;
+  color: var(--color-accent-tint-1);
+  transform-origin: 50% 100%;
+  animation: sway 2.4s ease-in-out infinite;
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(-6deg); }
+  50% { transform: rotate(6deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-symbol { animation: pulse 2s ease-in-out infinite; }
+}
+
 .spinner-dots { display: none; gap: 8px; }
 .spinner-dots span {
   width: 8px;
