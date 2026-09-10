@@ -103,6 +103,14 @@ npm run build      # dist/ 생성 (정적 파일, 서버 불필요)
 - 시안에서 새로 들어온 동작: 진행 막대, 자리 카드 3종 상태, "지금 할 수 있는 일" 체크(기록에 저장), 저장 후 "저장됨" 태그 + 토스트, 새 상담 대화상자 3버튼(저장하고 새 상담 / 저장 없이 시작 / 취소), 호출 제한 안내(고민 입력 화면), 선택지 비교의 "우선 제안" 표시(`recommendedOption`), 실행 순서 타임라인, 추가 질문 말풍선.
 - 아이콘은 이미지 없이 CSS 도형, 글꼴은 Pretendard(jsdelivr) + Cinzel(카드명만).
 
+## 카드 방향 (정방향·역방향)
+
+- 상담을 시작할 때 덱을 섞으면서 카드마다 역방향 여부를 정해 세션(`reversedIds`)에 저장합니다. 확률은 `appConfig.ts` 의 `REVERSED_RATE`(기본 0.4). 새로고침·재시도로 바뀌지 않습니다.
+- 뽑힌 카드(`DrawnCard.reversed`)에 방향이 붙어 결과·기록에 함께 저장됩니다. 예전 기록에는 없으므로 정방향으로 취급합니다.
+- 카드 데이터(`src/data/cards.ts`)에 `reversedEssence`, `reversedKeywords` 가 있습니다. 서버 프롬프트(counsel-v3)는 역방향을 "나쁜 카드"가 아니라 힘이 막히거나·지나치거나·안으로 향한 상태로 읽도록 지시하고, 이름 뒤에 "(역방향)"을 붙입니다.
+- 화면에서는 카드 전체를 180도 돌려 보여 주고 "역방향" 태그를 붙입니다(`CardFace` 의 `reversed`).
+- 골든 세트에서는 카드 ID 뒤에 `!` 를 붙이면 역방향입니다 (`"tower!"`).
+
 ## 화면 캡처 (디자인 시안·문서용)
 
 - `npm run dev` 를 켠 상태에서 `node scripts/make-capture-targets.mjs` 로 화면별 상태 목록을 만든 뒤 `npm run capture` → `docs/screens/A01~A14, B01~B10.png` (375px, 2배 해상도, 전체 페이지, 어두운/밝은 테마). Chrome 필요. 이름 일부를 인자로 주면 그 화면만 찍습니다: `node scripts/capture-screens.mjs A09`

@@ -63,7 +63,7 @@ export function CardsStep({ state, dispatch, onAnalyze, onCancel }: Props) {
         <span className="section-label" style={{ fontSize: 13, letterSpacing: 0 }} aria-live="polite">
           선택 {count} / {CARDS_TO_PICK}{!complete && ` · 다음 자리: ${POSITIONS[count].title}`}
         </span>
-        <span className="caption">{CARDS.length}장 · 정방향</span>
+        <span className="caption">{CARDS.length}장 · 정·역방향</span>
       </div>
 
       <div className="card-grid" role="group" aria-label="뒤집힌 카드 22장">
@@ -118,6 +118,7 @@ function RevealedCards({ state }: { state: SessionState }) {
       {state.selected.map((cardId, i) => {
         const card = getCard(cardId);
         const position = POSITIONS[i];
+        const reversed = state.reversedIds.includes(cardId);
         if (!card) return null;
         return (
           <div className="reveal-slot" key={cardId}>
@@ -125,10 +126,10 @@ function RevealedCards({ state }: { state: SessionState }) {
             <div className={`flip ${flipped[i] ? 'is-flipped' : ''}`}>
               <div className="flip-inner">
                 <div className="flip-side flip-side--back"><CardBack /></div>
-                <div className="flip-side flip-side--front"><CardFace card={card} showLabel={false} /></div>
+                <div className="flip-side flip-side--front"><CardFace card={card} showLabel={false} reversed={reversed} /></div>
               </div>
             </div>
-            <span className="card-name">{card.nameKo}</span>
+            <span className="card-name">{card.nameKo}{reversed && <span className="tag tag--outline" style={{ marginLeft: 6, verticalAlign: 'middle' }}>역방향</span>}</span>
             <span className="card-number">{card.number}번 · {card.nameEn}</span>
           </div>
         );

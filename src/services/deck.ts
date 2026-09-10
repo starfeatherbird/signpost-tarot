@@ -19,6 +19,14 @@ export function createShuffledDeck(random: () => number = Math.random): string[]
   return shuffle(CARDS.map((c) => c.id), random);
 }
 
+/**
+ * 카드마다 역방향 여부를 정해 역방향 카드 ID 목록을 돌려줍니다.
+ * 덱과 함께 세션에 저장해 화면이 다시 그려지거나 재시도해도 방향이 바뀌지 않게 합니다.
+ */
+export function drawReversed(deck: readonly string[], rate: number, random: () => number = Math.random): string[] {
+  return deck.filter(() => random() < rate);
+}
+
 /** 덱 순서가 유효한지(22장, 중복 없음, 모두 실제 카드) 확인 */
 export function isValidDeck(deck: unknown): deck is string[] {
   if (!Array.isArray(deck) || deck.length !== CARDS.length) return false;

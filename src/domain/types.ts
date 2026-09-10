@@ -24,6 +24,9 @@ export interface TarotCard {
   keywords: string[];
   /** 기본 의미 (정방향) */
   essence: string;
+  /** 역방향 핵심어·의미: 에너지가 막히거나 지나치거나 안으로 향한 상태 */
+  reversedKeywords: string[];
+  reversedEssence: string;
   /** 자리별로 살펴볼 관점 문구 */
   perspectives: Record<PositionId, string>;
   /** 이 카드가 제안하는 작은 행동 */
@@ -60,6 +63,8 @@ export interface Answer {
 export interface DrawnCard {
   cardId: string;
   positionId: PositionId;
+  /** 역방향 여부 (예전 기록에는 없을 수 있음 → 정방향으로 취급) */
+  reversed?: boolean;
 }
 
 /** 기본 분석 입력 */

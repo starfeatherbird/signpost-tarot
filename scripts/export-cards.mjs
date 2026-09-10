@@ -11,8 +11,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const here = dirname(fileURLToPath(import.meta.url));
 const { CARDS } = await import(pathToFileURL(resolve(here, '..', 'src', 'data', 'cards.ts')).href);
 
-const slim = CARDS.map(({ id, number, nameKo, nameEn, keywords, essence, perspectives, actions }) => ({
-  id, number, nameKo, nameEn, keywords, essence, perspectives, actions,
+const slim = CARDS.map(({ id, number, nameKo, nameEn, keywords, essence, reversedKeywords, reversedEssence, perspectives, actions }) => ({
+  id, number, nameKo, nameEn, keywords, essence, reversedKeywords, reversedEssence, perspectives, actions,
 }));
 const target = resolve(here, '..', 'supabase', 'functions', '_shared', 'cards.json');
 writeFileSync(target, JSON.stringify(slim, null, 2) + '\n', 'utf8');

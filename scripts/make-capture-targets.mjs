@@ -52,12 +52,12 @@ const followUpAnswer = readBody('res2-followup.txt')?.answer ?? '추가 질문 �
 
 const ids = ['fool', 'magician', 'high-priestess', 'empress', 'emperor', 'hierophant', 'lovers', 'chariot', 'strength', 'hermit', 'wheel-of-fortune', 'justice', 'hanged-man', 'death', 'temperance', 'devil', 'tower', 'star', 'moon', 'sun', 'judgement', 'world'];
 const deck = [...ids].sort((a, b) => (a.charCodeAt(1) * 7 + a.length) % 13 - (b.charCodeAt(1) * 7 + b.length) % 13 || a.localeCompare(b));
-const cards = [{ cardId: 'tower', positionId: 'core' }, { cardId: 'lovers', positionId: 'blindspot' }, { cardId: 'world', positionId: 'next' }];
+const cards = [{ cardId: 'tower', positionId: 'core' }, { cardId: 'lovers', positionId: 'blindspot', reversed: true }, { cardId: 'world', positionId: 'next' }];
 
 const base = {
   consultationId: 'seed-demo', plan: 'basic', deepIntroMode: 'start', concern,
   questionIndex: 0, answers: [], deepQuestionIndex: 0, deepAnswers: [], deck,
-  selected: [], revealed: false, supplement: '', result: null, deepResult: null, followUps: [], actionChecks: [],
+  reversedIds: ['lovers'], selected: [], revealed: false, supplement: '', result: null, deepResult: null, followUps: [], actionChecks: [],
   rateLimitedUntil: null, savedRecordId: null, savedVersion: null, analysisStatus: 'idle', analysisError: null, step: 'input',
 };
 const withAnswers = { ...base, answers, questionIndex: 1 };

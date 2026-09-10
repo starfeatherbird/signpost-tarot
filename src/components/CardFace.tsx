@@ -7,6 +7,8 @@ interface Props {
   card: TarotCard;
   /** 임시 SVG 로 그릴 때 한글 이름을 함께 넣을지 */
   showLabel?: boolean;
+  /** 역방향이면 카드를 180도 돌려 보여 줍니다 */
+  reversed?: boolean;
 }
 
 const FRAME_VARS = frameCssVars() as CSSProperties;
@@ -16,10 +18,10 @@ const FRAME_VARS = frameCssVars() as CSSProperties;
  * - 그림 파일이 없으면 틀 안에 임시 상징을 넣습니다. (JUDGEMENT·WORLD 처럼 아직 없는 카드)
  * - 틀 파일마저 없으면 예전 임시 SVG 디자인으로 되돌아갑니다.
  */
-export function CardFace({ card, showLabel = true }: Props) {
+export function CardFace({ card, showLabel = true, reversed = false }: Props) {
   const art = useImageFallback(getCardArtUrls(card));
   const frame = useImageFallback(FRAME_IMAGES);
-  const label = `${card.number}번 ${card.nameKo}`;
+  const label = `${card.number}번 ${card.nameKo}${reversed ? ' 역방향' : ''}`;
 
   if (!frame.src) {
     return (
@@ -30,7 +32,7 @@ export function CardFace({ card, showLabel = true }: Props) {
   }
 
   return (
-    <div className="card-face-wrap" style={FRAME_VARS} role="img" aria-label={label}>
+    <div className={`card-face-wrap ${reversed ? 'is-reversed' : ''}`} style={FRAME_VARS} role="img" aria-label={label}>
       <div className="card-art" aria-hidden="true">
         {art.src ? (
           <img src={art.src} alt="" onError={art.onError} />

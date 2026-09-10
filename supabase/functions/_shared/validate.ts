@@ -135,5 +135,5 @@ export function assertCards(cards: unknown): DrawnCard[] {
     const found = drawn.find((c) => c && c.positionId === p && typeof c.cardId === 'string' && getCardData(c.cardId));
     if (!found) throw new ProviderError(`'${p}' 자리의 카드가 없거나 알 수 없는 카드예요.`, 'bad_request', 400);
   }
-  return drawn.map((c) => ({ cardId: c.cardId, positionId: c.positionId }));
+  return drawn.map((c) => ({ cardId: c.cardId, positionId: c.positionId, reversed: c.reversed === true }));
 }

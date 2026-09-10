@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CARDS } from '../data/cards';
-import { createShuffledDeck, isValidDeck, shuffle } from './deck';
+import { createShuffledDeck, drawReversed, isValidDeck, shuffle } from './deck';
 
 describe('deck', () => {
   it('카드 데이터는 22장이고 번호·ID가 중복되지 않는다', () => {
@@ -23,6 +23,16 @@ describe('deck', () => {
     const copy = [...original];
     shuffle(original, () => 0.1);
     expect(original).toEqual(copy);
+  });
+
+  it('역방향 추첨은 확률을 따르고 덱에 있는 카드만 고른다', () => {
+    const deck = createShuffledDeck();
+    expect(drawReversed(deck, 0, () => 0.5)).toEqual([]);
+    expect(drawReversed(deck, 1, () => 0.5)).toEqual(deck);
+    let i = 0;
+    const half = drawReversed(deck, 0.5, () => (i++ % 2 === 0 ? 0.1 : 0.9));
+    expect(half).toHaveLength(11);
+    expect(half.every((id) => deck.includes(id))).toBe(true);
   });
 
   it('손상된 덱을 거부한다', () => {

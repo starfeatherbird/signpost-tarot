@@ -43,7 +43,8 @@ const POS = ['core', 'blindspot', 'next'];
 
 function buildRequest(c) {
   const answers = Object.entries(c.answers ?? {}).map(([id, value]) => ({ questionId: id, questionText: QUESTION_TEXT[id], value }));
-  const cards = c.cards.map((cardId, i) => ({ cardId, positionId: POS[i] }));
+  // 카드 ID 뒤에 ! 를 붙이면 역방향 (예: "tower!")
+  const cards = c.cards.map((raw, i) => ({ cardId: raw.replace(/!$/, ''), positionId: POS[i], reversed: raw.endsWith('!') }));
   const input = { concern: c.concern, answers, cards };
   if (useDeep && c.deep) {
     const d = c.deep;
@@ -64,7 +65,7 @@ function toMarkdown(c, req, res, ms) {
     `- 종류: ${req.kind} · 모델: ${r.source?.provider}/${r.source?.model} · 프롬프트: ${r.source?.promptVersion} · ${(ms / 1000).toFixed(1)}s`,
     `- 고민: ${c.concern}`,
     `- 답변: ${req.input.answers.map((a) => `${a.questionId}=${a.value ?? '(건너뜀)'}`).join(', ')}`,
-    `- 카드: ${c.cards.join(' · ')}`, '',
+    `- 카드: ${c.cards.map((x) => x.endsWith('!') ? x.slice(0, -1) + '(역방향)' : x).join(' · ')}`, '',
     '## 1. 먼저 제안드리는 방향', r.priority, '',
     '## 2. 이렇게 제안하는 이유', ...r.reasons.map((x) => `- ${x}`), '',
     '## 3. 다른 선택이 나은 경우', ...r.alternatives.map((x) => `- ${x}`), '',

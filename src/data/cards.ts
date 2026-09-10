@@ -1,7 +1,7 @@
 import type { TarotCard } from '../domain/types';
 
 /**
- * 메이저 아르카나 22장 기준 데이터 (정방향만 사용).
+ * 메이저 아르카나 22장 기준 데이터. 정방향(essence·perspectives)과 역방향(reversedEssence·reversedKeywords)을 함께 둡니다.
  *
  * 카드 이미지를 교체하려면 각 카드의 `image` 값에 경로를 넣으세요.
  * 예: image: '/cards/00-fool.png'  → public/cards/00-fool.png 파일을 사용합니다.
@@ -12,6 +12,8 @@ export const CARDS: TarotCard[] = [
   {
     id: 'fool', number: 0, nameKo: '바보', nameEn: 'The Fool', symbol: '✦',
     keywords: ['새 출발', '가벼움', '가능성'],
+    reversedKeywords: ['성급함', '회피', '준비 부족'],
+    reversedEssence: '시작하고 싶은 마음이 앞서 준비 없이 뛰어들거나, 반대로 두려워서 첫걸음을 계속 미루는 상태를 뜻해요.',
     essence: '계산보다 마음이 먼저 움직이는 시작의 순간을 뜻해요. 아직 정해진 것이 없기에 열려 있는 가능성이 큽니다.',
     perspectives: {
       core: '지금은 결과보다 "시작해 보고 싶은 마음" 자체가 고민의 중심에 있을 수 있어요.',
@@ -23,6 +25,8 @@ export const CARDS: TarotCard[] = [
   {
     id: 'magician', number: 1, nameKo: '마법사', nameEn: 'The Magician', symbol: '∞',
     keywords: ['능력', '실행', '자원'],
+    reversedKeywords: ['속임수', '산만함', '자신감 부족'],
+    reversedEssence: '가진 능력을 믿지 못하거나, 재주를 엉뚱한 데 쓰며 힘이 흩어지는 상태를 뜻해요.',
     essence: '이미 손에 있는 도구와 재능을 써서 뜻을 현실로 옮기는 힘을 뜻해요.',
     perspectives: {
       core: '필요한 자원과 능력이 이미 갖춰져 있다는 점이 지금 상황의 핵심일 수 있어요.',
@@ -34,6 +38,8 @@ export const CARDS: TarotCard[] = [
   {
     id: 'high-priestess', number: 2, nameKo: '여사제', nameEn: 'The High Priestess', symbol: '☽',
     keywords: ['직관', '내면', '기다림'],
+    reversedKeywords: ['감정 억압', '혼란', '숨김'],
+    reversedEssence: '내면의 목소리를 외면하거나, 드러내지 않은 마음이 쌓여 판단이 흐려진 상태를 뜻해요.',
     essence: '겉으로 드러나지 않은 것을 조용히 들여다보는 시간을 뜻해요. 서두르지 않는 통찰이 필요합니다.',
     perspectives: {
       core: '겉으로 보이는 문제 아래에 아직 말로 정리되지 않은 감정이나 직감이 있을 수 있어요.',
@@ -45,6 +51,8 @@ export const CARDS: TarotCard[] = [
   {
     id: 'empress', number: 3, nameKo: '여황제', nameEn: 'The Empress', symbol: '❀',
     keywords: ['풍요', '돌봄', '성장'],
+    reversedKeywords: ['의존', '소진', '방치'],
+    reversedEssence: '남을 돌보느라 자신을 돌보지 못하거나, 지나친 보살핌이 오히려 성장을 막는 상태를 뜻해요.',
     essence: '무언가를 기르고 돌보며 자연스럽게 자라게 하는 힘을 뜻해요.',
     perspectives: {
       core: '나 자신이나 관계를 충분히 돌보고 있는지가 지금 상황의 중심일 수 있어요.',
@@ -56,6 +64,8 @@ export const CARDS: TarotCard[] = [
   {
     id: 'emperor', number: 4, nameKo: '황제', nameEn: 'The Emperor', symbol: '♛',
     keywords: ['구조', '책임', '안정'],
+    reversedKeywords: ['고집', '지배', '무질서'],
+    reversedEssence: '기준이 너무 굳어 융통성을 잃었거나, 반대로 기준이 없어 흔들리는 상태를 뜻해요.',
     essence: '기준과 질서를 세워 흔들리지 않는 틀을 만드는 힘을 뜻해요.',
     perspectives: {
       core: '명확한 기준과 경계가 필요한 상황이 고민의 핵심일 수 있어요.',
@@ -67,6 +77,8 @@ export const CARDS: TarotCard[] = [
   {
     id: 'hierophant', number: 5, nameKo: '교황', nameEn: 'The Hierophant', symbol: '⚷',
     keywords: ['전통', '조언', '배움'],
+    reversedKeywords: ['반발', '형식주의', '조언 불신'],
+    reversedEssence: '정해진 방식에 갑갑함을 느끼거나, 남의 조언을 듣지 않고 자기 방식만 고집하는 상태를 뜻해요.',
     essence: '검증된 방법과 경험 있는 사람의 조언에서 배우는 것을 뜻해요.',
     perspectives: {
       core: '혼자 판단하기보다 믿을 만한 기준이나 조언이 필요한 시점일 수 있어요.',
@@ -78,6 +90,8 @@ export const CARDS: TarotCard[] = [
   {
     id: 'lovers', number: 6, nameKo: '연인', nameEn: 'The Lovers', symbol: '♡',
     keywords: ['관계', '선택', '가치'],
+    reversedKeywords: ['우유부단', '가치 충돌', '어긋남'],
+    reversedEssence: '마음과 행동이 어긋나거나, 관계 안에서 서로의 가치가 맞지 않아 결정을 미루는 상태를 뜻해요.',
     essence: '마음이 향하는 곳을 확인하고, 자신의 가치에 맞는 선택을 하는 것을 뜻해요.',
     perspectives: {
       core: '이 고민은 결국 "무엇을 더 소중히 여기는가"라는 선택의 문제일 수 있어요.',
@@ -89,6 +103,8 @@ export const CARDS: TarotCard[] = [
   {
     id: 'chariot', number: 7, nameKo: '전차', nameEn: 'The Chariot', symbol: '➤',
     keywords: ['추진', '의지', '집중'],
+    reversedKeywords: ['통제 불능', '집중 분산', '무리함'],
+    reversedEssence: '힘은 있는데 방향을 잃었거나, 너무 밀어붙여 스스로를 지치게 하는 상태를 뜻해요.',
     essence: '흔들리는 마음을 하나로 모아 앞으로 나아가는 힘을 뜻해요.',
     perspectives: {
       core: '방향은 어느 정도 보이는데 밀고 나갈 힘이 흩어져 있는 상태일 수 있어요.',
@@ -100,6 +116,8 @@ export const CARDS: TarotCard[] = [
   {
     id: 'strength', number: 8, nameKo: '힘', nameEn: 'Strength', symbol: '♾',
     keywords: ['인내', '온화함', '용기'],
+    reversedKeywords: ['불안', '억지', '자신감 저하'],
+    reversedEssence: '두려움에 눌려 스스로를 믿지 못하거나, 부드러움 대신 억지로 누르려 하는 상태를 뜻해요.',
     essence: '힘으로 누르는 대신 부드럽게 다스리는 내면의 용기를 뜻해요.',
     perspectives: {
       core: '두려움이나 불안을 어떻게 다루느냐가 지금 상황의 핵심일 수 있어요.',
@@ -111,6 +129,8 @@ export const CARDS: TarotCard[] = [
   {
     id: 'hermit', number: 9, nameKo: '은둔자', nameEn: 'The Hermit', symbol: '🏮',
     keywords: ['성찰', '고독', '탐구'],
+    reversedKeywords: ['외로움', '단절', '지나친 은둔'],
+    reversedEssence: '혼자 생각하는 시간이 길어져 고립되거나, 성찰을 핑계로 결정을 계속 미루는 상태를 뜻해요.',
     essence: '잠시 물러나 혼자 생각하며 자신의 답을 찾는 시간을 뜻해요.',
     perspectives: {
       core: '주변의 소리에서 벗어나 스스로 생각할 시간이 부족했던 것이 핵심일 수 있어요.',
@@ -122,6 +142,8 @@ export const CARDS: TarotCard[] = [
   {
     id: 'wheel-of-fortune', number: 10, nameKo: '운명의 수레바퀴', nameEn: 'Wheel of Fortune', symbol: '☸',
     keywords: ['변화', '흐름', '전환점'],
+    reversedKeywords: ['불운감', '반복', '통제 집착'],
+    reversedEssence: '흐름을 거스르며 애쓰거나, 같은 상황이 반복된다고 느끼며 무력해진 상태를 뜻해요.',
     essence: '상황이 돌고 돌며 바뀌는 흐름과 그 안의 전환점을 뜻해요.',
     perspectives: {
       core: '내가 통제할 수 없는 흐름이 상황을 움직이고 있다는 점이 핵심일 수 있어요.',
@@ -133,6 +155,8 @@ export const CARDS: TarotCard[] = [
   {
     id: 'justice', number: 11, nameKo: '정의', nameEn: 'Justice', symbol: '⚖',
     keywords: ['균형', '공정', '책임'],
+    reversedKeywords: ['편향', '자기 합리화', '불균형'],
+    reversedEssence: '한쪽으로 치우친 판단을 하거나, 결과를 스스로 책임지지 않으려는 상태를 뜻해요.',
     essence: '사실을 있는 그대로 보고, 균형 잡힌 판단을 내리는 것을 뜻해요.',
     perspectives: {
       core: '감정과 사실을 분리해 공정하게 바라보는 일이 지금 상황의 핵심일 수 있어요.',
@@ -144,6 +168,8 @@ export const CARDS: TarotCard[] = [
   {
     id: 'hanged-man', number: 12, nameKo: '매달린 사람', nameEn: 'The Hanged Man', symbol: '⟠',
     keywords: ['멈춤', '관점 전환', '내려놓기'],
+    reversedKeywords: ['답답함', '집착', '시간 낭비'],
+    reversedEssence: '멈춤이 길어져 답답하거나, 내려놓아야 할 것을 붙든 채 제자리에 머무는 상태를 뜻해요.',
     essence: '잠시 멈추어 다른 각도에서 상황을 바라보는 것을 뜻해요.',
     perspectives: {
       core: '움직이지 못하는 답답함이 아니라, 멈춤 자체가 필요한 시기일 수 있어요.',
@@ -155,6 +181,8 @@ export const CARDS: TarotCard[] = [
   {
     id: 'death', number: 13, nameKo: '죽음', nameEn: 'Death', symbol: '✕',
     keywords: ['끝맺음', '전환', '새 시작'],
+    reversedKeywords: ['정체', '집착', '두려움'],
+    reversedEssence: '끝나야 할 것을 붙잡고 있거나, 변화가 두려워 다음 단계로 넘어가지 못하는 상태를 뜻해요.',
     essence: '한 단계를 마무리해야 다음 단계가 열린다는 자연스러운 변화를 뜻해요.',
     perspectives: {
       core: '무언가를 끝내야 하는데 붙잡고 있는 상태가 고민의 중심일 수 있어요.',
@@ -166,6 +194,8 @@ export const CARDS: TarotCard[] = [
   {
     id: 'temperance', number: 14, nameKo: '절제', nameEn: 'Temperance', symbol: '⚱',
     keywords: ['조화', '조율', '균형'],
+    reversedKeywords: ['과잉', '조급함', '부조화'],
+    reversedEssence: '한쪽으로 치우쳐 균형을 잃었거나, 서둘러 맞추려다 오히려 어긋나는 상태를 뜻해요.',
     essence: '서로 다른 것을 섞어 알맞은 비율을 찾아가는 과정을 뜻해요.',
     perspectives: {
       core: '양극단 사이에서 알맞은 정도를 찾는 것이 지금 상황의 핵심일 수 있어요.',
@@ -177,6 +207,8 @@ export const CARDS: TarotCard[] = [
   {
     id: 'devil', number: 15, nameKo: '악마', nameEn: 'The Devil', symbol: '⛓',
     keywords: ['얽매임', '습관', '욕구'],
+    reversedKeywords: ['벗어남', '깨달음', '느슨해짐'],
+    reversedEssence: '얽매였던 것을 알아차리고 벗어나기 시작하거나, 아직 완전히 놓지 못해 흔들리는 상태를 뜻해요.',
     essence: '스스로를 묶고 있는 습관이나 집착을 알아차리는 것을 뜻해요.',
     perspectives: {
       core: '벗어나기 어렵다고 느끼는 무언가에 묶여 있는 상태가 고민의 중심일 수 있어요.',
@@ -188,6 +220,8 @@ export const CARDS: TarotCard[] = [
   {
     id: 'tower', number: 16, nameKo: '탑', nameEn: 'The Tower', symbol: '⚡',
     keywords: ['급변', '무너짐', '해방'],
+    reversedKeywords: ['버팀', '불안', '늦춰진 변화'],
+    reversedEssence: '무너져야 할 것을 억지로 버티고 있거나, 큰 변화를 두려워해 작은 균열을 못 본 척하는 상태를 뜻해요.',
     essence: '흔들리던 것이 무너지며 억지로 유지하던 구조에서 벗어나는 것을 뜻해요.',
     perspectives: {
       core: '이미 흔들리고 있던 것이 드러난 상황이 고민의 핵심일 수 있어요.',
@@ -199,6 +233,8 @@ export const CARDS: TarotCard[] = [
   {
     id: 'star', number: 17, nameKo: '별', nameEn: 'The Star', symbol: '★',
     keywords: ['희망', '회복', '방향'],
+    reversedKeywords: ['낙담', '고갈', '실망'],
+    reversedEssence: '회복의 기미를 보지 못하고 지쳤거나, 스스로에 대한 믿음이 약해진 상태를 뜻해요.',
     essence: '어려움 뒤에 찾아오는 잔잔한 희망과 회복의 시간을 뜻해요.',
     perspectives: {
       core: '힘든 시간을 지나 다시 방향을 찾고 싶은 마음이 고민의 중심일 수 있어요.',
@@ -210,6 +246,8 @@ export const CARDS: TarotCard[] = [
   {
     id: 'moon', number: 18, nameKo: '달', nameEn: 'The Moon', symbol: '☾',
     keywords: ['불안', '모호함', '상상'],
+    reversedKeywords: ['안개 걷힘', '두려움 직시', '착각'],
+    reversedEssence: '막연한 불안이 서서히 걷히기 시작하거나, 아직 착각과 사실을 구분하지 못해 헤매는 상태를 뜻해요.',
     essence: '분명하지 않은 것 앞에서 커지는 불안과 상상을 뜻해요.',
     perspectives: {
       core: '확인되지 않은 걱정과 상상이 상황을 실제보다 크게 보이게 하는 것이 핵심일 수 있어요.',
@@ -221,6 +259,8 @@ export const CARDS: TarotCard[] = [
   {
     id: 'sun', number: 19, nameKo: '태양', nameEn: 'The Sun', symbol: '☉',
     keywords: ['명료함', '기쁨', '자신감'],
+    reversedKeywords: ['일시적 침체', '과장', '허세'],
+    reversedEssence: '분명히 좋은 것이 있는데 알아보지 못하거나, 밝은 면만 보느라 현실을 놓치는 상태를 뜻해요.',
     essence: '있는 그대로 드러나도 괜찮다는 밝은 확신과 활력을 뜻해요.',
     perspectives: {
       core: '상황이 생각보다 단순하고 분명할 수 있다는 점이 지금의 핵심일 수 있어요.',
@@ -232,6 +272,8 @@ export const CARDS: TarotCard[] = [
   {
     id: 'judgement', number: 20, nameKo: '심판', nameEn: 'Judgement', symbol: '♪',
     keywords: ['깨달음', '부름', '결단'],
+    reversedKeywords: ['후회', '자기 비난', '미룸'],
+    reversedEssence: '지난 일을 자책하며 앞으로 나아가지 못하거나, 내려야 할 결단을 계속 미루는 상태를 뜻해요.',
     essence: '지난 시간을 돌아보고 새로운 단계로 나아가기로 마음먹는 것을 뜻해요.',
     perspectives: {
       core: '이미 마음속에서 결론이 나 있고, 그것을 받아들일지가 고민의 중심일 수 있어요.',
@@ -243,6 +285,8 @@ export const CARDS: TarotCard[] = [
   {
     id: 'world', number: 21, nameKo: '세계', nameEn: 'The World', symbol: '◎',
     keywords: ['완성', '통합', '순환'],
+    reversedKeywords: ['마무리 부족', '지연', '반복'],
+    reversedEssence: '거의 다 왔는데 마지막 매듭을 짓지 못하거나, 한 단계를 끝내지 않은 채 맴도는 상태를 뜻해요.',
     essence: '한 여정을 완성하고 다음 순환으로 넘어가는 성취를 뜻해요.',
     perspectives: {
       core: '한 단계를 마무리 짓는 시점이라는 점이 지금 상황의 핵심일 수 있어요.',

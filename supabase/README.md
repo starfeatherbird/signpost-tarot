@@ -54,6 +54,11 @@ npm run server:secrets -- TAROT_MODELS="anthropic:claude-sonnet-5,gemini:auto,an
 - 신모델이 나오면: 1순위에 새 모델을 넣고, 기존 모델을 2순위로 내려 잠시 두었다가 지웁니다.
   프롬프트 문구를 바꿨다면 `prompt.ts` 의 `PROMPT_VERSION` 을 올려 기록에서 구분되게 합니다.
 
+## 프롬프트 버전
+
+- counsel-v1: 초기 규칙 · v2: 행동 개인화, 전문가 권유 축소, 카드 주어 문장 축소, 적합 조건 구분 · **v3(현재)**: 정·역방향 해석 규칙 추가.
+- 문구를 바꾸면 `_shared/prompt.ts` 의 `PROMPT_VERSION` 을 올리고 `npm run golden` 으로 전후를 비교하세요.
+
 ## 응답 시간·비용 (2026-09-10 실측, Claude Sonnet 5, effort low)
 
 | 요청 | 시간 |

@@ -1,7 +1,7 @@
-import { STORAGE_KEYS } from '../config/appConfig';
+import { REVERSED_RATE, STORAGE_KEYS } from '../config/appConfig';
 import { CARDS_TO_PICK, POSITIONS } from '../data/positions';
 import type { Answer, DeepReadingResult, DrawnCard, FollowUp, PlanId, ReadingResult } from '../domain/types';
-import { createShuffledDeck, isValidDeck } from '../services/deck';
+import { createShuffledDeck, drawReversed, isValidDeck } from '../services/deck';
 import { createId } from '../services/records';
 import { readJson, removeKey, writeJson } from '../services/storage';
 
@@ -33,6 +33,8 @@ export interface SessionState {
   deepAnswers: Answer[];
   /** 섞인 덱(카드 ID 순서). 세션 시작 시 한 번 정해지고 바뀌지 않습니다. */
   deck: string[];
+  /** 역방향으로 뽑힐 카드 ID 목록 (덱과 함께 세션 시작 시 정해짐) */
+  reversedIds: string[];
   /** 선택한 카드 ID (선택 순서 = 자리 순서) */
   selected: string[];
   revealed: boolean;
@@ -52,6 +54,7 @@ export interface SessionState {
 }
 
 export function createInitialSession(): SessionState {
+  const deck = createShuffledDeck();
   return {
     consultationId: createId(),
     step: 'plan',
@@ -62,7 +65,8 @@ export function createInitialSession(): SessionState {
     answers: [],
     deepQuestionIndex: 0,
     deepAnswers: [],
-    deck: createShuffledDeck(),
+    deck,
+    reversedIds: drawReversed(deck, REVERSED_RATE),
     selected: [],
     revealed: false,
     supplement: '',
@@ -175,7 +179,7 @@ function upsertAnswer(list: Answer[], answer: Answer): Answer[] {
 
 /** 선택한 카드를 자리와 묶어 돌려줍니다. */
 export function getDrawnCards(state: SessionState): DrawnCard[] {
-  return state.selected.slice(0, CARDS_TO_PICK).map((cardId, i) => ({ cardId, positionId: POSITIONS[i].id }));
+  return state.selected.slice(0, CARDS_TO_PICK).map((cardId, i) => ({ cardId, positionId: POSITIONS[i].id, reversed: state.reversedIds.includes(cardId) }));
 }
 
 /** 진행 중인 내용이 있어 새 상담 시작 전에 확인이 필요한지 */

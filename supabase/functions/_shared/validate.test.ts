@@ -129,7 +129,8 @@ describe('validate', () => {
 
   it('추가 질문 응답과 카드 검증', () => {
     expect(normalizeFollowUp(JSON.stringify({ answer: '답' }), source)).toMatchObject({ answer: '답', isSample: false });
-    expect(assertCards(cards)).toEqual(cards);
+    expect(assertCards(cards)).toEqual(cards.map((c) => ({ ...c, reversed: false })));
+    expect(assertCards([{ ...cards[0], reversed: true }, cards[1], cards[2]])[0].reversed).toBe(true);
     expect(() => assertCards(cards.slice(0, 2))).toThrow('3장');
     expect(() => assertCards([...cards.slice(0, 2), { cardId: 'nope', positionId: 'next' }])).toThrow('next');
   });

@@ -62,6 +62,14 @@ describe('mockAnalysisService — 기본', () => {
     expect(allText(result)).not.toContain('이번 달 안에');
   });
 
+  it('역방향 카드는 역방향 의미와 (역방향) 표시를 쓴다', () => {
+    const result = buildSampleReading({ ...input, cards: [{ cardId: 'moon', positionId: 'core', reversed: true }, input.cards[1], input.cards[2]] });
+    expect(result.reasons[0]).toContain('「달(역방향)」');
+    expect(result.perspectives[0].text).toContain('역방향');
+    expect(result.perspectives[0].text).toContain('착각');
+    expect(result.perspectives[1].text).not.toContain('역방향');
+  });
+
   it('세 자리가 모두 없으면 실패한다', () => {
     expect(() => buildSampleReading({ ...input, cards: input.cards.slice(0, 2) })).toThrow();
   });

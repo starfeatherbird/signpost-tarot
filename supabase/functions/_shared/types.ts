@@ -14,6 +14,8 @@ export interface Answer {
 export interface DrawnCard {
   cardId: string;
   positionId: PositionId;
+  /** 역방향 여부 */
+  reversed?: boolean;
 }
 
 export interface AnalysisInput {
@@ -101,6 +103,8 @@ export interface CardData {
   nameEn: string;
   keywords: string[];
   essence: string;
+  reversedKeywords: string[];
+  reversedEssence: string;
   perspectives: Record<PositionId, string>;
   actions: string[];
 }

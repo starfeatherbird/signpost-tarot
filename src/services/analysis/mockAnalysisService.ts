@@ -78,6 +78,10 @@ function wait(ms: number, signal?: AbortSignal): Promise<void> {
 interface ResolvedCard {
   card: TarotCard;
   drawn: DrawnCard;
+  /** 방향에 맞는 의미·핵심어·표시 이름 */
+  essence: string;
+  keywords: string[];
+  label: string;
 }
 
 interface Spread {
@@ -91,7 +95,14 @@ function resolveSpread(cards: DrawnCard[]): Spread {
   const resolved = cards.map((drawn) => {
     const card = getCard(drawn.cardId);
     if (!card) throw new AnalysisError('선택한 카드 정보를 찾을 수 없어요.', false);
-    return { card, drawn };
+    const reversed = !!drawn.reversed;
+    return {
+      card,
+      drawn,
+      essence: reversed ? card.reversedEssence : card.essence,
+      keywords: reversed ? card.reversedKeywords : card.keywords,
+      label: reversed ? `${card.nameKo}(역방향)` : card.nameKo,
+    };
   });
   const byPosition = (id: DrawnCard['positionId']) => resolved.find((r) => r.drawn.positionId === id);
   const core = byPosition('core');
@@ -117,8 +128,8 @@ export function buildSampleReading(input: AnalysisInput, generatedAt = new Date(
     : `현재 말씀해 주신 조건에서는 「${next.card.nameKo}」 카드가 가리키는 방향을 먼저 제안드려요. ${next.card.perspectives.next}`;
 
   const reasons = [
-    `현재의 핵심 자리에 나온 「${core.card.nameKo}」는 ${core.card.essence} ${core.card.perspectives.core}`,
-    `「${next.card.nameKo}」의 기본 의미는 ${next.card.essence} 지금 상황에서는 이 흐름에 맞춰 움직이는 편이 부담이 덜할 수 있어요.`,
+    `현재의 핵심 자리에 나온 「${core.label}」는 ${core.essence} ${core.card.perspectives.core}`,
+    `「${next.label}」의 기본 의미는 ${next.essence} 지금 상황에서는 이 흐름에 맞춰 움직이는 편이 부담이 덜할 수 있어요.`,
   ];
   if (priorityAnswer) {
     reasons.push(`가장 지키고 싶은 것으로 '${priorityAnswer}'${objectParticle(priorityAnswer)} 꼽아 주셨기 때문에, 그 기준을 해치지 않는 범위에서의 움직임을 우선했어요.`);
@@ -139,10 +150,10 @@ export function buildSampleReading(input: AnalysisInput, generatedAt = new Date(
     '지금 떠오른 생각을 기록장에 남겨 두고, 며칠 뒤 다시 읽어 보기',
   ]).slice(0, 4);
 
-  const perspectives = resolved.map(({ card, drawn }) => ({
+  const perspectives = resolved.map(({ card, drawn, essence, keywords, label }) => ({
     cardId: card.id,
     positionId: drawn.positionId,
-    text: `${POSITION_BY_ID[drawn.positionId].title} 자리의 「${card.nameKo}」(${card.nameEn})는 ${card.essence} ${card.perspectives[drawn.positionId]} 핵심어: ${card.keywords.join(', ')}.`,
+    text: `${POSITION_BY_ID[drawn.positionId].title} 자리의 「${label}」(${card.nameEn})는 ${essence}${drawn.reversed ? ' 역방향은 카드의 힘이 막히거나 지나치거나 안으로 향한 상태로 읽어요.' : ''} ${card.perspectives[drawn.positionId]} 핵심어: ${keywords.join(', ')}.`,
   }));
 
   const notes: string[] = [SAMPLE_NOTE];

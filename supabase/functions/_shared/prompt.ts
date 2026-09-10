@@ -12,7 +12,7 @@ import {
  * 상담 프롬프트. 모델과 무관하게 유지되며, 문구를 바꾸면 PROMPT_VERSION 을 올립니다.
  * (기록에 버전이 남아 "어떤 규칙으로 만든 결과인지" 추적할 수 있습니다.)
  */
-export const PROMPT_VERSION = 'counsel-v2';
+export const PROMPT_VERSION = 'counsel-v3';
 
 const CARDS = cardsJson as CardData[];
 const CARD_BY_ID = new Map(CARDS.map((c) => [c.id, c]));
@@ -29,6 +29,7 @@ export const SYSTEM_PROMPT = `당신은 한국어 타로 상담 앱의 상담사
 - 타로는 상징과 관점을 제공할 뿐입니다. 실제 조언은 사용자가 적은 상황·우선순위·제약을 근거로 합니다.
 - 미래, 타인의 속마음, 확인되지 않은 사실을 단정하지 않습니다. "~일 수 있어요", "~해 보세요" 로 표현합니다.
 - 카드 이름은 반드시 제공된 세 장만 언급하고, 다른 카드를 끌어오지 않습니다. 카드 의미는 제공된 기본 의미와 자리별 관점을 바탕으로 합니다.
+- 카드에는 정방향/역방향이 있습니다. 역방향은 "나쁜 카드"가 아니라 그 카드의 힘이 막혀 있거나, 지나치거나, 안으로 향한 상태로 읽습니다. 역방향 카드는 제공된 역방향 의미를 쓰고, 이름 뒤에 "(역방향)"을 붙여 부릅니다. 정방향과 역방향이 섞였다면 그 대비를 해석에 살립니다.
 - 사용자가 적지 않은 상황을 지어내지 않습니다. 정보가 부족하면 그 점을 부드럽게 밝히고 일반적인 관점으로 답합니다.
 - 전문가·가까운 사람의 도움을 권하는 문장은 자해·자살·학대·위기 신호, 지속되는 심한 불안이나 우울, 의료·법률·큰 재정 결정이 걸린 경우에만 넣습니다. 평범한 관계·진로·일상 고민에는 넣지 않습니다.
 - 각 항목은 2~4문장, 행동 항목은 한 줄로 실행 가능하게 씁니다. 전체적으로 읽기 편한 길이를 유지합니다.
@@ -41,11 +42,14 @@ function describeCards(cards: DrawnCard[]): string {
     .map((drawn) => {
       const card = getCardData(drawn.cardId);
       if (!card) return `- ${POSITION_TITLES[drawn.positionId]}: (알 수 없는 카드 ${drawn.cardId})`;
+      const reversed = !!drawn.reversed;
       return [
-        `- 자리 "${POSITION_TITLES[drawn.positionId]}" (positionId: ${drawn.positionId}): 「${card.nameKo}」(${card.nameEn}, ${card.number}번, 정방향)`,
-        `  기본 의미: ${card.essence}`,
-        `  이 자리에서의 관점: ${card.perspectives[drawn.positionId]}`,
-        `  핵심어: ${card.keywords.join(', ')}`,
+        `- 자리 "${POSITION_TITLES[drawn.positionId]}" (positionId: ${drawn.positionId}): 「${card.nameKo}${reversed ? '(역방향)' : ''}」(${card.nameEn}, ${card.number}번, ${reversed ? '역방향' : '정방향'})`,
+        reversed
+          ? `  역방향 의미: ${card.reversedEssence} (정방향이었다면: ${card.essence})`
+          : `  기본 의미: ${card.essence}`,
+        `  이 자리에서의 관점(정방향 기준, 역방향이면 막힘·과함·내향으로 바꿔 읽기): ${card.perspectives[drawn.positionId]}`,
+        `  핵심어: ${(reversed ? card.reversedKeywords : card.keywords).join(', ')}`,
         `  이 카드가 제안하는 작은 행동 예시: ${card.actions.join(' / ')}`,
       ].join('\n');
     })

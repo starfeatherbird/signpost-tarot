@@ -68,6 +68,18 @@ describe('session reducer', () => {
     expect(s.selected).toEqual(s.deck.slice(0, 3));
   });
 
+  it('카드 방향은 세션 시작 때 정해지고 뽑은 카드에 그대로 붙는다', () => {
+    let s = createInitialSession();
+    s = { ...s, reversedIds: [s.deck[1]] };
+    s = pickThree(s);
+    const drawn = getDrawnCards(s);
+    expect(drawn.map((d) => d.reversed)).toEqual([false, true, false]);
+    // 실패·재시도 뒤에도 방향이 같다
+    s = sessionReducer(s, { type: 'analysisStarted' });
+    s = sessionReducer(s, { type: 'analysisFailed', message: 'x' });
+    expect(getDrawnCards(s).map((d) => d.reversed)).toEqual([false, true, false]);
+  });
+
   it('분석 실패·재시도를 거쳐도 덱과 선택 카드가 유지된다', () => {
     let s = createInitialSession();
     const deck = [...s.deck];
@@ -162,6 +174,7 @@ describe('session persistence', () => {
     expect(restored.concern).toBe('고민');
     expect(restored.deck).toEqual(s.deck);
     expect(restored.selected).toEqual([a, b]);
+    expect(restored.reversedIds).toEqual(s.reversedIds);
     expect(restored.step).toBe('cards');
     expect(restored.consultationId).toBe(s.consultationId);
   });

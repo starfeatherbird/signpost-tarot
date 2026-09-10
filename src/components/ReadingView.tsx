@@ -23,8 +23,8 @@ export function ReadingView({ result, cards, actionChecks = [], onToggleAction }
           if (!card) return null;
           return (
             <div className="mini-card" key={drawn.positionId}>
-              <CardFace card={card} showLabel={false} />
-              <span className="mini-label">{position.title}<strong>{card.nameKo}</strong></span>
+              <CardFace card={card} showLabel={false} reversed={!!drawn.reversed} />
+              <span className="mini-label">{position.title}<strong>{card.nameKo}{drawn.reversed ? ' · 역방향' : ''}</strong></span>
             </div>
           );
         })}
@@ -84,11 +84,12 @@ export function ReadingView({ result, cards, actionChecks = [], onToggleAction }
           {result.perspectives.map((p, i) => {
             const card = getCard(p.cardId);
             const position = POSITION_BY_ID[p.positionId];
+            const reversed = !!cards.find((c) => c.positionId === p.positionId)?.reversed;
             return (
               <details className="accordion" key={p.positionId} open={i === 0}>
                 <summary>
                   <span className="pos">{position.title}</span>
-                  <span>{card?.nameKo ?? p.cardId}</span>
+                  <span>{card?.nameKo ?? p.cardId}{reversed ? ' (역방향)' : ''}</span>
                 </summary>
                 <div className="accordion-body">{p.text}</div>
               </details>

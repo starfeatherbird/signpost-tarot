@@ -60,7 +60,7 @@ export function RecordsScreen({ records, onStartNew }: Props) {
                 </span>
                 <span className="record-title">{r.concern}</span>
                 <span className="tag-row">
-                  {r.cards.map((c) => <span className="card-chip" key={c.positionId}>{getCard(c.cardId)?.nameKo ?? c.cardId}</span>)}
+                  {r.cards.map((c) => <span className="card-chip" key={c.positionId}>{getCard(c.cardId)?.nameKo ?? c.cardId}{c.reversed ? ' 역' : ''}</span>)}
                 </span>
                 <span className="record-preview">{preview}</span>
               </button>
