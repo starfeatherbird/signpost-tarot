@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "cards": "node scripts/sync-cards.mjs",
-    "predev": "node scripts/sync-cards.mjs && node scripts/sync-stones.mjs",
+    "predev": "node scripts/sync-cards.mjs",
     "dev": "vite",
-    "prebuild": "node scripts/sync-cards.mjs && node scripts/sync-stones.mjs",
+    "prebuild": "node scripts/sync-cards.mjs",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b",
@@ -19,7 +19,7 @@
     "server:logs": "node -e \"console.log('로그: https://supabase.com/dashboard/project/fvtarvatvqcozsrfetbf/functions/tarot-reading/logs')\"",
     "capture": "node scripts/capture-screens.mjs",
     "golden": "node scripts/run-golden.mjs",
-    "stones": "node scripts/sync-stones.mjs"
+    "stones": "py -3 scripts/process_stones.py"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",

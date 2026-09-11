@@ -124,7 +124,7 @@ npm run build      # dist/ 생성 (정적 파일, 서버 불필요)
 - 결과(`ReadingResult`)에 `stone{stoneId, promise}` 와 `reflectionQuestion` 이 붙습니다(프롬프트 counsel-v4, 모의 분석도 생성). 예전 결과에는 없으므로 화면은 있을 때만 보여 줍니다.
 - 결과 화면: 패널 4 뒤에 스톤 패널, 마지막에 "며칠 뒤 돌아볼 질문". 기록장: 저장 `REFLECTION_AFTER_DAYS`(3일) 뒤부터 "돌아볼 때" 태그, 기록 상세의 메모 칸이 그 질문의 답이 됩니다(`followUpMemo` 그대로 사용, 답이 있으면 "돌아봄"). 상태 계산은 `services/reflection.ts`.
 - 내 공간 "모은 스톤": 저장된 기록의 스톤을 모아 19종 중 만난 돌만 색으로 보여 줍니다. `components/StoneGem.tsx` 는 `public/stones/<id>.webp`(없으면 .png)를 먼저 찾고, 없으면 대표 색 보석 모양을 그립니다.
-- 스톤 그림 원본은 `app/stone_source/<id>.png` 에 두면 `scripts/sync-stones.mjs`(predev/prebuild, `npm run stones`)가 처리해 `public/stones/<id>.webp`(320px, 투명)로 넣습니다. 단색 배경(검정 등)이면 가장자리에서 이어진 배경만 지우고(돌 안쪽의 어두운 부분은 유지), 외곽 띠는 근처 돌 색을 기준으로 배경이 섞인 비율을 역산해 걷어 냅니다(디프린지). 이미 투명이면 여백만 정리. 원본 폴더는 git 제외. 파일명은 스톤 id 와 같아야 합니다. 프롬프트·전달 사항: `docs/스톤_이미지_프롬프트.md`.
+- 스톤 그림: 원본 `app/stone_source/<id>.png`(Midjourney, 검정 배경 1024px, git 제외, **수정 금지**) → `npm run stones`(= `py -3 scripts/process_stones.py`, Python 3.14 + rembg·scipy·Pillow 필요, 첫 실행 때 isnet 모델 179MB 내려받음) → `public/stones/<id>.webp`(320px 투명, git 포함) + `public/stones/manifest.json`(처리 이력·스케일) + `stone_work/`(1024px 투명 마스터, 검수 시트 preview.png, git 제외). 사양은 `docs/stone_asset_handoff.md`: rembg 세그멘테이션 → 가장 큰 조각·구멍 채움·가장자리 1.5px → 디프린지 → 면적 0.37 정규화(긴 변 90% 상한, 셀레나이트만 걸림) → 돌별 전처리(clear-quartz 좌우 반전, obsidian 반점 제거+주대각선 반사). 그림자는 이미지에 없고 CSS(`img.stone-gem` drop-shadow, 테마별). 스톤을 추가·교체하면 원본을 넣고 `npm run stones <id>` 로 그 돌만 다시 처리합니다. predev/prebuild 에서는 돌리지 않습니다(CI 에 Python 패키지 없음).
 
 ## 로그인과 기록 동기화
 

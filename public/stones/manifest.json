@@ -1,0 +1,318 @@
+{
+  "canvas": 320,
+  "target_area": 0.37,
+  "max_long": 0.9,
+  "stones": [
+    {
+      "file": "amazonite.webp",
+      "source": "stone_source/amazonite.png",
+      "applied": [],
+      "segmentation": "rembg:isnet-general-use",
+      "debris_removed": 0,
+      "holes_filled": 0,
+      "scale": 0.2535,
+      "long_side_capped": false,
+      "area_ratio": 0.367,
+      "size": [
+        208,
+        206
+      ],
+      "processed_at": "2026-09-11T11:21:08+09:00"
+    },
+    {
+      "file": "amethyst.webp",
+      "source": "stone_source/amethyst.png",
+      "applied": [],
+      "segmentation": "rembg:isnet-general-use",
+      "debris_removed": 0,
+      "holes_filled": 0,
+      "scale": 0.2823,
+      "long_side_capped": false,
+      "area_ratio": 0.369,
+      "size": [
+        231,
+        228
+      ],
+      "processed_at": "2026-09-11T11:21:11+09:00"
+    },
+    {
+      "file": "aquamarine.webp",
+      "source": "stone_source/aquamarine.png",
+      "applied": [],
+      "segmentation": "rembg:isnet-general-use",
+      "debris_removed": 0,
+      "holes_filled": 0,
+      "scale": 0.3026,
+      "long_side_capped": false,
+      "area_ratio": 0.368,
+      "size": [
+        268,
+        173
+      ],
+      "processed_at": "2026-09-11T11:21:14+09:00"
+    },
+    {
+      "file": "aventurine.webp",
+      "source": "stone_source/aventurine.png",
+      "applied": [],
+      "segmentation": "rembg:isnet-general-use",
+      "debris_removed": 0,
+      "holes_filled": 0,
+      "scale": 0.2953,
+      "long_side_capped": false,
+      "area_ratio": 0.368,
+      "size": [
+        203,
+        244
+      ],
+      "processed_at": "2026-09-11T11:21:17+09:00"
+    },
+    {
+      "file": "black-tourmaline.webp",
+      "source": "stone_source/black-tourmaline.png",
+      "applied": [],
+      "segmentation": "rembg:isnet-general-use",
+      "debris_removed": 0,
+      "holes_filled": 0,
+      "scale": 0.3199,
+      "long_side_capped": false,
+      "area_ratio": 0.367,
+      "size": [
+        157,
+        265
+      ],
+      "processed_at": "2026-09-11T11:21:20+09:00"
+    },
+    {
+      "file": "carnelian.webp",
+      "source": "stone_source/carnelian.png",
+      "applied": [],
+      "segmentation": "rembg:isnet-general-use",
+      "debris_removed": 0,
+      "holes_filled": 0,
+      "scale": 0.3038,
+      "long_side_capped": false,
+      "area_ratio": 0.369,
+      "size": [
+        218,
+        228
+      ],
+      "processed_at": "2026-09-11T11:21:23+09:00"
+    },
+    {
+      "file": "citrine.webp",
+      "source": "stone_source/citrine.png",
+      "applied": [],
+      "segmentation": "rembg:isnet-general-use",
+      "debris_removed": 0,
+      "holes_filled": 0,
+      "scale": 0.315,
+      "long_side_capped": false,
+      "area_ratio": 0.368,
+      "size": [
+        235,
+        225
+      ],
+      "processed_at": "2026-09-11T11:21:26+09:00"
+    },
+    {
+      "file": "clear-quartz.webp",
+      "source": "stone_source/clear-quartz.png",
+      "applied": [
+        "mirror"
+      ],
+      "segmentation": "rembg:isnet-general-use",
+      "debris_removed": 0,
+      "holes_filled": 0,
+      "scale": 0.3235,
+      "long_side_capped": false,
+      "area_ratio": 0.368,
+      "size": [
+        222,
+        219
+      ],
+      "processed_at": "2026-09-11T11:21:29+09:00"
+    },
+    {
+      "file": "garnet.webp",
+      "source": "stone_source/garnet.png",
+      "applied": [],
+      "segmentation": "rembg:isnet-general-use",
+      "debris_removed": 0,
+      "holes_filled": 1,
+      "scale": 0.3048,
+      "long_side_capped": false,
+      "area_ratio": 0.368,
+      "size": [
+        201,
+        238
+      ],
+      "processed_at": "2026-09-11T11:21:32+09:00"
+    },
+    {
+      "file": "jade.webp",
+      "source": "stone_source/jade.png",
+      "applied": [],
+      "segmentation": "rembg:isnet-general-use",
+      "debris_removed": 0,
+      "holes_filled": 0,
+      "scale": 0.3071,
+      "long_side_capped": false,
+      "area_ratio": 0.367,
+      "size": [
+        175,
+        272
+      ],
+      "processed_at": "2026-09-11T11:21:34+09:00"
+    },
+    {
+      "file": "labradorite.webp",
+      "source": "stone_source/labradorite.png",
+      "applied": [],
+      "segmentation": "rembg:isnet-general-use",
+      "debris_removed": 0,
+      "holes_filled": 0,
+      "scale": 0.3232,
+      "long_side_capped": false,
+      "area_ratio": 0.37,
+      "size": [
+        176,
+        260
+      ],
+      "processed_at": "2026-09-11T11:21:37+09:00"
+    },
+    {
+      "file": "lapis-lazuli.webp",
+      "source": "stone_source/lapis-lazuli.png",
+      "applied": [],
+      "segmentation": "rembg:isnet-general-use",
+      "debris_removed": 0,
+      "holes_filled": 0,
+      "scale": 0.3134,
+      "long_side_capped": false,
+      "area_ratio": 0.367,
+      "size": [
+        223,
+        207
+      ],
+      "processed_at": "2026-09-11T11:21:40+09:00"
+    },
+    {
+      "file": "larimar.webp",
+      "source": "stone_source/larimar.png",
+      "applied": [],
+      "segmentation": "rembg:isnet-general-use",
+      "debris_removed": 0,
+      "holes_filled": 0,
+      "scale": 0.3009,
+      "long_side_capped": false,
+      "area_ratio": 0.368,
+      "size": [
+        221,
+        201
+      ],
+      "processed_at": "2026-09-11T11:21:43+09:00"
+    },
+    {
+      "file": "moonstone.webp",
+      "source": "stone_source/moonstone.png",
+      "applied": [],
+      "segmentation": "rembg:isnet-general-use",
+      "debris_removed": 0,
+      "holes_filled": 0,
+      "scale": 0.3155,
+      "long_side_capped": false,
+      "area_ratio": 0.369,
+      "size": [
+        208,
+        230
+      ],
+      "processed_at": "2026-09-11T11:21:46+09:00"
+    },
+    {
+      "file": "obsidian.webp",
+      "source": "stone_source/obsidian.png",
+      "applied": [
+        "despeckle",
+        "transpose"
+      ],
+      "segmentation": "rembg:isnet-general-use",
+      "debris_removed": 0,
+      "holes_filled": 0,
+      "scale": 0.3361,
+      "long_side_capped": false,
+      "area_ratio": 0.369,
+      "size": [
+        263,
+        180
+      ],
+      "speckle_before_per_1000": 15.06,
+      "speckle_after_per_1000": 0.63,
+      "processed_at": "2026-09-11T11:21:52+09:00"
+    },
+    {
+      "file": "pietersite.webp",
+      "source": "stone_source/pietersite.png",
+      "applied": [],
+      "segmentation": "rembg:isnet-general-use",
+      "debris_removed": 0,
+      "holes_filled": 0,
+      "scale": 0.27,
+      "long_side_capped": false,
+      "area_ratio": 0.368,
+      "size": [
+        222,
+        217
+      ],
+      "processed_at": "2026-09-11T11:21:55+09:00"
+    },
+    {
+      "file": "rose-quartz.webp",
+      "source": "stone_source/rose-quartz.png",
+      "applied": [],
+      "segmentation": "rembg:isnet-general-use",
+      "debris_removed": 0,
+      "holes_filled": 0,
+      "scale": 0.2888,
+      "long_side_capped": false,
+      "area_ratio": 0.369,
+      "size": [
+        210,
+        208
+      ],
+      "processed_at": "2026-09-11T11:21:58+09:00"
+    },
+    {
+      "file": "selenite.webp",
+      "source": "stone_source/selenite.png",
+      "applied": [],
+      "segmentation": "rembg:isnet-general-use",
+      "debris_removed": 0,
+      "holes_filled": 0,
+      "scale": 0.3564,
+      "long_side_capped": true,
+      "area_ratio": 0.295,
+      "size": [
+        288,
+        258
+      ],
+      "processed_at": "2026-09-11T11:22:01+09:00"
+    },
+    {
+      "file": "tiger-eye.webp",
+      "source": "stone_source/tiger-eye.png",
+      "applied": [],
+      "segmentation": "rembg:isnet-general-use",
+      "debris_removed": 0,
+      "holes_filled": 0,
+      "scale": 0.2943,
+      "long_side_capped": false,
+      "area_ratio": 0.369,
+      "size": [
+        215,
+        220
+      ],
+      "processed_at": "2026-09-11T11:22:03+09:00"
+    }
+  ]
+}

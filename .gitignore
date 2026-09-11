@@ -12,3 +12,7 @@ docs/screens
 
 # 스톤 그림 원본 (public/stones 로 변환됨)
 stone_source/
+
+# 스톤 가공 작업 폴더 (마스터·검수 시트)
+stone_work/
+obsidian_reference.png
