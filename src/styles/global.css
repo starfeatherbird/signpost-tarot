@@ -1542,11 +1542,11 @@ button.setting-row { cursor: pointer; }
 /* ==========================================================================
    상징 스톤 · 이후 돌아보기
    ========================================================================== */
-.stone-gem { display: block; flex: 0 0 auto; }
 /* 그림자는 이미지에 없고 테마별로 여기서 입힙니다 (docs/stone_asset_handoff.md) */
-img.stone-gem { filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.45)); }
-[data-theme='light'] img.stone-gem { filter: drop-shadow(0 1px 2px rgba(15, 26, 46, 0.18)); }
-.stone-gem.is-dim { opacity: 0.28; filter: grayscale(0.6); }
+.stone-gem { display: block; flex: 0 0 auto; --stone-shadow: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.45)); }
+[data-theme='light'] .stone-gem { --stone-shadow: drop-shadow(0 1px 2px rgba(15, 26, 46, 0.18)); }
+img.stone-gem { filter: var(--stone-shadow); }
+.stone-gem.is-dim { opacity: 0.28; filter: grayscale(0.6) var(--stone-shadow); }
 
 .panel--stone {
   background: var(--color-deep-panel-bg);
