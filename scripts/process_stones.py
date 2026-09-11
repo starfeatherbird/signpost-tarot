@@ -42,6 +42,8 @@ WEBP_QUALITY = 90
 # 돌별 전처리 (파일명 → 처리 이름 목록)
 SPECIAL = {
     "clear-quartz": ["mirror"],
+    "aventurine": ["mirror"],   # 하이라이트를 좌상단으로 (다른 돌과 조명 방향 통일)
+    "selenite": ["mirror"],
     "obsidian": ["despeckle", "transpose"],
 }
 
