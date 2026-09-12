@@ -131,25 +131,79 @@ button {
   line-height: 1;
 }
 
-.nav-icon {
+/* 선 아이콘: 현재 탭은 포인트 색 선 + 옅은 채움 */
+.nav-svg {
   display: block;
-  border: 2px solid var(--color-text-faint);
-  background: transparent;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  transition: transform var(--duration-select) ease-out;
 }
 
-.nav-icon--circle { width: 18px; height: 18px; border-radius: 50%; }
-.nav-icon--square { width: 16px; height: 16px; border-radius: 4px; }
-.nav-icon--diamond { width: 14px; height: 14px; border-radius: 3px; transform: rotate(45deg); }
+.nav-svg-line { fill: none !important; }
 
 .nav-item[aria-current='page'] {
   color: var(--color-accent-text);
   font-weight: 700;
 }
 
-.nav-item[aria-current='page'] .nav-icon {
-  background: var(--color-accent);
-  border-color: var(--color-accent-text);
+.nav-item[aria-current='page'] .nav-svg {
+  fill: var(--color-accent-soft);
+  transform: translateY(-1px);
 }
+
+.nav-item[aria-current='page'] .nav-svg-front { fill: var(--color-accent); }
+
+/* 첫 화면 장면: 후광 + 표지판 + 부채꼴 카드 */
+.hero {
+  position: relative;
+  height: 172px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  margin: -6px 0 2px;
+}
+
+.hero-halo {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(55% 65% at 50% 62%, rgba(201, 168, 106, 0.2), transparent 72%);
+}
+
+.hero-symbol {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--color-gold-text);
+  z-index: 2;
+}
+
+.hero-symbol .loading-symbol { animation: none; }
+
+.hero-cards {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 130px;
+}
+
+.hero-cards .card-face-wrap {
+  width: 74px;
+  border-radius: 6px;
+  outline: 1px solid var(--color-gold-line);
+  outline-offset: -1px;
+  box-shadow: var(--shadow-lg);
+}
+
+.hero-cards .card-face-wrap:nth-child(1) { transform: rotate(-17deg) translate(18px, 12px); }
+.hero-cards .card-face-wrap:nth-child(2) { z-index: 1; transform: translateY(-4px); }
+.hero-cards .card-face-wrap:nth-child(3) { transform: rotate(17deg) translate(-18px, 12px); }
+
+.screen-head--center { align-items: center; text-align: center; }
 
 /* 상담 진행 화면 맨 윗줄: 섹션 라벨 + 상담 취소 */
 .flow-top {

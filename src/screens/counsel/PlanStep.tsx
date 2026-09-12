@@ -1,4 +1,5 @@
 import type { Dispatch } from 'react';
+import { HeroScene } from '../../components/HeroScene';
 import { Notice } from '../../components/Notice';
 import { APP_NAME } from '../../config/appConfig';
 import { PLANS } from '../../config/products';
@@ -22,7 +23,8 @@ export function PlanStep({ dispatch, records = [], onOpenRecord }: Props) {
   const due = getDueRecords(records);
   return (
     <div className="screen">
-      <div className="screen-head">
+      <HeroScene />
+      <div className="screen-head screen-head--center">
         <p className="section-label">상담실</p>
         <h1 className="screen-title">{APP_NAME}에 오신 것을 환영해요</h1>
         <p className="screen-lead">어떤 방식으로 고민을 정리해 볼까요?</p>
