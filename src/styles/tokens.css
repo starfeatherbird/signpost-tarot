@@ -47,6 +47,18 @@
   --color-card-back: #1c2f4f;
   --color-card-back-stripe: #22385c;
 
+  /* 금색 보조색: 태그·섹션 번호·구분선·카드 테두리 광택 (버튼·링크는 계속 #1D559C) */
+  --color-gold: #c9a86a;
+  --color-gold-text: #dcc28a;
+  --color-gold-soft: rgba(201, 168, 106, 0.14);
+  --color-gold-line: rgba(201, 168, 106, 0.38);
+  --glow-gold: 0 0 0 2px rgba(201, 168, 106, 0.85), 0 10px 28px rgba(201, 168, 106, 0.28);
+
+  /* 배경 깊이: 위가 살짝 밝고 아래로 어두워지는 방 + 옅은 별점 */
+  --bg-scene: radial-gradient(120% 70% at 50% -10%, #1a2c4d 0%, var(--color-bg) 55%, var(--color-bg-deep) 100%);
+  --bg-stars-opacity: 0.55;
+  --panel-highlight: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0) 38%);
+
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
   --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.45);
   --focus-ring: 0 0 0 3px rgba(29, 85, 156, 0.35);
@@ -95,6 +107,16 @@
   --color-card-back: #dde4ee;
   --color-card-back-stripe: #e8edf4;
 
+  --color-gold: #a8893f;
+  --color-gold-text: #8a6f2e;
+  --color-gold-soft: rgba(168, 137, 63, 0.12);
+  --color-gold-line: rgba(168, 137, 63, 0.4);
+  --glow-gold: 0 0 0 2px rgba(168, 137, 63, 0.8), 0 10px 24px rgba(168, 137, 63, 0.22);
+
+  --bg-scene: radial-gradient(120% 70% at 50% -10%, #fbfaf6 0%, var(--color-bg) 55%, var(--color-bg-deep) 100%);
+  --bg-stars-opacity: 0;
+  --panel-highlight: none;
+
   --shadow-sm: 0 2px 8px rgba(20, 36, 61, 0.08);
   --shadow-lg: 0 12px 32px rgba(20, 36, 61, 0.2);
   --focus-ring: 0 0 0 3px rgba(29, 85, 156, 0.25);
@@ -116,10 +138,12 @@
   /* 글꼴 */
   --font-body: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
   --font-card: 'Cinzel', 'Times New Roman', serif;
+  /* 제목용 한글 세리프: 화면 제목·패널 제목·질문에만 씀 (본문은 Pretendard) */
+  --font-display: 'Gowun Batang', 'Noto Serif KR', 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif;
 
   /* 타이포 스케일 (size / line) */
-  --text-display: 700 24px/32px var(--font-body);
-  --text-title: 700 19px/27px var(--font-body);
+  --text-display: 700 25px/34px var(--font-display);
+  --text-title: 700 19px/27px var(--font-display);
   --text-body: 400 16px/26px var(--font-body);
   --text-body-panel: 400 15px/1.65 var(--font-body);
   --text-small: 500 14px/21px var(--font-body);
