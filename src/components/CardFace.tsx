@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
-import { FRAME_IMAGES, frameCssVars, getCardArtUrls, getCardTitle } from '../data/cardAssets';
+import { FRAME_IMAGES, frameCssVars, getCardArtUrls, getCardTitle, getTitleScale } from '../data/cardAssets';
+import { getCardLabel } from '../data/cards';
 import type { TarotCard } from '../domain/types';
 import { useImageFallback } from './useImageFallback';
 
@@ -21,7 +22,7 @@ const FRAME_VARS = frameCssVars() as CSSProperties;
 export function CardFace({ card, showLabel = true, reversed = false }: Props) {
   const art = useImageFallback(getCardArtUrls(card));
   const frame = useImageFallback(FRAME_IMAGES);
-  const label = `${card.number}번 ${card.nameKo}${reversed ? ' 역방향' : ''}`;
+  const label = `${getCardLabel(card)}${reversed ? ' 역방향' : ''}`;
 
   if (!frame.src) {
     return (
@@ -32,7 +33,7 @@ export function CardFace({ card, showLabel = true, reversed = false }: Props) {
   }
 
   return (
-    <div className={`card-face-wrap ${reversed ? 'is-reversed' : ''}`} style={FRAME_VARS} role="img" aria-label={label}>
+    <div className={`card-face-wrap ${reversed ? 'is-reversed' : ''}`} style={{ ...FRAME_VARS, '--title-scale': getTitleScale(card) } as CSSProperties} role="img" aria-label={label}>
       <div className="card-art" aria-hidden="true">
         {art.src ? (
           <img src={art.src} alt="" onError={art.onError} />
@@ -47,7 +48,7 @@ export function CardFace({ card, showLabel = true, reversed = false }: Props) {
 }
 
 function PlaceholderFace({ card, showLabel }: { card: TarotCard; showLabel: boolean }) {
-  const label = `${card.number}번 ${card.nameKo}`;
+  const label = getCardLabel(card);
   return (
     <svg viewBox="0 0 100 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label={label}>
       <defs>
@@ -60,7 +61,7 @@ function PlaceholderFace({ card, showLabel }: { card: TarotCard; showLabel: bool
       <rect width="100" height="160" fill={`url(#glow-${card.id})`} />
       <rect x="5" y="5" width="90" height="150" rx="6" fill="none" stroke="#d6ba78" strokeWidth="1.2" opacity="0.8" />
       <text x="50" y="22" textAnchor="middle" fontSize="11" fill="#e8d6a5" fontFamily="serif" letterSpacing="1">
-        {toRoman(card.number)}
+        {card.arcana === 'minor' && card.rank ? toRoman(card.rank) : toRoman(card.number)}
       </text>
       <text x="50" y="82" textAnchor="middle" fontSize="34" fill="#f4ecd8">
         {card.symbol}

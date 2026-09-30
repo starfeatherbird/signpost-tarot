@@ -12,11 +12,17 @@ export interface CardPosition {
   description: string;
 }
 
+export type Suit = 'wands' | 'cups' | 'swords' | 'pentacles';
+
 /** 카드 기준 데이터 */
 export interface TarotCard {
   id: string;
-  /** 메이저 아르카나 번호 0~21 */
+  /** 덱 안 고유 번호: 메이저 0~21, 마이너 22~77 (표시용 번호는 getCardCaption 참고) */
   number: number;
+  arcana: 'major' | 'minor';
+  /** 마이너 카드의 수트와 순서(1=에이스 … 10, 11 페이지, 12 나이트, 13 퀸, 14 킹) */
+  suit?: Suit;
+  rank?: number;
   nameKo: string;
   nameEn: string;
   /** 임시 앞면에 표시할 간단한 상징 문자 */

@@ -1047,7 +1047,7 @@ button {
   white-space: nowrap;
   font-family: var(--font-card);
   font-weight: 500;
-  font-size: var(--title-size);
+  font-size: calc(var(--title-size) * var(--title-scale, 1));
   line-height: 1;
   color: #23304d;
   letter-spacing: 0.02em;

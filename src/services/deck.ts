@@ -27,9 +27,12 @@ export function drawReversed(deck: readonly string[], rate: number, random: () =
   return deck.filter(() => random() < rate);
 }
 
-/** 덱 순서가 유효한지(22장, 중복 없음, 모두 실제 카드) 확인 */
+/**
+ * 덱 순서가 유효한지(중복 없음, 모두 실제 카드, 최소 3장) 확인.
+ * 카드가 늘어나기 전(22장)에 보관된 덱도 그대로 쓸 수 있게 장수는 CARDS.length 이하면 허용합니다.
+ */
 export function isValidDeck(deck: unknown): deck is string[] {
-  if (!Array.isArray(deck) || deck.length !== CARDS.length) return false;
+  if (!Array.isArray(deck) || deck.length < 3 || deck.length > CARDS.length) return false;
   const known = new Set(CARDS.map((c) => c.id));
   const seen = new Set<string>();
   for (const id of deck) {

@@ -18,7 +18,7 @@ npm run build      # dist/ 생성 (정적 파일, 서버 불필요)
 | `src/styles/tokens.css` | 디자인 토큰 (시안 A dark 기본 / B light, `data-theme` 로 전환). 값은 `이정표 시안 디자인.zip` 의 README 그대로 |
 | `src/styles/global.css` | 전체 스타일 (클래스 기반, 컴포넌트 CSS 없음) |
 | `src/domain/types.ts` | 카드·질문·답변·결과·기록 타입 |
-| `src/data/cards.ts` | **카드 기준 데이터** 22장 (이름·의미·자리별 관점·행동·이미지 경로) |
+| `src/data/cards.ts` | **카드 기준 데이터** 메이저 22장 + `minorCards.ts` 의 마이너 56장 = `CARDS` 78장 (이름·의미·자리별 관점·행동). `getCardLabel`/`getCardCaption` 이 메이저("16번 탑")와 마이너("소드 나이트") 표기를 나눔 |
 | `src/data/positions.ts` | 세 자리(현재의 핵심 / 놓치고 있는 관점 / 다음 움직임) |
 | `src/services/deck.ts` | **카드 추첨** (중복 없는 셔플, 덱 검증) |
 | `src/services/questions.ts` | **상황 확인 질문 제공** (`QuestionProvider` 인터페이스, 기본·심층 두 제공자) |
@@ -50,6 +50,13 @@ npm run build      # dist/ 생성 (정적 파일, 서버 불필요)
 글자 크기 44pt(카드 너비의 7.29%). 글꼴은 index.html 에서 Google Fonts 의 Cinzel 을 불러오며, 오프라인이면 시스템 세리프로 대체됩니다.
 
 `public/cards/` 는 생성물이므로 지워도 됩니다. 다음 실행 때 다시 만들어집니다.
+
+## 마이너 아르카나 (2026-10-01)
+
+- `src/data/minorCards.ts`: 수트별 14장을 `build()` 로 만듭니다. id 는 그림 파일명 규칙(`ACE OF WANDS.png` → `ace-of-wands`), `number` 는 덱 고유 번호 22~77, `arcana: 'minor'`, `suit`, `rank`(1 에이스 … 11 페이지 12 나이트 13 퀸 14 킹). 내용(의미·역방향·자리별 관점·행동)은 초안이므로 실사용하며 다듬습니다.
+- 카드 선택 그리드는 78장을 그대로 6열로 펼칩니다(13행). 덱 검증(`isValidDeck`)은 카드 수가 늘기 전(22장) 보관된 세션도 통과시킵니다.
+- 명판 제목이 16자를 넘으면(`KNIGHT OF PENTACLES`) `getTitleScale` 로 글자 크기를 비례 축소합니다(`--title-scale`).
+- 서버 프롬프트 counsel-v6: 78장 안내(수트 의미, 궁정 카드는 태도로 읽기). `npm run server:data` 는 vite-node 로 실행합니다(cards.ts 가 .ts 상대 import 를 쓰므로 Node 단독 실행 불가).
 
 ## 무료 기본 상담 / 유료 심층 상담
 

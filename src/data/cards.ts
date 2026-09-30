@@ -1,16 +1,17 @@
 import type { TarotCard } from '../domain/types';
+import { MINOR_CARDS, SUIT_KO } from './minorCards';
 
 /**
- * 메이저 아르카나 22장 기준 데이터. 정방향(essence·perspectives)과 역방향(reversedEssence·reversedKeywords)을 함께 둡니다.
+ * 메이저 아르카나 22장 기준 데이터(MAJOR_CARDS). 마이너 56장은 minorCards.ts 에 있고 CARDS 가 둘을 합칩니다. 정방향(essence·perspectives)과 역방향(reversedEssence·reversedKeywords)을 함께 둡니다.
  *
  * 카드 이미지를 교체하려면 각 카드의 `image` 값에 경로를 넣으세요.
  * 예: image: '/cards/00-fool.png'  → public/cards/00-fool.png 파일을 사용합니다.
  * image 가 없거나 로드에 실패하면 CardFace 컴포넌트가 임시 디자인을 그립니다.
  * 카드 뒷면 이미지는 src/components/CardBack.tsx 의 CARD_BACK_IMAGE 에서 바꿉니다.
  */
-export const CARDS: TarotCard[] = [
+export const MAJOR_CARDS: TarotCard[] = [
   {
-    id: 'fool', number: 0, nameKo: '바보', nameEn: 'The Fool', symbol: '✦',
+    id: 'fool', number: 0, arcana: 'major', nameKo: '바보', nameEn: 'The Fool', symbol: '✦',
     keywords: ['새 출발', '가벼움', '가능성'],
     reversedKeywords: ['성급함', '회피', '준비 부족'],
     reversedEssence: '시작하고 싶은 마음이 앞서 준비 없이 뛰어들거나, 반대로 두려워서 첫걸음을 계속 미루는 상태를 뜻해요.',
@@ -23,7 +24,7 @@ export const CARDS: TarotCard[] = [
     actions: ['가장 작은 단위의 시작을 하나 정해 오늘 안에 해 보기', '실패해도 괜찮은 범위를 미리 적어 두기'],
   },
   {
-    id: 'magician', number: 1, nameKo: '마법사', nameEn: 'The Magician', symbol: '∞',
+    id: 'magician', number: 1, arcana: 'major', nameKo: '마법사', nameEn: 'The Magician', symbol: '∞',
     keywords: ['능력', '실행', '자원'],
     reversedKeywords: ['속임수', '산만함', '자신감 부족'],
     reversedEssence: '가진 능력을 믿지 못하거나, 재주를 엉뚱한 데 쓰며 힘이 흩어지는 상태를 뜻해요.',
@@ -36,7 +37,7 @@ export const CARDS: TarotCard[] = [
     actions: ['지금 활용할 수 있는 자원·사람·경험을 세 가지 적어 보기', '그중 하나를 써서 오늘 할 수 있는 일 정하기'],
   },
   {
-    id: 'high-priestess', number: 2, nameKo: '여사제', nameEn: 'The High Priestess', symbol: '☽',
+    id: 'high-priestess', number: 2, arcana: 'major', nameKo: '여사제', nameEn: 'The High Priestess', symbol: '☽',
     keywords: ['직관', '내면', '기다림'],
     reversedKeywords: ['감정 억압', '혼란', '숨김'],
     reversedEssence: '내면의 목소리를 외면하거나, 드러내지 않은 마음이 쌓여 판단이 흐려진 상태를 뜻해요.',
@@ -49,7 +50,7 @@ export const CARDS: TarotCard[] = [
     actions: ['이 고민을 떠올릴 때 드는 느낌을 세 단어로 적어 보기', '결정을 하루만 미루고 다시 읽어 보기'],
   },
   {
-    id: 'empress', number: 3, nameKo: '여황제', nameEn: 'The Empress', symbol: '❀',
+    id: 'empress', number: 3, arcana: 'major', nameKo: '여황제', nameEn: 'The Empress', symbol: '❀',
     keywords: ['풍요', '돌봄', '성장'],
     reversedKeywords: ['의존', '소진', '방치'],
     reversedEssence: '남을 돌보느라 자신을 돌보지 못하거나, 지나친 보살핌이 오히려 성장을 막는 상태를 뜻해요.',
@@ -62,7 +63,7 @@ export const CARDS: TarotCard[] = [
     actions: ['나를 편안하게 하는 일 하나를 이번 주 일정에 넣기', '고민과 관련된 사람에게 따뜻한 말 한마디 건네기'],
   },
   {
-    id: 'emperor', number: 4, nameKo: '황제', nameEn: 'The Emperor', symbol: '♛',
+    id: 'emperor', number: 4, arcana: 'major', nameKo: '황제', nameEn: 'The Emperor', symbol: '♛',
     keywords: ['구조', '책임', '안정'],
     reversedKeywords: ['고집', '지배', '무질서'],
     reversedEssence: '기준이 너무 굳어 융통성을 잃었거나, 반대로 기준이 없어 흔들리는 상태를 뜻해요.',
@@ -75,7 +76,7 @@ export const CARDS: TarotCard[] = [
     actions: ['이번 선택에서 절대 양보하지 않을 기준 한 가지 적기', '할 일을 중요도 순으로 세 개만 고르기'],
   },
   {
-    id: 'hierophant', number: 5, nameKo: '교황', nameEn: 'The Hierophant', symbol: '⚷',
+    id: 'hierophant', number: 5, arcana: 'major', nameKo: '교황', nameEn: 'The Hierophant', symbol: '⚷',
     keywords: ['전통', '조언', '배움'],
     reversedKeywords: ['반발', '형식주의', '조언 불신'],
     reversedEssence: '정해진 방식에 갑갑함을 느끼거나, 남의 조언을 듣지 않고 자기 방식만 고집하는 상태를 뜻해요.',
@@ -88,7 +89,7 @@ export const CARDS: TarotCard[] = [
     actions: ['이 고민을 이야기할 만한 사람 한 명 떠올리고 연락하기', '비슷한 상황을 다룬 글이나 사례 하나 찾아 읽기'],
   },
   {
-    id: 'lovers', number: 6, nameKo: '연인', nameEn: 'The Lovers', symbol: '♡',
+    id: 'lovers', number: 6, arcana: 'major', nameKo: '연인', nameEn: 'The Lovers', symbol: '♡',
     keywords: ['관계', '선택', '가치'],
     reversedKeywords: ['우유부단', '가치 충돌', '어긋남'],
     reversedEssence: '마음과 행동이 어긋나거나, 관계 안에서 서로의 가치가 맞지 않아 결정을 미루는 상태를 뜻해요.',
@@ -101,7 +102,7 @@ export const CARDS: TarotCard[] = [
     actions: ['선택지마다 "이걸 고르면 지키는 것"을 한 줄씩 적기', '마음이 더 기우는 쪽을 누군가에게 말해 보기'],
   },
   {
-    id: 'chariot', number: 7, nameKo: '전차', nameEn: 'The Chariot', symbol: '➤',
+    id: 'chariot', number: 7, arcana: 'major', nameKo: '전차', nameEn: 'The Chariot', symbol: '➤',
     keywords: ['추진', '의지', '집중'],
     reversedKeywords: ['통제 불능', '집중 분산', '무리함'],
     reversedEssence: '힘은 있는데 방향을 잃었거나, 너무 밀어붙여 스스로를 지치게 하는 상태를 뜻해요.',
@@ -114,7 +115,7 @@ export const CARDS: TarotCard[] = [
     actions: ['이번 주에 집중할 목표를 한 문장으로 적어 보이는 곳에 두기', '방해가 되는 일 하나를 잠시 멈추기'],
   },
   {
-    id: 'strength', number: 8, nameKo: '힘', nameEn: 'Strength', symbol: '♾',
+    id: 'strength', number: 8, arcana: 'major', nameKo: '힘', nameEn: 'Strength', symbol: '♾',
     keywords: ['인내', '온화함', '용기'],
     reversedKeywords: ['불안', '억지', '자신감 저하'],
     reversedEssence: '두려움에 눌려 스스로를 믿지 못하거나, 부드러움 대신 억지로 누르려 하는 상태를 뜻해요.',
@@ -127,7 +128,7 @@ export const CARDS: TarotCard[] = [
     actions: ['불안할 때 스스로에게 해 줄 말 한 문장 준비하기', '어려운 대화나 일을 작은 단계로 나눠 첫 단계만 하기'],
   },
   {
-    id: 'hermit', number: 9, nameKo: '은둔자', nameEn: 'The Hermit', symbol: '🏮',
+    id: 'hermit', number: 9, arcana: 'major', nameKo: '은둔자', nameEn: 'The Hermit', symbol: '🏮',
     keywords: ['성찰', '고독', '탐구'],
     reversedKeywords: ['외로움', '단절', '지나친 은둔'],
     reversedEssence: '혼자 생각하는 시간이 길어져 고립되거나, 성찰을 핑계로 결정을 계속 미루는 상태를 뜻해요.',
@@ -140,7 +141,7 @@ export const CARDS: TarotCard[] = [
     actions: ['30분 동안 방해 없이 고민을 글로 적어 보기', '"내가 정말 원하는 것"을 한 문장으로 요약하기'],
   },
   {
-    id: 'wheel-of-fortune', number: 10, nameKo: '운명의 수레바퀴', nameEn: 'Wheel of Fortune', symbol: '☸',
+    id: 'wheel-of-fortune', number: 10, arcana: 'major', nameKo: '운명의 수레바퀴', nameEn: 'Wheel of Fortune', symbol: '☸',
     keywords: ['변화', '흐름', '전환점'],
     reversedKeywords: ['불운감', '반복', '통제 집착'],
     reversedEssence: '흐름을 거스르며 애쓰거나, 같은 상황이 반복된다고 느끼며 무력해진 상태를 뜻해요.',
@@ -153,7 +154,7 @@ export const CARDS: TarotCard[] = [
     actions: ['내가 바꿀 수 있는 것과 없는 것을 두 칸으로 나눠 적기', '바꿀 수 있는 것 하나에 오늘 손대기'],
   },
   {
-    id: 'justice', number: 11, nameKo: '정의', nameEn: 'Justice', symbol: '⚖',
+    id: 'justice', number: 11, arcana: 'major', nameKo: '정의', nameEn: 'Justice', symbol: '⚖',
     keywords: ['균형', '공정', '책임'],
     reversedKeywords: ['편향', '자기 합리화', '불균형'],
     reversedEssence: '한쪽으로 치우친 판단을 하거나, 결과를 스스로 책임지지 않으려는 상태를 뜻해요.',
@@ -166,7 +167,7 @@ export const CARDS: TarotCard[] = [
     actions: ['선택지별 장점과 단점을 같은 개수로 적어 보기', '상대 입장에서 이 상황을 한 줄로 설명해 보기'],
   },
   {
-    id: 'hanged-man', number: 12, nameKo: '매달린 사람', nameEn: 'The Hanged Man', symbol: '⟠',
+    id: 'hanged-man', number: 12, arcana: 'major', nameKo: '매달린 사람', nameEn: 'The Hanged Man', symbol: '⟠',
     keywords: ['멈춤', '관점 전환', '내려놓기'],
     reversedKeywords: ['답답함', '집착', '시간 낭비'],
     reversedEssence: '멈춤이 길어져 답답하거나, 내려놓아야 할 것을 붙든 채 제자리에 머무는 상태를 뜻해요.',
@@ -179,7 +180,7 @@ export const CARDS: TarotCard[] = [
     actions: ['이 고민에서 내려놓아도 되는 기대 하나 적기', '반대 입장이라면 어떻게 볼지 한 줄로 써 보기'],
   },
   {
-    id: 'death', number: 13, nameKo: '죽음', nameEn: 'Death', symbol: '✕',
+    id: 'death', number: 13, arcana: 'major', nameKo: '죽음', nameEn: 'Death', symbol: '✕',
     keywords: ['끝맺음', '전환', '새 시작'],
     reversedKeywords: ['정체', '집착', '두려움'],
     reversedEssence: '끝나야 할 것을 붙잡고 있거나, 변화가 두려워 다음 단계로 넘어가지 못하는 상태를 뜻해요.',
@@ -192,7 +193,7 @@ export const CARDS: TarotCard[] = [
     actions: ['이제 놓아도 되는 습관·역할·기대 하나 정하기', '마무리를 위한 첫 행동을 작게 정하기'],
   },
   {
-    id: 'temperance', number: 14, nameKo: '절제', nameEn: 'Temperance', symbol: '⚱',
+    id: 'temperance', number: 14, arcana: 'major', nameKo: '절제', nameEn: 'Temperance', symbol: '⚱',
     keywords: ['조화', '조율', '균형'],
     reversedKeywords: ['과잉', '조급함', '부조화'],
     reversedEssence: '한쪽으로 치우쳐 균형을 잃었거나, 서둘러 맞추려다 오히려 어긋나는 상태를 뜻해요.',
@@ -205,7 +206,7 @@ export const CARDS: TarotCard[] = [
     actions: ['두 선택지를 섞은 절충안 하나 만들어 보기', '이번 주에는 한 단계만 조절해 보기'],
   },
   {
-    id: 'devil', number: 15, nameKo: '악마', nameEn: 'The Devil', symbol: '⛓',
+    id: 'devil', number: 15, arcana: 'major', nameKo: '악마', nameEn: 'The Devil', symbol: '⛓',
     keywords: ['얽매임', '습관', '욕구'],
     reversedKeywords: ['벗어남', '깨달음', '느슨해짐'],
     reversedEssence: '얽매였던 것을 알아차리고 벗어나기 시작하거나, 아직 완전히 놓지 못해 흔들리는 상태를 뜻해요.',
@@ -218,7 +219,7 @@ export const CARDS: TarotCard[] = [
     actions: ['나를 붙잡고 있다고 느끼는 것 하나를 솔직하게 적기', '그것과 거리를 두는 작은 규칙 하나 정하기'],
   },
   {
-    id: 'tower', number: 16, nameKo: '탑', nameEn: 'The Tower', symbol: '⚡',
+    id: 'tower', number: 16, arcana: 'major', nameKo: '탑', nameEn: 'The Tower', symbol: '⚡',
     keywords: ['급변', '무너짐', '해방'],
     reversedKeywords: ['버팀', '불안', '늦춰진 변화'],
     reversedEssence: '무너져야 할 것을 억지로 버티고 있거나, 큰 변화를 두려워해 작은 균열을 못 본 척하는 상태를 뜻해요.',
@@ -231,7 +232,7 @@ export const CARDS: TarotCard[] = [
     actions: ['이번 일로 더 이상 지키지 않아도 되는 것 하나 적기', '새로 세우고 싶은 것 한 가지 정하기'],
   },
   {
-    id: 'star', number: 17, nameKo: '별', nameEn: 'The Star', symbol: '★',
+    id: 'star', number: 17, arcana: 'major', nameKo: '별', nameEn: 'The Star', symbol: '★',
     keywords: ['희망', '회복', '방향'],
     reversedKeywords: ['낙담', '고갈', '실망'],
     reversedEssence: '회복의 기미를 보지 못하고 지쳤거나, 스스로에 대한 믿음이 약해진 상태를 뜻해요.',
@@ -244,7 +245,7 @@ export const CARDS: TarotCard[] = [
     actions: ['최근에 조금이라도 나아진 점 하나 적기', '나를 회복시키는 일을 하루 10분 하기'],
   },
   {
-    id: 'moon', number: 18, nameKo: '달', nameEn: 'The Moon', symbol: '☾',
+    id: 'moon', number: 18, arcana: 'major', nameKo: '달', nameEn: 'The Moon', symbol: '☾',
     keywords: ['불안', '모호함', '상상'],
     reversedKeywords: ['안개 걷힘', '두려움 직시', '착각'],
     reversedEssence: '막연한 불안이 서서히 걷히기 시작하거나, 아직 착각과 사실을 구분하지 못해 헤매는 상태를 뜻해요.',
@@ -257,7 +258,7 @@ export const CARDS: TarotCard[] = [
     actions: ['걱정 중 사실로 확인된 것과 추측인 것을 나눠 적기', '추측 하나를 직접 확인할 방법 정하기'],
   },
   {
-    id: 'sun', number: 19, nameKo: '태양', nameEn: 'The Sun', symbol: '☉',
+    id: 'sun', number: 19, arcana: 'major', nameKo: '태양', nameEn: 'The Sun', symbol: '☉',
     keywords: ['명료함', '기쁨', '자신감'],
     reversedKeywords: ['일시적 침체', '과장', '허세'],
     reversedEssence: '분명히 좋은 것이 있는데 알아보지 못하거나, 밝은 면만 보느라 현실을 놓치는 상태를 뜻해요.',
@@ -270,7 +271,7 @@ export const CARDS: TarotCard[] = [
     actions: ['이 고민에서 이미 잘하고 있는 것 하나 적기', '하고 싶은 말을 돌려 말하지 않고 한 문장으로 준비하기'],
   },
   {
-    id: 'judgement', number: 20, nameKo: '심판', nameEn: 'Judgement', symbol: '♪',
+    id: 'judgement', number: 20, arcana: 'major', nameKo: '심판', nameEn: 'Judgement', symbol: '♪',
     keywords: ['깨달음', '부름', '결단'],
     reversedKeywords: ['후회', '자기 비난', '미룸'],
     reversedEssence: '지난 일을 자책하며 앞으로 나아가지 못하거나, 내려야 할 결단을 계속 미루는 상태를 뜻해요.',
@@ -283,7 +284,7 @@ export const CARDS: TarotCard[] = [
     actions: ['지난 경험에서 배운 것 한 가지 적기', '"이제 그만 미루고 싶은 결정"을 한 줄로 쓰기'],
   },
   {
-    id: 'world', number: 21, nameKo: '세계', nameEn: 'The World', symbol: '◎',
+    id: 'world', number: 21, arcana: 'major', nameKo: '세계', nameEn: 'The World', symbol: '◎',
     keywords: ['완성', '통합', '순환'],
     reversedKeywords: ['마무리 부족', '지연', '반복'],
     reversedEssence: '거의 다 왔는데 마지막 매듭을 짓지 못하거나, 한 단계를 끝내지 않은 채 맴도는 상태를 뜻해요.',
@@ -297,8 +298,22 @@ export const CARDS: TarotCard[] = [
   },
 ];
 
+/** 전체 덱 78장 = 메이저 22 + 마이너 56 (src/data/minorCards.ts) */
+export const CARDS: TarotCard[] = [...MAJOR_CARDS, ...MINOR_CARDS];
+
 export const CARD_BY_ID: Record<string, TarotCard> = Object.fromEntries(CARDS.map((c) => [c.id, c]));
 
 export function getCard(id: string): TarotCard | undefined {
   return CARD_BY_ID[id];
+}
+
+/** 접근성 라벨·짧은 표기: 메이저 "16번 탑", 마이너 "소드 나이트" */
+export function getCardLabel(card: Pick<TarotCard, 'arcana' | 'number' | 'nameKo'>): string {
+  return card.arcana === 'minor' ? card.nameKo : `${card.number}번 ${card.nameKo}`;
+}
+
+/** 카드 공개 화면의 보조 줄: 메이저 "16번 · The Tower", 마이너 "소드 · Knight of Swords" */
+export function getCardCaption(card: Pick<TarotCard, 'arcana' | 'number' | 'nameEn' | 'suit'>): string {
+  if (card.arcana === 'minor' && card.suit) return `${SUIT_KO[card.suit]} · ${card.nameEn}`;
+  return `${card.number}번 · ${card.nameEn}`;
 }

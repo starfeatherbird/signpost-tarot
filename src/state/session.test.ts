@@ -184,6 +184,6 @@ describe('session persistence', () => {
     storage.setItem(STORAGE_KEYS.draft, '{"step":"cards","deck":["fool","fool"]}');
     const restored = loadSession();
     expect(restored.step).toBe('plan');
-    expect(new Set(restored.deck).size).toBe(22);
+    expect(new Set(restored.deck).size).toBe(78);
   });
 });

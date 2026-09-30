@@ -107,6 +107,10 @@ export type ReadingKind = ReadingRequest['kind'];
 export interface CardData {
   id: string;
   number: number;
+  /** 예전 데이터에는 없을 수 있음 → major 로 취급 */
+  arcana?: 'major' | 'minor';
+  suit?: 'wands' | 'cups' | 'swords' | 'pentacles';
+  rank?: number;
   nameKo: string;
   nameEn: string;
   keywords: string[];

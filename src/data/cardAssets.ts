@@ -30,9 +30,16 @@ export function normalizeAssetName(fileName: string): string {
   return fileName.replace(/\.png$/i, '').trim().toLowerCase().replace(/\s+/g, '-');
 }
 
-/** 명판에 쓸 영문 제목: "The Tower" → "TOWER" */
+/** 명판에 쓸 영문 제목: "The Tower" → "TOWER", "Knight of Pentacles" → "KNIGHT OF PENTACLES" */
 export function getCardTitle(card: Pick<TarotCard, 'nameEn'>): string {
   return card.nameEn.replace(/^the\s+/i, '').toUpperCase();
+}
+
+/** 명판 폭에 맞는 글자 크기 배율. 16자("WHEEL OF FORTUNE")까지는 44pt 그대로, 더 길면 줄입니다. */
+export const TITLE_FIT_CHARS = 16;
+export function getTitleScale(card: Pick<TarotCard, 'nameEn'>): number {
+  const len = getCardTitle(card).length;
+  return len <= TITLE_FIT_CHARS ? 1 : Number((TITLE_FIT_CHARS / len).toFixed(3));
 }
 
 /**

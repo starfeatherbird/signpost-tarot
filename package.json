@@ -12,7 +12,7 @@
     "preview": "vite preview",
     "typecheck": "tsc -b",
     "test": "vitest run",
-    "server:data": "node scripts/export-cards.mjs",
+    "server:data": "vite-node scripts/export-cards.mjs",
     "server:deploy": "npm run server:data && npx supabase functions deploy tarot-reading --project-ref fvtarvatvqcozsrfetbf",
     "server:secrets": "npx supabase secrets set --project-ref fvtarvatvqcozsrfetbf",
     "server:usage": "node --no-deprecation scripts/server-usage.mjs",

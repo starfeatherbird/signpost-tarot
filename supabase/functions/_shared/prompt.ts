@@ -14,7 +14,9 @@ import {
  * 상담 프롬프트. 모델과 무관하게 유지되며, 문구를 바꾸면 PROMPT_VERSION 을 올립니다.
  * (기록에 버전이 남아 "어떤 규칙으로 만든 결과인지" 추적할 수 있습니다.)
  */
-export const PROMPT_VERSION = 'counsel-v5';
+export const PROMPT_VERSION = 'counsel-v6';
+
+const SUIT_KO: Record<string, string> = { wands: '완드', cups: '컵', swords: '소드', pentacles: '펜타클' };
 
 /**
  * "원하는 도움" (상황 확인 첫 질문, questionId 'help'). 문구는 앱의 src/config/helpModes.ts 와 같아야 합니다.
@@ -78,6 +80,7 @@ export const SYSTEM_PROMPT = `당신은 한국어 타로 상담 앱의 상담사
 - 타로는 상징과 관점을 제공할 뿐입니다. 실제 조언은 사용자가 적은 상황·우선순위·제약을 근거로 합니다.
 - 미래, 타인의 속마음, 확인되지 않은 사실을 단정하지 않습니다. "~일 수 있어요", "~해 보세요" 로 표현합니다.
 - 카드 이름은 반드시 제공된 세 장만 언급하고, 다른 카드를 끌어오지 않습니다. 카드 의미는 제공된 기본 의미와 자리별 관점을 바탕으로 합니다.
+- 덱은 78장입니다. 메이저 아르카나는 삶의 큰 흐름과 전환을, 마이너 아르카나는 일상의 구체적인 장면을 보여 줍니다. 마이너의 수트는 완드=의지·일·열정, 컵=감정·관계, 소드=생각·말·갈등, 펜타클=현실·돈·몸·일상입니다. 마이너 카드가 나오면 그 수트의 영역에서 구체적으로 풀고, 궁정 카드(페이지·나이트·퀸·킹)는 사람보다 "태도"로 읽습니다. 마이너 카드를 "사소한 카드"라고 부르지 않습니다.
 - 카드에는 정방향/역방향이 있습니다. 역방향은 "나쁜 카드"가 아니라 그 카드의 힘이 막혀 있거나, 지나치거나, 안으로 향한 상태로 읽습니다. 역방향 카드는 제공된 역방향 의미를 쓰고, 이름 뒤에 "(역방향)"을 붙여 부릅니다. 정방향과 역방향이 섞였다면 그 대비를 해석에 살립니다.
 - 사용자가 적지 않은 상황을 지어내지 않습니다. 정보가 부족하면 그 점을 부드럽게 밝히고 일반적인 관점으로 답합니다.
 - 전문가·가까운 사람의 도움을 권하는 문장은 자해·자살·학대·위기 신호, 지속되는 심한 불안이나 우울, 의료·법률·큰 재정 결정이 걸린 경우에만 넣습니다. 평범한 관계·진로·일상 고민에는 넣지 않습니다.
@@ -98,8 +101,9 @@ function describeCards(cards: DrawnCard[]): string {
       const card = getCardData(drawn.cardId);
       if (!card) return `- ${POSITION_TITLES[drawn.positionId]}: (알 수 없는 카드 ${drawn.cardId})`;
       const reversed = !!drawn.reversed;
+      const kind = card.arcana === 'minor' ? `마이너 아르카나 ${SUIT_KO[card.suit ?? 'wands']} 수트` : `메이저 아르카나 ${card.number}번`;
       return [
-        `- 자리 "${POSITION_TITLES[drawn.positionId]}" (positionId: ${drawn.positionId}): 「${card.nameKo}${reversed ? '(역방향)' : ''}」(${card.nameEn}, ${card.number}번, ${reversed ? '역방향' : '정방향'})`,
+        `- 자리 "${POSITION_TITLES[drawn.positionId]}" (positionId: ${drawn.positionId}): 「${card.nameKo}${reversed ? '(역방향)' : ''}」(${card.nameEn}, ${kind}, ${reversed ? '역방향' : '정방향'})`,
         reversed
           ? `  역방향 의미: ${card.reversedEssence} (정방향이었다면: ${card.essence})`
           : `  기본 의미: ${card.essence}`,

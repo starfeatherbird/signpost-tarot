@@ -88,6 +88,7 @@ add('A04-deep-questions', 'dark', { draft: { ...withAnswers, plan: 'deep', step:
 add('A05-deep-intro', 'dark', { draft: { ...base, plan: 'deep', step: 'deepIntro' } });
 add('A06-cards', 'dark', { draft: picked });
 add('A07-reveal', 'dark', { draft: revealed });
+add('A07b-reveal-minor', 'dark', { draft: { ...revealed, selected: ['knight-of-pentacles', 'ace-of-cups', 'ten-of-swords'], deck: [...ids, 'knight-of-pentacles', 'ace-of-cups', 'ten-of-swords'], reversedIds: ['ace-of-cups'] } }); // 마이너 카드·긴 제목 확인
 add('A08-loading', 'dark', { draft: { ...revealed, plan: 'deep', step: 'analyzing' } }); // 실제 분석이 시작되지만 캡처는 대기 화면
 add('A09-result', 'dark', { draft: result });
 add('A10-deep-result', 'dark', { draft: deepRes });

@@ -3,7 +3,7 @@ import { CardBack } from '../../components/CardBack';
 import { CardFace } from '../../components/CardFace';
 import { ConcernBox } from '../../components/ConcernBox';
 import { FlowTop } from '../../components/FlowTop';
-import { CARDS, getCard } from '../../data/cards';
+import { CARDS, getCard, getCardCaption } from '../../data/cards';
 import { CARDS_TO_PICK, POSITIONS } from '../../data/positions';
 import type { SessionAction, SessionState } from '../../state/session';
 
@@ -66,7 +66,7 @@ export function CardsStep({ state, dispatch, onAnalyze, onCancel }: Props) {
         <span className="caption">{CARDS.length}장 · 정·역방향</span>
       </div>
 
-      <div className="card-grid" role="group" aria-label="뒤집힌 카드 22장">
+      <div className="card-grid" role="group" aria-label={`뒤집힌 카드 ${state.deck.length}장`}>
         {state.deck.map((cardId, i) => {
           const order = state.selected.indexOf(cardId);
           const isSelected = order >= 0;
@@ -130,7 +130,7 @@ function RevealedCards({ state }: { state: SessionState }) {
               </div>
             </div>
             <span className="card-name">{card.nameKo}{reversed && <span className="tag tag--outline" style={{ marginLeft: 6, verticalAlign: 'middle' }}>역방향</span>}</span>
-            <span className="card-number">{card.number}번 · {card.nameEn}</span>
+            <span className="card-number">{getCardCaption(card)}</span>
           </div>
         );
       })}
