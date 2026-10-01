@@ -1,5 +1,5 @@
 {
-  "_설명": "상담문 품질 비교용 골든 세트. 프롬프트나 모델을 바꿀 때 같은 입력으로 결과를 뽑아 전후를 비교합니다. 카드는 고정이라 결과 차이가 입력이 아닌 프롬프트·모델 때문임을 알 수 있어요. 자유롭게 고쳐 쓰세요. 카드 ID 뒤에 !를 붙이면 역방향입니다 (예: \"tower!\"). answers.help 는 원하는 도움(마음을 먼저 정리하기 / 선택지를 비교하기 / 오늘 할 일 정하기)이며 없으면 기본 균형.",
+  "_설명": "상담문 품질 비교용 골든 세트. 프롬프트나 모델을 바꿀 때 같은 입력으로 결과를 뽑아 전후를 비교합니다. 카드는 고정이라 결과 차이가 입력이 아닌 프롬프트·모델 때문임을 알 수 있어요. 자유롭게 고쳐 쓰세요. 카드 ID 뒤에 !를 붙이면 역방향입니다 (예: \"tower!\"). answers.help 는 원하는 도움(마음을 먼저 정리하기 / 선택지를 비교하기 / 오늘 할 일 정하기)이며 없으면 기본 균형. 마이너 카드 id 는 ace-of-wands, two-of-cups 처럼 그림 파일명 규칙을 따릅니다 (minor-* 케이스).",
   "cases": [
     {
       "id": "friend-hurt",
@@ -197,6 +197,67 @@
         "judgement"
       ],
       "deep": null
+    },
+    {
+      "id": "minor-extra-work",
+      "title": "추가 업무 거절 (완드7·소드2역·소드퀸)",
+      "concern": "팀장이 자꾸 추가 업무를 맡겨요. 거절하면 평가에 영향이 있을까 봐 걱정되는데, 지금도 야근이 잦아요.",
+      "answers": {
+        "help": "선택지를 비교하기",
+        "priority": "안정·현실",
+        "constraint": "주변 사람의 반응"
+      },
+      "cards": [
+        "seven-of-wands",
+        "two-of-swords!",
+        "queen-of-swords"
+      ],
+      "deep": {
+        "options": [
+          "이번 일은 받고 다음부터 조율하기",
+          "지금 바로 업무 범위 조정을 요청하기"
+        ],
+        "criteria": "장기적인 만족",
+        "constraints": "함께 결정할 사람이 있어요"
+      }
+    },
+    {
+      "id": "minor-relationship-quiet",
+      "title": "연인과 대화가 줄어듦 (컵4·컵2역·컵6)",
+      "concern": "오래 만난 연인과 요즘 대화가 많이 줄었어요. 권태기인지 마음이 식은 건지 모르겠어서 먼저 말을 꺼내기가 겁나요.",
+      "answers": {
+        "help": "마음을 먼저 정리하기",
+        "priority": "관계",
+        "constraint": "실패에 대한 걱정"
+      },
+      "cards": [
+        "four-of-cups",
+        "two-of-cups!",
+        "six-of-cups"
+      ]
+    },
+    {
+      "id": "minor-shop-savings",
+      "title": "가게 창업 vs 더 모으기 (펜타클A·펜타클4역·펜타클나이트)",
+      "concern": "모아 둔 돈으로 작은 가게를 열지, 1년 더 모으고 시작할지 고민이에요. 지금 시작하면 여유 자금이 거의 없어요.",
+      "answers": {
+        "help": "오늘 할 일 정하기",
+        "priority": "안정·현실",
+        "constraint": "비용·현실적 부담"
+      },
+      "cards": [
+        "ace-of-pentacles",
+        "four-of-pentacles!",
+        "knight-of-pentacles"
+      ],
+      "deep": {
+        "options": [
+          "올해 안에 작게 시작하기",
+          "1년 더 모으고 시작하기"
+        ],
+        "criteria": "후회를 줄이는 것",
+        "constraints": "비용 한도가 있어요"
+      }
     }
   ]
 }

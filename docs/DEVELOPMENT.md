@@ -56,7 +56,7 @@ npm run build      # dist/ 생성 (정적 파일, 서버 불필요)
 - `src/data/minorCards.ts`: 수트별 14장을 `build()` 로 만듭니다. id 는 그림 파일명 규칙(`ACE OF WANDS.png` → `ace-of-wands`), `number` 는 덱 고유 번호 22~77, `arcana: 'minor'`, `suit`, `rank`(1 에이스 … 11 페이지 12 나이트 13 퀸 14 킹). 내용(의미·역방향·자리별 관점·행동)은 초안이므로 실사용하며 다듬습니다.
 - **카드 선택은 "덱에서 뽑기"(2026-10-01)**: 섞인 덱 더미를 누르면(`drawTop`) 덱 맨 위 카드가 다음 자리에 뒷면으로 놓입니다. 뽑은 카드는 되돌리지 않고, 펼치기 전에는 "다시 섞기"(`reshuffle`: 새 덱 + 새 역방향)로 처음부터 할 수 있습니다. 공개는 다음 화면에서 뒤집기. 예전 22장 그리드 선택 방식(`toggleCard`, `.card-grid` CSS)은 리듀서·스타일에 남아 있지만 화면에서는 쓰지 않습니다. 덱 검증(`isValidDeck`)은 카드 수가 늘기 전(22장) 보관된 세션도 통과시킵니다.
 - 명판 제목이 16자를 넘으면(`KNIGHT OF PENTACLES`) `getTitleScale` 로 글자 크기를 비례 축소합니다(`--title-scale`).
-- 서버 프롬프트 counsel-v6: 78장 안내(수트 의미, 궁정 카드는 태도로 읽기). `npm run server:data` 는 vite-node 로 실행합니다(cards.ts 가 .ts 상대 import 를 쓰므로 Node 단독 실행 불가).
+- 서버 프롬프트 counsel-v6: 78장 안내(수트 의미, 궁정 카드는 태도로 읽기). 골든 세트에 마이너 케이스 3건(`minor-*`: 추가 업무 거절·연인 대화 감소·가게 창업, 각각 도움 모드 다름) 추가. `npm run golden -- --only minor-` 로 마이너만 실행. `npm run server:data` 는 vite-node 로 실행합니다(cards.ts 가 .ts 상대 import 를 쓰므로 Node 단독 실행 불가).
 
 ## 무료 기본 상담 / 유료 심층 상담
 
