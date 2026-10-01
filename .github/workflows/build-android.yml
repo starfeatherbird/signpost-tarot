@@ -1,0 +1,106 @@
+name: Build Android
+
+# Play 업로드용 AAB + 직접 설치용 APK 를 만듭니다. 웹(GitHub Pages) 배포는 deploy.yml 이 따로 합니다.
+# - main push: Actions Artifacts(60일)에 올림
+# - v* 태그 push: GitHub Release 에 첨부 (예: git tag v1.0.0 && git push origin v1.0.0)
+# 서명 키는 APP/이정표-서명키/README.txt 의 시크릿 4개로 복원합니다.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    tags: ['v*']
+    paths:
+      - 'android/**'
+      - 'src/**'
+      - 'public/**'
+      - 'index.html'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'vite.config.ts'
+      - 'capacitor.config.ts'
+      - '.github/workflows/build-android.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check keystore secrets
+        run: |
+          if [ -z "$KEYSTORE_B64" ] || [ -z "$KEYSTORE_PASSWORD" ]; then
+            echo "::error::KEYSTORE_B64 / KEYSTORE_PASSWORD 시크릿이 없습니다. APP/이정표-서명키/README.txt 를 보고 등록하세요."
+            exit 1
+          fi
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # 네이티브 빌드는 루트 경로('/')로 — VITE_BASE_PATH 를 주지 않습니다 (Pages 와 다름)
+      - name: Build web app
+        run: npm run build
+
+      - name: Capacitor sync
+        run: npx cap sync android
+
+      - name: Restore keystore
+        run: echo "$KEYSTORE_B64" | base64 -d > android/app/upload.keystore
+
+      - name: Build release APK + AAB
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease bundleRelease --no-daemon
+
+      - name: Remove keystore
+        if: always()
+        run: rm -f android/app/upload.keystore
+
+      - name: Collect artifacts
+        run: |
+          VERSION=$(grep versionName android/app/build.gradle | tr -dc '0-9.')
+          cp android/app/build/outputs/apk/release/app-release.apk "signpost_v${VERSION}.apk"
+          cp android/app/build/outputs/bundle/release/app-release.aab "signpost_v${VERSION}.aab"
+
+      - name: Upload artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: signpost-android
+          path: |
+            signpost_v*.apk
+            signpost_v*.aab
+          retention-days: 60
+
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" signpost_v*.apk signpost_v*.aab \
+            --title "$GITHUB_REF_NAME" \
+            --generate-notes

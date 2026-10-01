@@ -1,5 +1,8 @@
+import { App as CapApp } from '@capacitor/app';
+import { Browser } from '@capacitor/browser';
 import type { Session } from '@supabase/supabase-js';
 import { useCallback, useEffect, useState } from 'react';
+import { isNativeApp } from '../services/native';
 import { authRedirectUrl, supabase } from '../services/supabase';
 
 export interface AuthUser {
@@ -17,8 +20,8 @@ function toUser(session: Session | null): AuthUser | null {
 
 /**
  * 로그인 상태. 로그인은 선택이며, 하지 않아도 기기 저장으로 계속 쓸 수 있습니다.
- * - Google: OAuth 로 이동했다가 돌아옵니다.
- * - 이메일: 비밀번호 없이 메일의 링크로 로그인합니다.
+ * - Google: 웹은 같은 창에서 OAuth 로 이동했다가 돌아오고, 앱은 시스템 브라우저를 열었다가 앱 스킴으로 돌아옵니다.
+ * - 이메일: 비밀번호 없이 메일의 링크로 로그인합니다. 앱에서는 링크가 앱을 엽니다.
  */
 export function useAuth() {
   const available = !!supabase;
@@ -42,10 +45,35 @@ export function useAuth() {
     };
   }, []);
 
+  // 네이티브: 앱 스킴으로 돌아온 주소의 code 를 세션으로 바꿉니다.
+  useEffect(() => {
+    if (!supabase || !isNativeApp) return;
+    const client = supabase;
+    const handle = CapApp.addListener('appUrlOpen', async ({ url }) => {
+      try {
+        const code = new URL(url).searchParams.get('code');
+        if (!code) return;
+        await Browser.close().catch(() => {});
+        const { error } = await client.auth.exchangeCodeForSession(code);
+        if (error) console.warn('[auth] code exchange failed', error.message);
+      } catch (err) {
+        console.warn('[auth] appUrlOpen', err);
+      }
+    });
+    return () => {
+      handle.then((h) => h.remove());
+    };
+  }, []);
+
   const signInWithGoogle = useCallback(async (): Promise<string | null> => {
     if (!supabase) return '로그인을 사용할 수 없어요.';
-    const { error } = await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: authRedirectUrl() } });
-    return error ? error.message : null;
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: authRedirectUrl(), skipBrowserRedirect: isNativeApp },
+    });
+    if (error) return error.message;
+    if (isNativeApp && data.url) await Browser.open({ url: data.url });
+    return null;
   }, []);
 
   const signInWithEmail = useCallback(async (email: string): Promise<string | null> => {

@@ -142,6 +142,15 @@ npm run build      # dist/ 생성 (정적 파일, 서버 불필요)
 - 분석 호출은 로그인 토큰을 붙여(`getAccessToken`) 서버가 사람 기준으로 횟수를 세게 합니다. 서버 쪽 설정은 `supabase/README.md` 의 "로그인과 기록 동기화".
 - 로그인 뒤 돌아올 주소는 `authRedirectUrl()`(origin + BASE_URL). Supabase Redirect URLs 와 같아야 합니다.
 
+## 안드로이드 앱 (Capacitor, 2026-10-01)
+
+- `capacitor.config.ts`: appId `com.solamemento.signpost`, webDir `dist`. 안드로이드 프로젝트는 `android/` (git 포함, 빌드 산출물은 android/.gitignore 로 제외).
+- 빌드는 GitHub Actions `build-android.yml`: `npm run build`(루트 경로) → `cap sync` → `gradlew assembleRelease bundleRelease`. main push 마다 Artifacts, `v*` 태그면 Release 에 APK+AAB. 서명 키는 시크릿 4개(`APP/이정표-서명키/README.txt`). 이 PC 에는 JDK·Android Studio 가 없어 로컬 빌드는 하지 않습니다.
+- 아이콘·스플래시: `assets/`(1024 아이콘·적응형 전경/배경·2732 스플래시) → `npx @capacitor/assets generate --android` 로 `android/app/src/main/res` 생성.
+- 네이티브 분기(`services/native.ts` 의 `isNativeApp`): 서비스 워커 등록 안 함(main.tsx), 인증은 PKCE + 앱 스킴 `com.solamemento.signpost://auth`(AndroidManifest intent-filter, `useAuth` 가 `appUrlOpen` 의 code 를 세션으로 교환, Google 은 시스템 브라우저로 열고 돌아옴), 뒤로 가기는 다른 탭→상담실→앱 최소화(App.tsx).
+- Supabase Redirect URLs 에 `com.solamemento.signpost://auth` 를 추가해야 앱 로그인이 됩니다.
+- 다음 단계(예정): AdMob 배너(기록장·내 공간·결과 화면 하단), Play 인앱 결제(심층 리딩 1회 소모성 + 광고 제거 비소모성, RevenueCat 검증).
+
 ## 오프라인 (서비스 워커)
 
 - `vite-plugin-pwa`(vite.config.ts)가 빌드 때 `sw.js` 를 만듭니다. 앱 껍데기(js/css/html/아이콘/매니페스트)는 미리 저장하고, 카드 이미지는 한 번 본 것만(`card-images`), Google Fonts 는 응답을 저장합니다. 매니페스트는 `public/manifest.webmanifest` 를 그대로 씁니다.

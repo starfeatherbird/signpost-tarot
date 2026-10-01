@@ -13,7 +13,7 @@ const base = process.env.VITE_BASE_PATH ?? '/';
  */
 const pwa = VitePWA({
   registerType: 'autoUpdate',
-  injectRegister: 'auto',
+  injectRegister: null, // 등록은 main.tsx 에서 웹일 때만 (네이티브 앱 제외)
   manifest: false,
   workbox: {
     globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'],

@@ -62,7 +62,7 @@ npm run server:secrets -- TAROT_MODELS="anthropic:claude-sonnet-5,gemini:auto,an
 - 표·정책: `supabase/sql/records.sql` (본인 행만 읽고 쓰는 RLS, 삭제는 `deleted_at` 표시). 실행: `npx supabase db query --linked --project-ref fvtarvatvqcozsrfetbf -f supabase/sql/records.sql`
 - 함수는 `Authorization: Bearer <로그인 토큰>` 이면 `auth.getUser` 로 사용자를 확인하고, anon 키면 익명으로 처리합니다.
 - **대시보드에서 직접 할 것** (Authentication):
-  1. URL Configuration → Site URL `https://starfeatherbird.github.io/signpost-tarot/`, Redirect URLs 에 같은 주소와 `http://localhost:5173/` 추가.
+  1. URL Configuration → Site URL `https://starfeatherbird.github.io/signpost-tarot/`, Redirect URLs 에 같은 주소와 `http://localhost:5173/`, 그리고 안드로이드 앱용 `com.solamemento.signpost://auth` 추가.
   2. Providers → Email: 켜기(비밀번호 없이 링크만 쓰므로 "Confirm email" 은 기본값 그대로). 무료 메일 발송은 시간당 몇 통으로 제한되니 시제품 동안만 씁니다.
   3. Providers → Google: Google Cloud Console 에서 OAuth 클라이언트(웹)를 만들고, 승인된 리디렉션 URI 에 `https://fvtarvatvqcozsrfetbf.supabase.co/auth/v1/callback` 을 넣은 뒤 Client ID/Secret 을 Supabase 에 입력.
 - 로그아웃해도 기기의 기록은 남습니다(계정에서 지우려면 로그인 상태에서 삭제).

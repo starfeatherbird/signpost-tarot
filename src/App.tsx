@@ -1,5 +1,7 @@
+import { App as CapApp } from '@capacitor/app';
 import { useEffect, useReducer, useState } from 'react';
 import { BottomNav, type Tab } from './components/BottomNav';
+import { isNativeApp } from './services/native';
 import { APP_NAME } from './config/appConfig';
 import { CounselScreen } from './screens/counsel/CounselScreen';
 import { RecordsScreen } from './screens/records/RecordsScreen';
@@ -23,6 +25,24 @@ export default function App() {
 
   useEffect(() => {
     document.title = APP_NAME;
+  }, []);
+
+  // 안드로이드 뒤로 가기: 다른 탭이면 상담실로, 상담실이면 앱을 뒤로 보냅니다(진행 중인 상담은 임시 보관됨).
+  useEffect(() => {
+    if (!isNativeApp) return;
+    const handle = CapApp.addListener('backButton', () => {
+      setTab((current) => {
+        if (current !== 'counsel') {
+          window.scrollTo({ top: 0 });
+          return 'counsel';
+        }
+        void CapApp.minimizeApp();
+        return current;
+      });
+    });
+    return () => {
+      handle.then((h) => h.remove());
+    };
   }, []);
 
   // 상담실에서 특정 기록을 바로 열 때 사용. 탭을 바꿀 때마다 지워 다음 방문에는 목록부터 보이게 합니다.

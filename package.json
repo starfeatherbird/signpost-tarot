@@ -22,11 +22,17 @@
     "stones": "py -3 scripts/process_stones.py"
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/app": "^8.1.1",
+    "@capacitor/browser": "^8.0.4",
+    "@capacitor/core": "^8.5.2",
     "@supabase/supabase-js": "^2.116.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^8.5.2",
     "@types/node": "^22.20.2",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
