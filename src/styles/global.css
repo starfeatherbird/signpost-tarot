@@ -89,7 +89,13 @@ button {
   width: 100%;
   max-width: var(--content-max-width);
   margin: 0 auto;
-  padding: calc(env(safe-area-inset-top, 0px) + 20px) var(--space-4) calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + 28px);
+  padding: calc(env(safe-area-inset-top, 0px) + 20px) var(--space-4) calc(var(--nav-height) + var(--ad-h, 0px) + env(safe-area-inset-bottom, 0px) + 28px);
+}
+
+/* 배너 광고(네이티브 뷰)는 시스템 내비게이션 바로 위에 붙으므로, 광고가 있을 때 탭 바를 그만큼 올립니다 (services/ads.ts) */
+html.has-ad .bottom-nav {
+  bottom: calc(var(--ad-h, 0px) + env(safe-area-inset-bottom, 0px));
+  padding-bottom: 0;
 }
 
 /* 하단 탭 */

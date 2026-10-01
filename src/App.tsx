@@ -7,6 +7,7 @@ import { CounselScreen } from './screens/counsel/CounselScreen';
 import { RecordsScreen } from './screens/records/RecordsScreen';
 import { SpaceScreen } from './screens/space/SpaceScreen';
 import { loadSession, persistSession, sessionReducer } from './state/session';
+import { useAds } from './state/useAds';
 import { useAuth } from './state/useAuth';
 import { useRecords } from './state/useRecords';
 import { useTheme } from './state/useTheme';
@@ -17,6 +18,7 @@ export default function App() {
   const auth = useAuth();
   const records = useRecords(auth.user?.id ?? null);
   const { theme, toggle: toggleTheme } = useTheme();
+  useAds(tab, session.step); // 네이티브 앱의 하단 배너 (웹에서는 아무 일도 안 함)
 
   // 진행 중인 상담을 임시 보관해 새로고침 시 복구합니다.
   useEffect(() => {

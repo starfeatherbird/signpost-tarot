@@ -35,6 +35,11 @@
             android:grantUriPermissions="true">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
         </provider>
+
+        <!-- AdMob 앱 ID (하단 배너). 값은 res/values/strings.xml 의 admob_app_id (src/config/ads.ts 와 함께 바꿀 것) -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_app_id" />
     </application>
 
     <!-- Permissions -->

@@ -149,7 +149,8 @@ npm run build      # dist/ 생성 (정적 파일, 서버 불필요)
 - 아이콘·스플래시: `assets/`(1024 아이콘·적응형 전경/배경·2732 스플래시) → `npx @capacitor/assets generate --android` 로 `android/app/src/main/res` 생성.
 - 네이티브 분기(`services/native.ts` 의 `isNativeApp`): 서비스 워커 등록 안 함(main.tsx), 인증은 PKCE + 앱 스킴 `com.solamemento.signpost://auth`(AndroidManifest intent-filter, `useAuth` 가 `appUrlOpen` 의 code 를 세션으로 교환, Google 은 시스템 브라우저로 열고 돌아옴), 뒤로 가기는 다른 탭→상담실→앱 최소화(App.tsx).
 - Supabase Redirect URLs 에 `com.solamemento.signpost://auth` 를 추가해야 앱 로그인이 됩니다.
-- 다음 단계(예정): AdMob 배너(기록장·내 공간·결과 화면 하단), Play 인앱 결제(심층 리딩 1회 소모성 + 광고 제거 비소모성, RevenueCat 검증).
+- **AdMob 배너(2026-10-02)**: `@capacitor-community/admob`. 설정은 `src/config/ads.ts`(앱 ID·배너 ID·`AD_TESTING`) + `strings.xml` 의 `admob_app_id`(AndroidManifest meta-data). 지금은 Google 테스트 ID. 표시 규칙은 `state/useAds.ts` 의 `shouldShowAds`(기록장·내 공간·결과 화면만, 입력·카드·분석 화면 제외), 실제 제어는 `services/ads.ts`(배너 높이를 `--ad-h`/`html.has-ad` 로 알려 탭 바를 올리고 본문 여백 확보, 입력 중 숨김, 실패 시 1분 뒤 재시도). 광고 제거 여부는 지금 `tarot-counsel.adfree.v1` 기기 저장값이며 3단계에서 스토어 구매 상태로 바뀝니다. 웹에서는 아무것도 하지 않습니다.
+- 다음 단계(예정): Play 인앱 결제(심층 리딩 1회 소모성 + 광고 제거 비소모성, RevenueCat 검증).
 
 ## 오프라인 (서비스 워커)
 
