@@ -66,7 +66,7 @@ const base = {
   rateLimitedUntil: null, savedRecordId: null, savedVersion: null, analysisStatus: 'idle', analysisError: null, step: 'input',
 };
 const withAnswers = { ...base, answers, questionIndex: 1 };
-const picked = { ...withAnswers, step: 'cards', selected: ['tower'] };
+const picked = { ...withAnswers, step: 'cards', selected: [deck[0]] }; // 덱에서 뽑기: 맨 위 카드가 첫 자리에
 const revealed = { ...withAnswers, step: 'cards', selected: ['tower', 'lovers', 'world'], revealed: true };
 const result = { ...revealed, step: 'result', result: basic, actionChecks: [basic.actions[0]] };
 const followUps = [{ question: '첫 단계를 이번 주에 하기 어렵다면 어떻게 시작하면 좋을까요?', answer: followUpAnswer, isSample: false, askedAt: '2026-09-10T01:00:00.000Z' }];

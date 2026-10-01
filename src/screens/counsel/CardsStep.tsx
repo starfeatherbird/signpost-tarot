@@ -43,61 +43,63 @@ export function CardsStep({ state, dispatch, onAnalyze, onCancel }: Props) {
 
       <ConcernBox text={state.concern} />
 
-      <div className="slot-row" aria-label="세 자리">
+      {/* 세 자리: 뽑은 카드가 뒷면으로 놓입니다 (공개는 다음 화면) */}
+      <div className="draw-slots" role="group" aria-label="세 자리">
         {POSITIONS.map((p, i) => {
           const filled = i < count;
           const current = i === count;
-          const cls = filled ? 'slot slot--filled' : current ? 'slot slot--current' : 'slot';
-          const stateText = filled ? `자리 ${i + 1} · 선택됨` : current ? `자리 ${i + 1} · 지금` : `자리 ${i + 1}`;
           return (
-            <div className={cls} key={p.id}>
-              <span className="slot-state">{stateText}</span>
-              <span className="slot-name">{p.title}</span>
-              <span className="slot-desc">{p.description}</span>
+            <div className={`draw-slot ${filled ? 'is-filled' : ''} ${current ? 'is-current' : ''}`} key={p.id}>
+              <span className="draw-slot-title">{p.title}</span>
+              <div className="draw-slot-card" aria-label={filled ? `${p.title} 자리에 카드가 놓였어요` : current ? `${p.title} 자리, 다음에 놓일 자리` : `${p.title} 자리, 비어 있음`}>
+                {filled ? (
+                  <div className="draw-slot-dealt" key={state.selected[i]}>
+                    <CardBack />
+                    <span className="card-badge" aria-hidden="true">{i + 1}</span>
+                  </div>
+                ) : (
+                  <div className="draw-slot-empty" aria-hidden="true" />
+                )}
+              </div>
+              <span className="draw-slot-desc">{p.description}</span>
             </div>
           );
         })}
       </div>
 
-      <div className="row-between">
-        <span className="section-label" style={{ fontSize: 13, letterSpacing: 0 }} aria-live="polite">
-          선택 {count} / {CARDS_TO_PICK}{!complete && ` · 다음 자리: ${POSITIONS[count].title}`}
-        </span>
-        <span className="caption">{CARDS.length}장 · 정·역방향</span>
+      {/* 덱 더미: 누르면 맨 위 카드가 다음 자리로 */}
+      <div className="deck-stage">
+        <button
+          type="button"
+          className="deck-pile"
+          disabled={complete}
+          aria-label={complete ? '세 장을 모두 뽑았어요' : `덱에서 카드 한 장 뽑기, ${POSITIONS[count].title} 자리에 놓여요`}
+          onClick={() => dispatch({ type: 'drawTop' })}
+        >
+          <span className="deck-layer deck-layer--3" aria-hidden="true"><CardBack /></span>
+          <span className="deck-layer deck-layer--2" aria-hidden="true"><CardBack /></span>
+          <span className="deck-layer deck-layer--1" aria-hidden="true"><CardBack /></span>
+        </button>
+        <p className="deck-hint" aria-live="polite">
+          {complete
+            ? '세 장이 모두 놓였어요. 이제 펼쳐 볼까요?'
+            : `덱을 누르면 맨 위 카드가 「${POSITIONS[count].title}」 자리에 놓여요. ${remaining}장 남았어요.`}
+        </p>
+        <span className="caption">{CARDS.length}장 · 정·역방향 · 섞여 있어요</span>
       </div>
-
-      <div className="card-grid" role="group" aria-label={`뒤집힌 카드 ${state.deck.length}장`}>
-        {state.deck.map((cardId, i) => {
-          const order = state.selected.indexOf(cardId);
-          const isSelected = order >= 0;
-          const disabled = !isSelected && complete;
-          const label = isSelected
-            ? `${i + 1}번째 카드, 선택됨: ${POSITIONS[order].title}. 다시 누르면 선택이 풀려요`
-            : `${i + 1}번째 카드`;
-          return (
-            <button
-              key={cardId}
-              type="button"
-              className="card-button"
-              aria-pressed={isSelected}
-              aria-label={label}
-              disabled={disabled}
-              onClick={() => dispatch({ type: 'toggleCard', cardId })}
-            >
-              <CardBack />
-              {isSelected && <span className="card-badge" aria-hidden="true">{order + 1}</span>}
-            </button>
-          );
-        })}
-      </div>
-
-      <p className="caption" style={{ fontWeight: 500 }}>카드를 누르면 살짝 떠오르며 번호가 붙어요. 다시 누르면 선택이 풀려요.</p>
 
       <div className="btn-stack">
-        <button type="button" className="btn btn--primary btn--block" disabled={!complete} onClick={() => dispatch({ type: 'reveal' })}>
-          {complete ? '카드 펼치기' : `카드 펼치기 · ${remaining}장 더 골라 주세요`}
-        </button>
-        <button type="button" className="btn btn--text btn--sub btn--block" onClick={() => dispatch({ type: 'goToStep', step: state.plan === 'deep' ? 'deepQuestions' : 'questions' })}>이전</button>
+        {complete ? (
+          <button type="button" className="btn btn--primary btn--block" onClick={() => dispatch({ type: 'reveal' })}>카드 펼치기</button>
+        ) : (
+          <button type="button" className="btn btn--primary btn--block" onClick={() => dispatch({ type: 'drawTop' })}>
+            {count === 0 ? '첫 카드 뽑기' : `다음 카드 뽑기 · ${remaining}장 남음`}
+          </button>
+        )}
+        <div className="btn-pair">
+          <button type="button" className="btn btn--secondary btn--sub" onClick={() => dispatch({ type: 'goToStep', step: state.plan === 'deep' ? 'deepQuestions' : 'questions' })}>이전</button>
+          <button type="button" className="btn btn--text btn--sub" disabled={count === 0} onClick={() => dispatch({ type: 'reshuffle' })}>다시 섞기</button>
+        </div>
       </div>
     </div>
   );

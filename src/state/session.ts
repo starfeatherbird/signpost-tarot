@@ -93,6 +93,10 @@ export type SessionAction =
   | { type: 'setDeepQuestionIndex'; index: number }
   | { type: 'deepAnswer'; answer: Answer }
   | { type: 'toggleCard'; cardId: string }
+  /** 덱 맨 위 카드를 다음 자리에 놓습니다 (덱에서 뽑기 방식) */
+  | { type: 'drawTop' }
+  /** 펼치기 전에만: 덱을 다시 섞고 뽑은 카드를 모두 되돌립니다 */
+  | { type: 'reshuffle' }
   | { type: 'reveal' }
   | { type: 'setSupplement'; supplement: string }
   | { type: 'analysisStarted' }
@@ -138,6 +142,18 @@ export function sessionReducer(state: SessionState, action: SessionAction): Sess
       if (state.selected.length >= CARDS_TO_PICK) return state;
       if (!state.deck.includes(action.cardId)) return state;
       return { ...state, selected: [...state.selected, action.cardId] };
+    }
+    case 'drawTop': {
+      if (state.revealed || state.selected.length >= CARDS_TO_PICK) return state;
+      // 뽑은 카드는 덱 앞쪽에 순서대로 쌓여 있으므로 다음 카드는 selected.length 번째
+      const next = state.deck.find((id) => !state.selected.includes(id));
+      if (!next) return state;
+      return { ...state, selected: [...state.selected, next] };
+    }
+    case 'reshuffle': {
+      if (state.revealed) return state;
+      const deck = createShuffledDeck();
+      return { ...state, deck, reversedIds: drawReversed(deck, REVERSED_RATE), selected: [] };
     }
     case 'reveal':
       if (state.selected.length !== CARDS_TO_PICK) return state;

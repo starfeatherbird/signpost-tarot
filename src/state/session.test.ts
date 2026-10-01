@@ -57,6 +57,27 @@ describe('session reducer', () => {
     expect(getDrawnCards(s).map((x) => x.positionId)).toEqual(['core', 'blindspot', 'next']);
   });
 
+  it('덱에서 뽑기: 맨 위부터 순서대로 세 장, 더는 뽑히지 않고, 다시 섞으면 처음으로', () => {
+    let s = createInitialSession();
+    const top3 = s.deck.slice(0, 3);
+    s = sessionReducer(s, { type: 'drawTop' });
+    s = sessionReducer(s, { type: 'drawTop' });
+    expect(s.selected).toEqual(top3.slice(0, 2));
+    s = sessionReducer(s, { type: 'drawTop' });
+    s = sessionReducer(s, { type: 'drawTop' }); // 네 번째는 무시
+    expect(s.selected).toEqual(top3);
+    const before = s.deck;
+    s = sessionReducer(s, { type: 'reshuffle' });
+    expect(s.selected).toEqual([]);
+    expect(s.deck).toHaveLength(before.length);
+    expect(new Set(s.deck).size).toBe(before.length);
+    s = sessionReducer(s, { type: 'drawTop' });
+    s = sessionReducer(s, { type: 'drawTop' });
+    s = sessionReducer(s, { type: 'drawTop' });
+    s = sessionReducer(s, { type: 'reveal' });
+    expect(sessionReducer(s, { type: 'reshuffle' })).toBe(s); // 공개 뒤에는 섞을 수 없음
+  });
+
   it('덱에 없는 카드는 선택되지 않고, 공개 후에는 선택이 바뀌지 않는다', () => {
     let s = createInitialSession();
     s = sessionReducer(s, { type: 'toggleCard', cardId: 'nope' });
