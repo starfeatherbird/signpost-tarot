@@ -9,6 +9,7 @@ import { SpaceScreen } from './screens/space/SpaceScreen';
 import { loadSession, persistSession, sessionReducer } from './state/session';
 import { useAds } from './state/useAds';
 import { useAuth } from './state/useAuth';
+import { usePurchases } from './state/usePurchases';
 import { useRecords } from './state/useRecords';
 import { useTheme } from './state/useTheme';
 
@@ -18,7 +19,8 @@ export default function App() {
   const auth = useAuth();
   const records = useRecords(auth.user?.id ?? null);
   const { theme, toggle: toggleTheme } = useTheme();
-  useAds(tab, session.step); // 네이티브 앱의 하단 배너 (웹에서는 아무 일도 안 함)
+  const purchases = usePurchases(auth.user?.id ?? null); // 네이티브 앱의 인앱 결제 (웹에서는 꺼짐)
+  useAds(tab, session.step, purchases.adFree); // 네이티브 앱의 하단 배너 (웹에서는 아무 일도 안 함)
 
   // 진행 중인 상담을 임시 보관해 새로고침 시 복구합니다.
   useEffect(() => {
@@ -59,9 +61,19 @@ export default function App() {
   return (
     <div className="app-shell">
       <main className="app-main" id="main">
-        {tab === 'counsel' && <CounselScreen state={session} dispatch={dispatch} records={records} onOpenRecords={(id) => changeTab('records', id ?? null)} />}
+        {tab === 'counsel' && (
+          <CounselScreen
+            state={session}
+            dispatch={dispatch}
+            records={records}
+            auth={auth}
+            purchases={purchases}
+            onOpenRecords={(id) => changeTab('records', id ?? null)}
+            onOpenSpace={() => changeTab('space')}
+          />
+        )}
         {tab === 'records' && <RecordsScreen records={records} initialId={openRecordId} onStartNew={() => changeTab('counsel')} />}
-        {tab === 'space' && <SpaceScreen records={records} auth={auth} theme={theme} onToggleTheme={toggleTheme} />}
+        {tab === 'space' && <SpaceScreen records={records} auth={auth} purchases={purchases} theme={theme} onToggleTheme={toggleTheme} />}
       </main>
       <BottomNav current={tab} onChange={changeTab} />
     </div>

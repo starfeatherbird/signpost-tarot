@@ -67,6 +67,13 @@ npm run server:secrets -- TAROT_MODELS="anthropic:claude-sonnet-5,gemini:auto,an
   3. Providers → Google: Google Cloud Console 에서 OAuth 클라이언트(웹)를 만들고, 승인된 리디렉션 URI 에 `https://fvtarvatvqcozsrfetbf.supabase.co/auth/v1/callback` 을 넣은 뒤 Client ID/Secret 을 Supabase 에 입력.
 - 로그아웃해도 기기의 기록은 남습니다(계정에서 지우려면 로그인 상태에서 삭제).
 
+## 심층 상담 결제 확인 (2026-10-02)
+
+- 시크릿 `REVENUECAT_SECRET_KEY`(RevenueCat 프로젝트의 비밀 API 키, `sk_…`)를 넣으면 deep/followUp 요청마다 RevenueCat 에서 사용자의 `deep_reading_1` 거래를 읽어 `tarot_deep_uses` 표에 상담(consultationId)과 묶습니다. 없으면 확인하지 않습니다(오픈 기간).
+- 표 생성: `npx supabase db query --linked --project-ref fvtarvatvqcozsrfetbf -f supabase/sql/deep_uses.sql` (실행됨)
+- 앱이 `{ "kind": "credits" }` 로 물으면 `{ deepCredits, enforced, adFree }` 를 돌려줍니다.
+- 거부 응답: 402 `{ error, code: "payment_required", reason: login_required | no_credit | no_consultation }`. 사용 기록표에는 `payment:<reason>` 으로 남습니다.
+
 ## 프롬프트 버전
 
 - counsel-v1: 초기 규칙 · v2: 행동 개인화, 전문가 권유 축소, 카드 주어 문장 축소, 적합 조건 구분 · v3: 정·역방향 해석 규칙 추가 · v4: 상징 스톤(`stone`, 목록은 `_shared/stones.json`)과 며칠 뒤 돌아볼 질문(`reflectionQuestion`) 추가. 둘 다 없어도 결과를 버리지 않습니다 · v5: "원하는 도움"(답변 questionId `help`, 문구는 앱 `src/config/helpModes.ts` 와 동일) 모드별로 결과의 무게를 바꾸는 지시 추가(마음 정리 / 선택지 비교 / 오늘 할 일) · **v6(현재)**: 덱 78장(마이너 아르카나 56장 추가). 수트별 영역과 궁정 카드 읽기 규칙, 카드 설명에 "메이저 N번 / 마이너 ○○ 수트" 표기.

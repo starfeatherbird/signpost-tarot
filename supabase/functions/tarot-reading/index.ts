@@ -14,7 +14,24 @@ import type { DeepReadingResult, Provenance, ReadingRequest } from '../_shared/t
 import { assertCards, normalizeBasic, normalizeDeep, normalizeFollowUp } from '../_shared/validate.ts';
 import { checkRateLimit, clientIp, hashIp, parseLimits, retryAfterSeconds, type HitResult } from '../_shared/rateLimit.ts';
 import { buildUsageRow, type UsageRow } from '../_shared/usage.ts';
+import { checkDeepAccess, DEEP_ACCESS_MESSAGES, fetchSubscriber, unusedTransactions, type DeepUsesStore } from '../_shared/purchases.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2';
+
+/** tarot_deep_uses 표 (supabase/sql/deep_uses.sql) 읽기·쓰기 */
+function createDeepUsesStore(admin: ReturnType<typeof createClient>): DeepUsesStore {
+  return {
+    async load(userId, consultationId) {
+      const { data, error } = await admin.from('tarot_deep_uses').select('consultation_id, transaction_id').eq('user_id', userId);
+      if (error) throw new Error(error.message);
+      const rows = (data ?? []) as { consultation_id: string; transaction_id: string }[];
+      return { usedTransactionIds: rows.map((r) => r.transaction_id), thisConsultationUsed: rows.some((r) => r.consultation_id === consultationId) };
+    },
+    async record(userId, consultationId, transactionId) {
+      const { error } = await admin.from('tarot_deep_uses').insert({ user_id: userId, consultation_id: consultationId, transaction_id: transactionId });
+      if (error) throw new Error(error.message);
+    },
+  };
+}
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -55,6 +72,7 @@ function parseRequest(body: Record<string, unknown>): ReadingRequest {
   const concern = clip(raw.concern, MAX_CONCERN).trim();
   if (!concern) throw new ProviderError('고민 내용이 비어 있어요.', 'bad_request', 400);
   const base = {
+    consultationId: clip(raw.consultationId, 80).trim() || undefined,
     concern,
     answers: cleanAnswers(raw.answers),
     cards: assertCards(raw.cards),
@@ -105,17 +123,40 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   if (req.method !== 'POST') return json({ error: 'POST 만 지원해요.' }, 405);
 
-  let request: ReadingRequest;
+  let body: Record<string, unknown>;
   try {
-    request = parseRequest((await req.json()) as Record<string, unknown>);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : '요청 형식이 올바르지 않아요.';
-    return json({ error: message }, 400);
+    body = (await req.json()) as Record<string, unknown>;
+  } catch {
+    return json({ error: '요청 형식이 올바르지 않아요.' }, 400);
   }
 
   const admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
   const ipHash = await hashIp(clientIp(req.headers));
   const userId = await resolveUserId(admin, req.headers);
+  const revenueCatKey = Deno.env.get('REVENUECAT_SECRET_KEY') ?? '';
+  const deepUses = createDeepUsesStore(admin);
+
+  // 구매 상태 조회: 아직 상담에 쓰지 않은 심층 횟수 (앱의 심층 안내 화면이 묻습니다)
+  if (body.kind === 'credits') {
+    if (!revenueCatKey) return json({ deepCredits: 0, enforced: false });
+    if (!userId) return json({ deepCredits: 0, enforced: true });
+    try {
+      const [snap, used] = await Promise.all([fetchSubscriber(revenueCatKey, userId), deepUses.load(userId, '')]);
+      return json({ deepCredits: unusedTransactions(snap.deepTransactionIds, used.usedTransactionIds).length, enforced: true, adFree: snap.adFree });
+    } catch (err) {
+      console.error('[tarot-reading] credits lookup failed', err);
+      return json({ error: '구매 상태를 확인하지 못했어요. 잠시 뒤 다시 시도해 주세요.' }, 502);
+    }
+  }
+
+  let request: ReadingRequest;
+  try {
+    request = parseRequest(body);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : '요청 형식이 올바르지 않아요.';
+    return json({ error: message }, 400);
+  }
+
   const startedAt = Date.now();
 
   /** 사용 기록(고민 내용은 저장하지 않음). 실패해도 응답에는 영향 없음. */
@@ -158,6 +199,22 @@ Deno.serve(async (req) => {
     }
   } catch (err) {
     console.error('[tarot-reading] rate limit check failed (allowing request)', err);
+  }
+
+  // ── 심층 구매 확인 ──────────────────────────────
+  // REVENUECAT_SECRET_KEY 가 설정된 뒤부터만 확인합니다(오픈 기간에는 무료). 기본 상담은 항상 무료.
+  if (revenueCatKey && (request.kind === 'deep' || request.kind === 'followUp')) {
+    try {
+      const access = await checkDeepAccess(request.kind, userId, request.input.consultationId, () => fetchSubscriber(revenueCatKey, userId!), deepUses);
+      if (!access.allowed) {
+        await logUsage(buildUsageRow({ kind: request.kind, ok: false, errorKind: `payment:${access.reason}`, durationMs: Date.now() - startedAt, ipHash, userId }));
+        return json({ error: DEEP_ACCESS_MESSAGES[access.reason], code: 'payment_required', reason: access.reason }, 402);
+      }
+      if (access.consumed) console.log(`[tarot-reading] deep credit used tx=${access.consumed}`);
+    } catch (err) {
+      console.error('[tarot-reading] purchase check failed', err);
+      return json({ error: '구매 상태를 확인하지 못했어요. 잠시 뒤 다시 시도해 주세요.' }, 502);
+    }
   }
 
   const keys = {

@@ -77,6 +77,8 @@ export interface DrawnCard {
 
 /** 기본 분석 입력 */
 export interface AnalysisInput {
+  /** 상담 세션 id. 서버가 심층 구매 1회를 이 상담에 묶는 데 씁니다 (재정리·추가 질문은 같은 상담으로 봄) */
+  consultationId?: string;
   concern: string;
   answers: Answer[];
   cards: DrawnCard[];

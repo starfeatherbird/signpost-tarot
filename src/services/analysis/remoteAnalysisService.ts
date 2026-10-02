@@ -69,6 +69,7 @@ export function createRemoteAnalysisService(config: RemoteConfig): AnalysisServi
         error.code = 'rate_limited';
         error.retryAfterSeconds = body?.retryAfterSeconds ?? 3600;
       }
+      if (res.status === 402) error.code = 'payment_required';
       throw error;
     }
     return body.result;

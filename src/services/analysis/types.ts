@@ -36,8 +36,8 @@ export interface AnalysisService {
 }
 
 export class AnalysisError extends Error {
-  /** rate_limited: 호출 횟수 제한 (retryAfterSeconds 뒤에 풀림) */
-  code?: 'rate_limited';
+  /** rate_limited: 호출 횟수 제한 (retryAfterSeconds 뒤에 풀림) / payment_required: 심층 구매 필요 */
+  code?: 'rate_limited' | 'payment_required';
   retryAfterSeconds?: number;
   constructor(message: string, public readonly retryable = true) {
     super(message);

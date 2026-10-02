@@ -10,4 +10,3 @@ export const ADMOB_BANNER_ID = 'ca-app-pub-3940256099942544/6300978111';
 export const AD_TESTING = true;
 
 /** 광고 제거 구매 여부 임시 저장 키 (3단계 결제 연결 전까지 자리만 둠) */
-export const AD_FREE_STORAGE_KEY = 'tarot-counsel.adfree.v1';

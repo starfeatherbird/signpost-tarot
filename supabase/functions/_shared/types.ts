@@ -19,6 +19,8 @@ export interface DrawnCard {
 }
 
 export interface AnalysisInput {
+  /** 상담 세션 id (심층 구매 1회를 상담에 묶는 키) */
+  consultationId?: string;
   concern: string;
   answers: Answer[];
   cards: DrawnCard[];

@@ -12,6 +12,8 @@ import {
   type SessionAction,
   type SessionState,
 } from '../../state/session';
+import type { AuthApi } from '../../state/useAuth';
+import type { PurchasesApi } from '../../state/usePurchases';
 import type { RecordsApi } from '../../state/useRecords';
 import { AnalyzingStep } from './AnalyzingStep';
 import { CardsStep } from './CardsStep';
@@ -26,12 +28,16 @@ interface Props {
   state: SessionState;
   dispatch: Dispatch<SessionAction>;
   records: RecordsApi;
+  auth: AuthApi;
+  purchases: PurchasesApi;
   /** 기록장 탭으로 이동. id 를 주면 그 기록을 바로 엽니다. */
   onOpenRecords: (recordId?: string) => void;
+  /** 내 공간 탭으로 이동 (로그인 안내용) */
+  onOpenSpace: () => void;
 }
 
 /** 상담실 탭. 단계 화면을 고르고, 분석 실행·저장·새 상담 같은 흐름 제어를 맡습니다. */
-export function CounselScreen({ state, dispatch, records, onOpenRecords }: Props) {
+export function CounselScreen({ state, dispatch, records, auth, purchases, onOpenRecords, onOpenSpace }: Props) {
   const inFlight = useRef(false);
   const requestSeq = useRef(0);
   const [saveFeedback, setSaveFeedback] = useState<SaveFeedback | null>(null);
@@ -61,6 +67,7 @@ export function CounselScreen({ state, dispatch, records, onOpenRecords }: Props
     dispatch({ type: 'analysisStarted' });
 
     const baseInput = {
+      consultationId: state.consultationId,
       concern: state.concern,
       answers: state.answers,
       cards,
@@ -106,6 +113,7 @@ export function CounselScreen({ state, dispatch, records, onOpenRecords }: Props
   const askFollowUp = async (question: string) => {
     if (!state.deepResult) return;
     const { answer, isSample } = await analysisService.askFollowUp({
+      consultationId: state.consultationId,
       concern: state.concern,
       answers: state.answers,
       deepAnswers: state.deepAnswers,
@@ -177,7 +185,7 @@ export function CounselScreen({ state, dispatch, records, onOpenRecords }: Props
       content = <PlanStep dispatch={dispatch} records={records.records} onOpenRecord={onOpenRecords} />;
       break;
     case 'deepIntro':
-      content = <DeepIntroStep state={state} dispatch={dispatch} />;
+      content = <DeepIntroStep state={state} dispatch={dispatch} auth={auth} purchases={purchases} onOpenSpace={onOpenSpace} />;
       break;
     case 'input':
       content = <InputStep state={state} dispatch={dispatch} onOpenRecords={onOpenRecords} onCancel={requestCancel} />;

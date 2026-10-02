@@ -6,6 +6,7 @@ import { APP_NAME, APP_VERSION } from '../../config/appConfig';
 import { STONES } from '../../data/stones';
 import { getRecordStone } from '../../services/reflection';
 import type { AuthApi } from '../../state/useAuth';
+import type { PurchasesApi } from '../../state/usePurchases';
 import type { RecordsApi } from '../../state/useRecords';
 import type { Theme } from '../../state/useTheme';
 import { pickTextFile, saveTextFile } from '../../utils/download';
@@ -14,11 +15,12 @@ import { formatDateTime } from '../../utils/format';
 interface Props {
   records: RecordsApi;
   auth: AuthApi;
+  purchases: PurchasesApi;
   theme: Theme;
   onToggleTheme: () => void;
 }
 
-export function SpaceScreen({ records, auth, theme, onToggleTheme }: Props) {
+export function SpaceScreen({ records, auth, purchases, theme, onToggleTheme }: Props) {
   const [confirmClear, setConfirmClear] = useState(false);
   const [feedback, setFeedback] = useState<{ ok: boolean; message: string } | null>(null);
   const [busy, setBusy] = useState(false);
@@ -101,6 +103,8 @@ export function SpaceScreen({ records, auth, theme, onToggleTheme }: Props) {
           <span className="setting-value">{count}개</span>
         </button>
       </section>
+
+      {purchases.available && <PurchasePanel purchases={purchases} onFeedback={setFeedback} />}
 
       <section className="panel panel--flat" aria-label="앱 정보">
         <div className="setting-row"><span className="setting-title" style={{ fontWeight: 500, fontSize: 15 }}>앱 이름</span><span className="setting-value">{APP_NAME}</span></div>
@@ -211,6 +215,38 @@ function AccountPanel({ auth, records }: { auth: AuthApi; records: RecordsApi })
           {note && <Notice kind={note.ok ? 'success' : 'error'} role="status">{note.message}</Notice>}
         </>
       )}
+    </section>
+  );
+}
+
+/** 광고 제거 구매와 구매 복원 (Play 앱에서만 보임) */
+function PurchasePanel({ purchases, onFeedback }: { purchases: PurchasesApi; onFeedback: (f: { ok: boolean; message: string }) => void }) {
+  const buy = async () => {
+    const r = await purchases.purchaseRemoveAds();
+    if (r.outcome === 'purchased') onFeedback({ ok: true, message: '광고 제거를 구매했어요. 이제 광고가 나오지 않아요.' });
+    else if (r.outcome === 'error') onFeedback({ ok: false, message: r.message ?? '결제를 마치지 못했어요.' });
+  };
+  const restore = async () => {
+    const free = await purchases.restore();
+    onFeedback(free ? { ok: true, message: '이전 구매를 되살렸어요. 광고가 나오지 않아요.' } : { ok: true, message: '되살릴 구매가 없어요. 구매할 때 쓴 Google 계정으로 로그인되어 있는지 확인해 주세요.' });
+  };
+  return (
+    <section className="panel panel--flat" aria-label="구매">
+      {purchases.adFree ? (
+        <div className="setting-row">
+          <span className="setting-title" style={{ fontWeight: 600, fontSize: 15 }}>광고 제거</span>
+          <span className="tag tag--success">구매함</span>
+        </div>
+      ) : (
+        <button type="button" className="setting-row" onClick={buy} disabled={purchases.busy}>
+          <span className="setting-title" style={{ fontWeight: 600, fontSize: 15, color: 'var(--color-accent-text)' }}>광고 제거 구매</span>
+          <span className="setting-value">{purchases.removeAdsPrice ?? '한 번 구매'}</span>
+        </button>
+      )}
+      <button type="button" className="setting-row" onClick={restore} disabled={purchases.busy}>
+        <span className="setting-title" style={{ fontWeight: 500, fontSize: 15 }}>구매 복원</span>
+        <span className="setting-value">기기를 바꿨을 때</span>
+      </button>
     </section>
   );
 }
