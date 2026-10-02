@@ -164,6 +164,8 @@ Deno.serve(async (req) => {
     try {
       const { error } = await admin.from('tarot_usage_log').insert(row);
       if (error) console.warn('[tarot-reading] usage log failed', error.message);
+      // 보관 기간 90일 (개인정보처리방침 2항). 요청마다 오래된 행을 정리합니다(created_at 인덱스).
+      await admin.from('tarot_usage_log').delete().lt('created_at', new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString());
     } catch (err) {
       console.warn('[tarot-reading] usage log failed', err);
     }

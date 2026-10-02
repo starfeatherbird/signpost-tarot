@@ -1933,6 +1933,7 @@ img.stone-gem { filter: var(--stone-shadow); }
 }
 
 .account-error { color: var(--color-danger); }
+.account-delete { align-self: center; color: var(--color-text-faint); font-size: 13px; }
 
 .account-email-row {
   display: flex;

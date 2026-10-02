@@ -88,7 +88,16 @@ export function useAuth() {
     return error ? error.message : null;
   }, []);
 
-  return { available, ready, user, signInWithGoogle, signInWithEmail, signOut };
+  /** 계정과 클라우드 기록을 서버에서 지우고(rpc delete_my_account) 로그아웃합니다. 기기의 기록은 남습니다. */
+  const deleteAccount = useCallback(async (): Promise<string | null> => {
+    if (!supabase) return '로그인을 사용할 수 없어요.';
+    const { error } = await supabase.rpc('delete_my_account');
+    if (error) return error.message;
+    await supabase.auth.signOut().catch(() => {});
+    return null;
+  }, []);
+
+  return { available, ready, user, signInWithGoogle, signInWithEmail, signOut, deleteAccount };
 }
 
 export type AuthApi = ReturnType<typeof useAuth>;

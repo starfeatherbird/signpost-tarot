@@ -163,6 +163,15 @@ function AccountPanel({ auth, records }: { auth: AuthApi; records: RecordsApi })
     setBusy(false);
   };
 
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const deleteAccount = async () => {
+    setConfirmDelete(false);
+    setBusy(true);
+    const err = await auth.deleteAccount();
+    setNote(err ? { ok: false, message: `계정을 삭제하지 못했어요. ${err}` } : { ok: true, message: '계정과 클라우드 기록을 삭제했어요. 이 기기의 기록은 남아 있어요.' });
+    setBusy(false);
+  };
+
   const { syncStatus } = records;
   const syncLine = syncStatus.state === 'syncing'
     ? '기록을 맞추는 중이에요…'
@@ -190,6 +199,17 @@ function AccountPanel({ auth, records }: { auth: AuthApi; records: RecordsApi })
             <button type="button" className="btn btn--secondary btn--sub" onClick={() => void records.sync()} disabled={syncStatus.state === 'syncing'}>기록 다시 불러오기</button>
             <button type="button" className="btn btn--text btn--sub" onClick={logout} disabled={busy}>로그아웃</button>
           </div>
+          <button type="button" className="link-button account-delete" onClick={() => setConfirmDelete(true)} disabled={busy}>계정 삭제</button>
+          <ConfirmDialog
+            open={confirmDelete}
+            title="계정을 삭제할까요?"
+            description="계정과 클라우드에 저장된 모든 상담 기록, 심층 상담 구매 사용 내역이 즉시 지워지고 되돌릴 수 없어요. 이 기기에 있는 기록은 남아요."
+            actions={[
+              { label: '계정 삭제하기', kind: 'danger', onClick: () => { void deleteAccount(); } },
+              { label: '취소', kind: 'secondary', onClick: () => setConfirmDelete(false) },
+            ]}
+            onDismiss={() => setConfirmDelete(false)}
+          />
         </>
       ) : (
         <>

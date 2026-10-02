@@ -36,6 +36,6 @@ from public.tarot_usage_log
 group by 1, 2;
 
 -- 프로젝트 설정 "Automatically expose new tables" 가 꺼져 있어 서버 함수 역할에 권한을 직접 줍니다.
-grant insert, select on table public.tarot_usage_log to service_role;
+grant insert, select, delete on table public.tarot_usage_log to service_role; -- delete: 90일 지난 행 정리
 grant usage, select on sequence public.tarot_usage_log_id_seq to service_role;
 grant select on public.tarot_usage_daily to service_role;
