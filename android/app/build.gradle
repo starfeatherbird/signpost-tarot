@@ -7,7 +7,7 @@ android {
         applicationId "com.solamemento.signpost"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode (System.getenv("VERSION_CODE") ?: "1").toInteger()  // CI 가 GitHub 실행 번호를 넣어 빌드마다 올라갑니다
+        versionCode Integer.parseInt(System.getenv("VERSION_CODE") ?: "1")  // CI 가 GitHub 실행 번호를 넣어 빌드마다 올라갑니다
         versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
