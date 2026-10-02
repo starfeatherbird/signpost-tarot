@@ -99,8 +99,9 @@ html.has-ad .bottom-nav {
 }
 
 /* 탭 바 아래(배너 자리 + 시스템 내비게이션 바 영역)로 본문이 비치지 않게 탭 바 색으로 막습니다.
-   웹뷰가 내비게이션 바 밑까지 그려지는 기기에서 배너 아래 틈이 생기는 문제 대응. */
-html.has-ad body::after {
+   웹뷰가 내비게이션 바 밑까지 그려지는 기기에서 배너 아래 틈이 생기는 문제 대응.
+   .app-shell 안에 두어야 같은 층의 탭 바(z-index 10)가 이 레이어(9) 위에 그려집니다. */
+html.has-ad .app-shell::after {
   content: '';
   position: fixed;
   left: 0;
