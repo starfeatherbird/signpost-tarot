@@ -1,8 +1,8 @@
 import type { PlanId } from '../domain/types';
 
 /**
- * 상담 상품 정보. 가격·무료 이용 횟수는 아직 미정이라 적지 않습니다.
- * 문구를 바꾸거나 나중에 가격을 붙일 때 이 파일만 수정하면 됩니다.
+ * 상담 상품 정보. 가격은 스토어(Play)가 정하므로 여기에는 적지 않습니다.
+ * 문구를 바꿀 때 이 파일만 수정하면 됩니다.
  */
 export interface PlanInfo {
   id: PlanId;
@@ -34,7 +34,7 @@ export const PLANS: Record<PlanId, PlanInfo> = {
   deep: {
     id: 'deep',
     name: '유료 심층 상담',
-    badge: '유료 예정',
+    badge: '유료',
     description: '선택지의 이점과 부담을 비교하고, 실행 순서까지 구체적으로 정리해요.',
     features: [
       '기본 상담의 모든 내용',
@@ -51,7 +51,7 @@ export const PLANS: Record<PlanId, PlanInfo> = {
 
 export const PLAN_LIST: PlanInfo[] = [PLANS.basic, PLANS.deep];
 
-/** 심층 상담 체험 안내 화면의 번호 목록 */
+/** 심층 상담 안내 화면의 번호 목록 */
 export const DEEP_INTRO_STEPS = [
   '중요하게 생각하는 기준과 현실적인 제약 확인',
   '선택지 2~3개의 이점과 부담 비교',
@@ -62,14 +62,14 @@ export const DEEP_INTRO_STEPS = [
   '심층 결과를 기록장에 저장',
 ];
 
-/** 심층 상담 체험 안내 문구 */
-export const DEEP_TRIAL_NOTICE =
-  '심층 상담은 정식 서비스에서 유료로 제공할 예정이에요. 현재 시제품에서는 결제 없이 예시 흐름을 체험할 수 있어요.';
-
 /**
- * 시제품에서 추가 심층 질문을 체험할 수 있는 횟수.
- * 실제 상품의 이용 한도가 아니며, 정식 정책이 정해지면 서버 쪽 규칙으로 옮깁니다.
+ * 심층 상담 안내 문구. 결제가 연결되기 전까지는 무료로 열어 두고 그 사실을 알립니다.
+ * (결제 연결 후에는 구매 안내로 바뀝니다.)
  */
+export const DEEP_INTRO_NOTICE =
+  '심층 상담은 유료 상품이에요. 지금은 오픈 기간이라 결제 없이 이용할 수 있어요.';
+
+/** 심층 상담 1회당 추가 질문 횟수 */
 export const DEEP_FOLLOWUP_TRIAL_COUNT = 1;
 
 /** 고민 입력 화면의 예시 칩: 짧은 라벨 → 입력란에 들어갈 문장 */

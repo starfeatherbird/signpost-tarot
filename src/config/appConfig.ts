@@ -2,7 +2,7 @@
  * 앱 전역 설정. 이름·버전·저장 키처럼 한 곳에서 바꾸고 싶은 값을 모아 둡니다.
  */
 export const APP_NAME = '이정표';
-export const APP_VERSION = '0.3 시제품';
+export const APP_VERSION = '1.0.0';
 
 /** 고민 입력 최대 글자 수 */
 export const CONCERN_MAX_LENGTH = 300;

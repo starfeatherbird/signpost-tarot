@@ -59,7 +59,7 @@ export function RecordsScreen({ records, initialId = null, onStartNew }: Props) 
       <div className="screen-head">
         <p className="section-label">기록장</p>
         <h1 className="screen-title">남겨 둔 상담 {records.records.length}개</h1>
-        <p className="faint">이 브라우저에만 저장돼요</p>
+        <p className="faint">{records.synced ? '이 기기와 계정에 저장돼요' : '이 기기에만 저장돼요'}</p>
       </div>
       <ul className="record-list">
         {records.records.map((r) => {

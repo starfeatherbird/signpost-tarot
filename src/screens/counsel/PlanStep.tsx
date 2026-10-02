@@ -32,8 +32,8 @@ export function PlanStep({ dispatch, records = [], onOpenRecord }: Props) {
 
       <Notice>
         {isRemoteAnalysis
-          ? '지금은 시제품이에요. 상담 결과는 AI가 카드와 적어 주신 내용을 바탕으로 정리하고, 기록은 이 브라우저에만 저장돼요.'
-          : '지금은 시제품이에요. 상담 결과는 카드 의미를 바탕으로 한 예시 문장이고, 기록은 이 브라우저에만 저장돼요.'}
+          ? '상담 결과는 AI가 카드와 적어 주신 내용을 바탕으로 정리한 제안이에요. 기록은 이 기기에 저장되고, 로그인하면 계정에도 보관돼요.'
+          : '지금은 서버와 연결되지 않아 카드 의미를 바탕으로 한 예시 문장만 보여 줘요. 기록은 이 기기에만 저장돼요.'}
       </Notice>
 
       {due.length > 0 && onOpenRecord && (
@@ -87,7 +87,7 @@ export function PlanStep({ dispatch, records = [], onOpenRecord }: Props) {
         </button>
       </section>
 
-      <p className="faint">가격과 이용 횟수는 아직 정해지지 않았어요. 정식 서비스에서 안내드릴게요.</p>
+      <p className="faint">상담 결과는 참고용 제안이며 전문 상담을 대신하지 않아요.</p>
     </div>
   );
 }

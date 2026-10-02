@@ -32,9 +32,9 @@ export interface MockOptions {
 }
 
 export const SAMPLE_NOTE =
-  '이 결과는 시제품 예시예요. 카드의 기본 의미와 선택하신 답변만으로 구성했고, 적어 주신 고민 내용을 실제로 분석한 것은 아니에요.';
+  '이 결과는 예시예요. 서버와 연결되지 않아 카드의 기본 의미와 선택하신 답변만으로 구성했고, 적어 주신 고민 내용을 실제로 분석한 것은 아니에요.';
 const SUPPLEMENT_NOTE =
-  '보충해 주신 내용은 접수했어요. 다만 지금은 예시 결과라 보충 내용이 해석에 반영되지는 않아요. 실제 분석이 연결되면 같은 카드로 다시 정리해 드릴 예정이에요.';
+  '보충해 주신 내용은 접수했어요. 다만 지금은 예시 결과라 보충 내용이 해석에 반영되지는 않아요. 서버와 연결되면 같은 카드로 다시 정리할 수 있어요.';
 
 export function createMockAnalysisService(options: MockOptions = {}): AnalysisService {
   const delayMs = options.delayMs ?? MOCK_ANALYSIS_DELAY_MS;
@@ -247,7 +247,7 @@ export function buildDeepSampleReading(input: DeepAnalysisInput, generatedAt = n
   ];
 
   const notes = [
-    '심층 상담 결과도 시제품 예시예요. 적어 주신 선택지 이름과 고른 기준·제약은 그대로 반영했지만, 내용을 실제로 분석해 비교한 것은 아니에요.',
+    '심층 상담 결과도 예시예요. 적어 주신 선택지 이름과 고른 기준·제약은 그대로 반영했지만, 내용을 실제로 분석해 비교한 것은 아니에요.',
     ...base.notes.filter((n) => n !== SAMPLE_NOTE),
   ];
 
@@ -271,7 +271,7 @@ export function buildSampleFollowUp(input: FollowUpInput): FollowUpAnswer {
   const { next } = resolveSpread(input.cards);
   const answer = [
     '질문을 접수했어요. 지금은 예시 결과라 질문 내용에 맞춘 답을 드리지는 못해요.',
-    `정식 서비스에서는 선택하신 카드와 앞선 정리를 바탕으로 이 질문에 답해 드릴 예정이에요.`,
+    `서버와 연결되면 선택하신 카드와 앞선 정리를 바탕으로 이 질문에 답해 드려요.`,
     `지금 참고할 수 있는 관점: 「${next.card.nameKo}」 — ${next.card.perspectives.next}`,
   ].join(' ');
   return { answer, isSample: true };

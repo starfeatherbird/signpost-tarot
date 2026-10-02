@@ -31,7 +31,7 @@ export function readJson<T>(key: string, validate: (value: unknown) => value is 
 
 export function writeJson(key: string, value: unknown): StorageResult {
   const storage = getStorage();
-  if (!storage) return { ok: false, reason: '이 브라우저에서는 저장 공간을 사용할 수 없어요.' };
+  if (!storage) return { ok: false, reason: '이 기기에서는 저장 공간을 사용할 수 없어요.' };
   try {
     storage.setItem(key, JSON.stringify(value));
     return { ok: true };
@@ -42,7 +42,7 @@ export function writeJson(key: string, value: unknown): StorageResult {
 
 export function removeKey(key: string): StorageResult {
   const storage = getStorage();
-  if (!storage) return { ok: false, reason: '이 브라우저에서는 저장 공간을 사용할 수 없어요.' };
+  if (!storage) return { ok: false, reason: '이 기기에서는 저장 공간을 사용할 수 없어요.' };
   try {
     storage.removeItem(key);
     return { ok: true };

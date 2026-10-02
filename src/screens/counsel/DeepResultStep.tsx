@@ -11,7 +11,7 @@ interface Props extends ResultProps {
   onAskFollowUp: (question: string) => Promise<void>;
 }
 
-/** 유료 심층 상담 결과 (체험) */
+/** 유료 심층 상담 결과 */
 export function DeepResultStep(props: Props) {
   const { state, dispatch, onAskFollowUp } = props;
   const result = state.deepResult;

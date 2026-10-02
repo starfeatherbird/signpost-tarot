@@ -1,6 +1,6 @@
 import type { Dispatch } from 'react';
 import { Notice } from '../../components/Notice';
-import { DEEP_INTRO_STEPS, DEEP_TRIAL_NOTICE } from '../../config/products';
+import { DEEP_INTRO_NOTICE, DEEP_INTRO_STEPS } from '../../config/products';
 import type { SessionAction, SessionState } from '../../state/session';
 
 interface Props {
@@ -9,8 +9,8 @@ interface Props {
 }
 
 /**
- * 심층 상담 체험 안내. 결제 대신 제공 내용을 보여 주고 체험 여부만 묻습니다.
- * 결제 API·카드 입력·결제 완료 화면·가격표는 만들지 않습니다.
+ * 심층 상담 안내. 제공 내용을 보여 주고 시작 여부를 묻습니다.
+ * 결제(Play 인앱)는 다음 단계에서 이 화면의 시작 버튼에 연결됩니다.
  */
 export function DeepIntroStep({ state, dispatch }: Props) {
   const upgrading = state.deepIntroMode === 'upgrade';
@@ -36,10 +36,10 @@ export function DeepIntroStep({ state, dispatch }: Props) {
         <p className="muted" style={{ fontSize: 14 }}>지금까지 적어 주신 고민, 확인 답변, 선택한 카드는 그대로 이어받아요. 카드를 다시 뽑거나 같은 내용을 다시 적지 않아도 돼요.</p>
       )}
 
-      <Notice>{DEEP_TRIAL_NOTICE}</Notice>
+      <Notice>{DEEP_INTRO_NOTICE}</Notice>
 
       <div className="btn-stack">
-        <button type="button" className="btn btn--primary btn--block" onClick={() => dispatch({ type: 'startDeepTrial' })}>심층 상담 체험하기</button>
+        <button type="button" className="btn btn--primary btn--block" onClick={() => dispatch({ type: 'startDeepTrial' })}>심층 상담 시작하기</button>
         <button type="button" className="btn btn--secondary btn--block" onClick={back}>돌아가기</button>
       </div>
     </div>

@@ -47,6 +47,6 @@ describe('결과 공유 텍스트', () => {
 
   it('예시 결과는 예시라고 밝힌다', () => {
     const t = buildShareText({ plan: 'basic', concern: 'x', cards, result: { ...basic, isSample: true } });
-    expect(t).toContain('시제품 예시 결과');
+    expect(t).toContain('예시 결과');
   });
 });

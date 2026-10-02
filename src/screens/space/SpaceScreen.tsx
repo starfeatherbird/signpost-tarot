@@ -71,7 +71,7 @@ export function SpaceScreen({ records, auth, theme, onToggleTheme }: Props) {
         <h1 className="screen-title">설정과 안내</h1>
       </div>
 
-      <Notice>{APP_NAME}는 아직 시제품이에요. 로그인 없이도 쓸 수 있고, 로그인하면 기록을 다른 기기에서도 이어 볼 수 있어요.</Notice>
+      <Notice>{APP_NAME}는 로그인 없이도 쓸 수 있어요. 로그인하면 기록을 다른 기기에서도 이어 볼 수 있어요.</Notice>
 
       {feedback && <Notice kind={feedback.ok ? 'success' : 'error'} role="status">{feedback.message}</Notice>}
 
@@ -85,7 +85,7 @@ export function SpaceScreen({ records, auth, theme, onToggleTheme }: Props) {
           <span className="setting-desc">
             {records.synced
               ? '상담 기록은 이 기기와 계정 양쪽에 저장돼요. 같은 계정으로 로그인한 다른 기기에서도 이어 볼 수 있어요. 파일로도 따로 보관할 수 있어요.'
-              : '상담 기록은 이 기기의 브라우저 안에만 저장돼요. 브라우저 데이터를 지우거나 다른 기기에서 열면 보이지 않아요. 위에서 로그인하거나, 아래에서 파일로 저장해 두면 옮기거나 되살릴 수 있어요.'}
+              : '상담 기록은 이 기기에만 저장돼요. 앱 데이터를 지우거나 다른 기기에서 열면 보이지 않아요. 위에서 로그인하거나, 아래에서 파일로 저장해 두면 옮기거나 되살릴 수 있어요.'}
           </span>
         </div>
         <button type="button" className="setting-row" onClick={exportRecords} disabled={count === 0 || busy}>

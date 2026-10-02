@@ -54,7 +54,7 @@ export function buildShareText({ plan, concern, cards, result }: ShareInput): st
   const stone = result.stone ? getStone(result.stone.stoneId) : undefined;
   if (stone && result.stone) lines.push('', `■ 상징 스톤: ${stone.nameKo} (${stone.symbol})`, result.stone.promise);
   if (result.reflectionQuestion) lines.push('', '■ 며칠 뒤 돌아볼 질문', result.reflectionQuestion);
-  lines.push('', `${result.isSample ? '시제품 예시 결과' : '타로 상징과 적어 주신 내용을 바탕으로 한 제안'}이에요. 최종 선택은 스스로 하실 수 있어요.`);
+  lines.push('', `${result.isSample ? '예시 결과' : '타로 상징과 적어 주신 내용을 바탕으로 한 제안'}이에요. 최종 선택은 스스로 하실 수 있어요.`);
   return lines.join('\n');
 }
 
