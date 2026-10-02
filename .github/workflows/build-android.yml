@@ -71,6 +71,8 @@ jobs:
         run: echo "$KEYSTORE_B64" | base64 -d > android/app/upload.keystore
 
       - name: Build release APK + AAB
+        env:
+          VERSION_CODE: ${{ github.run_number }}
         working-directory: android
         run: |
           chmod +x gradlew
