@@ -82,6 +82,7 @@ Play Console → 스토어 등록정보에 붙여넣는 텍스트와 앱 콘텐�
 - [x] 앱 아이콘 512×512 — `docs/store/icon-512.png`
 - [x] 그래픽 이미지 1024×500 — `docs/store/feature-graphic.png`
 - [x] 휴대전화 스크린샷 1080×1920 6장 — `docs/store/phone-1~6-*.png` (`node scripts/make-store-shots.mjs`, 문구는 스크립트 FRAMES)
+- [x] 7인치·10인치 태블릿 스크린샷 1620×2880 3장씩 — `docs/store/tablet7-*.png`, `tablet10-*.png` (같은 구성 1.5배)
 
 ## 앱 콘텐츠(App content) 선언 답안
 

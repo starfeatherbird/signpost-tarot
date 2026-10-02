@@ -1,6 +1,6 @@
 /**
  * Play 스토어용 이미지 생성.
- *   node scripts/make-store-shots.mjs            휴대전화 스크린샷 6장(1080×1920) + 그래픽 이미지(1024×500) + 아이콘 512
+ *   node scripts/make-store-shots.mjs            휴대전화 6장(1080×1920) + 태블릿 7·10인치 3장씩(1620×2880) + 그래픽(1024×500) + 아이콘 512
  *   node scripts/make-store-shots.mjs phone-3    이름 일부로 골라서
  * 앞서 `npm run capture` 로 docs/screens/*.png 가 있어야 합니다(앱 화면 원본). 문구·사용 화면은 아래 FRAMES 에서 바꿉니다.
  * 결과: docs/store/phone-N-*.png, docs/store/feature-graphic.png, docs/store/icon-512.png
@@ -38,10 +38,11 @@ const FONT_HEAD = `
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">`;
 
-function phoneHtml(frame) {
+function phoneHtml(frame, scale = 1) {
   const img = dataUri(resolve(SCREENS, `${frame.screen}.png`));
   return `<!doctype html><html lang="ko"><head><meta charset="utf-8">${FONT_HEAD}<style>
-  html,body{margin:0;width:1080px;height:1920px;overflow:hidden}
+  html,body{margin:0;width:${1080 * scale}px;height:${1920 * scale}px;overflow:hidden}
+  .stage{position:relative;width:1080px;height:1920px;transform:scale(${scale});transform-origin:0 0}
   body{font-family:Pretendard,system-ui,sans-serif;color:#F3EEE4;background:radial-gradient(120% 70% at 50% -10%,#1a2c4d 0%,#0F1A2E 55%,#0A1222 100%)}
   .stars{position:absolute;inset:0;opacity:.6;background-image:radial-gradient(1.5px 1.5px at 12% 18%,rgba(255,255,255,.6) 50%,transparent 51%),radial-gradient(2px 2px at 78% 9%,rgba(220,194,138,.7) 50%,transparent 51%),radial-gradient(1.5px 1.5px at 55% 33%,rgba(255,255,255,.45) 50%,transparent 51%),radial-gradient(1.5px 1.5px at 31% 61%,rgba(255,255,255,.4) 50%,transparent 51%),radial-gradient(2px 2px at 90% 47%,rgba(255,255,255,.5) 50%,transparent 51%),radial-gradient(1.5px 1.5px at 68% 78%,rgba(220,194,138,.55) 50%,transparent 51%);background-size:420px 420px,520px 520px,460px 460px,500px 500px,560px 560px,480px 480px}
   .text{position:absolute;left:72px;right:72px;top:120px;text-align:center}
@@ -49,10 +50,10 @@ function phoneHtml(frame) {
   p{font-size:34px;line-height:1.5;margin:26px 0 0;color:#C9D3E3}
   .phone{position:absolute;left:50%;top:520px;transform:translateX(-50%);width:820px;height:1520px;border-radius:64px;background:#0F1A2E;box-shadow:0 0 0 12px #1c2f4f,0 0 0 14px rgba(201,168,106,.5),0 40px 90px rgba(0,0,0,.6);overflow:hidden}
   .phone img{position:absolute;left:0;top:${-frame.offset * (820 / 750)}px;width:820px;display:block}
-  </style></head><body><div class="stars"></div>
+  </style></head><body><div class="stage"><div class="stars"></div>
   <div class="text"><h1>${frame.headline}</h1><p>${frame.sub}</p></div>
   <div class="phone"><img src="${img}"></div>
-  </body></html>`;
+  </div></body></html>`;
 }
 
 function featureHtml() {
@@ -117,6 +118,16 @@ try {
     if (only && !f.name.includes(only)) continue;
     if (!existsSync(resolve(SCREENS, `${f.screen}.png`))) { console.warn(`[store] 원본 없음: ${f.screen}.png (npm run capture 먼저)`); continue; }
     await shoot(phoneHtml(f), 1080, 1920, resolve(OUT, `${f.name}.png`));
+  }
+  // 태블릿 7인치·10인치: 같은 구성을 1.5배(1620×2880, 9:16)로. Play 는 두 종류 모두 이 크기를 받습니다.
+  const TABLET = ['phone-1-hero', 'phone-3-reveal', 'phone-4-result'];
+  for (const kind of ['tablet7', 'tablet10']) {
+    if (only && !kind.includes(only)) continue;
+    for (let i = 0; i < TABLET.length; i += 1) {
+      const f = FRAMES.find((x) => x.name === TABLET[i]);
+      if (!f || !existsSync(resolve(SCREENS, `${f.screen}.png`))) continue;
+      await shoot(phoneHtml(f, 1.5), 1620, 2880, resolve(OUT, `${kind}-${i + 1}-${f.name.split('-')[2]}.png`));
+    }
   }
   if (!only || 'feature'.includes(only)) await shoot(featureHtml(), 1024, 500, resolve(OUT, 'feature-graphic.png'));
   if (!only || 'icon'.includes(only)) {
