@@ -4,10 +4,9 @@ import { isNativeApp } from '../services/native';
 import type { Step } from './session';
 import type { Tab } from '../components/BottomNav';
 
-/** 광고가 나와도 되는 화면: 기록장·내 공간, 상담실의 결과 화면. 입력·카드 장면에서는 뺍니다. */
-export function shouldShowAds(tab: Tab, step: Step): boolean {
-  if (tab === 'records' || tab === 'space') return true;
-  return tab === 'counsel' && (step === 'result' || step === 'deepResult');
+/** 모든 화면에서 배너를 보여 줍니다 (입력 중 숨김은 services/ads.ts 가 처리). 화면별로 뺄 일이 생기면 여기서 조절합니다. */
+export function shouldShowAds(_tab: Tab, _step: Step): boolean {
+  return true;
 }
 
 /**
