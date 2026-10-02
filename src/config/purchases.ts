@@ -6,7 +6,7 @@
  * - 광고 제거는 RevenueCat 의 entitlement(ad_free)로 판단합니다.
  * 서버 쪽 검증(심층 1회 차감)은 supabase/functions/_shared/purchases.ts 가 RevenueCat 비밀 키로 합니다.
  */
-export const REVENUECAT_ANDROID_KEY = '';
+export const REVENUECAT_ANDROID_KEY = 'goog_KLUQtkpDClPfVLZZYsDvofUfbZA';
 
 export const PRODUCT_DEEP_READING = 'deep_reading_1';
 export const PRODUCT_REMOVE_ADS = 'remove_ads';

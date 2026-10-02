@@ -19,3 +19,8 @@ obsidian_reference.png
 
 # Android 서명 키 (CI 가 시크릿에서 복원)
 android/app/upload.keystore
+
+# Google 서비스 계정 키 (절대 커밋 금지)
+*.iam.gserviceaccount.json
+gen-lang-client-*.json
+*service-account*.json
