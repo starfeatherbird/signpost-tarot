@@ -25,7 +25,7 @@ const FRAMES = [
   { name: 'phone-3-reveal', screen: 'A07-reveal', offset: 0, headline: '현재의 핵심, 놓친 관점,\n다음 움직임', sub: '세 자리에 놓인 카드를 상황과 함께 읽어요' },
   { name: 'phone-4-result', screen: 'A09-result', offset: 270, headline: '먼저 할 일부터\n작은 행동까지', sub: '단정 대신, 지금 상황에 맞는 제안과 체크리스트' },
   { name: 'phone-5-stone', screen: 'A09-result', offset: 3190, headline: '약속을 떠올리게 하는\n상징 스톤', sub: '며칠 뒤 돌아볼 질문으로 생각을 이어가요' },
-  { name: 'phone-6-space', screen: 'A13-space', offset: 1060, headline: '기록은 내 폰에,\n로그인하면 어디서나', sub: '모은 스톤과 기록장 · 계정 없이도 바로 시작' },
+  { name: 'phone-6-space', screen: 'A13-space', offset: 950, headline: '기록은 내 폰에,\n로그인하면 어디서나', sub: '모은 스톤과 기록장 · 계정 없이도 바로 시작' },
 ];
 
 const CHROME = ['C:/Program Files/Google/Chrome/Application/chrome.exe', 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe', process.env.LOCALAPPDATA ? `${process.env.LOCALAPPDATA}/Google/Chrome/Application/chrome.exe` : ''].find((p) => p && existsSync(p));
