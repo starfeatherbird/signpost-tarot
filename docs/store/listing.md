@@ -79,9 +79,9 @@ Play Console → 스토어 등록정보에 붙여넣는 텍스트와 앱 콘텐�
 
 ## 그래픽 자산 체크리스트
 
-- [ ] 앱 아이콘 512×512 — `store-assets/icons/app-icon-1024.png` 를 512 로 줄여 사용
-- [ ] 그래픽 이미지 1024×500
-- [ ] 휴대전화 스크린샷 1080×1920, 4~6장 (문구 얹은 ASO 형식)
+- [x] 앱 아이콘 512×512 — `docs/store/icon-512.png`
+- [x] 그래픽 이미지 1024×500 — `docs/store/feature-graphic.png`
+- [x] 휴대전화 스크린샷 1080×1920 6장 — `docs/store/phone-1~6-*.png` (`node scripts/make-store-shots.mjs`, 문구는 스크립트 FRAMES)
 
 ## 앱 콘텐츠(App content) 선언 답안
 
@@ -144,5 +144,18 @@ The app is fully usable without an account: free readings, records and stones al
 - [ ] 광고 제거 구매·복원 실측
 - [ ] 앱 내 계정 삭제 실측
 - [ ] AdMob 에서 앱을 스토어와 연결(출시 후 가능), 테스트 기기 등록
-- [ ] 스크린샷·그래픽 이미지 제작 후 등록정보 입력
+- [x] 스크린샷·그래픽 이미지 제작 (docs/store) → [ ] 등록정보 입력
 - [ ] 앱 콘텐츠 선언 입력 → 프로덕션 검토 제출
+
+## 스크린샷 문구 (`docs/store/phone-N-*.png`)
+
+| # | 파일 | 헤드라인 | 부제 | 원본 화면 |
+|---|---|---|---|---|
+| 1 | phone-1-hero | 고민이 막막할 때, 카드가 방향을 보여 줘요 | 고민을 적고 세 장을 뽑으면 AI가 먼저 할 일을 정리해요 | 상담실 첫 화면 |
+| 2 | phone-2-deck | 섞인 덱에서 세 장을 뽑아요 | 메이저·마이너 78장, 정방향과 역방향 | 카드 뽑기 |
+| 3 | phone-3-reveal | 현재의 핵심, 놓친 관점, 다음 움직임 | 세 자리에 놓인 카드를 상황과 함께 읽어요 | 카드 공개 |
+| 4 | phone-4-result | 먼저 할 일부터 작은 행동까지 | 단정 대신, 지금 상황에 맞는 제안과 체크리스트 | 결과(실제 AI 응답) |
+| 5 | phone-5-stone | 약속을 떠올리게 하는 상징 스톤 | 며칠 뒤 돌아볼 질문으로 생각을 이어가요 | 결과 하단 |
+| 6 | phone-6-space | 기록은 내 폰에, 로그인하면 어디서나 | 모은 스톤과 기록장 · 계정 없이도 바로 시작 | 내 공간 |
+
+제작: `npm run dev` 켠 상태에서 `node scripts/make-capture-targets.mjs` → `node scripts/capture-screens.mjs` → `node scripts/make-store-shots.mjs`. 결과 화면에 실제 응답을 쓰려면 %TMP%/res-basic.txt 에 서버 응답을 두고 캡처합니다.
