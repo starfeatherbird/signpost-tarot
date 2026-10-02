@@ -4,6 +4,6 @@
     <string name="title_activity_main">이정표</string>
     <string name="package_name">com.solamemento.signpost</string>
     <string name="custom_url_scheme">com.solamemento.signpost</string>
-    <!-- AdMob 앱 ID. 지금은 Google 테스트 ID — 실제 ID 로 바꿀 때 src/config/ads.ts 도 함께 -->
-    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+    <!-- AdMob 앱 ID. 실제 ID (src/config/ads.ts 와 함께 관리) -->
+    <string name="admob_app_id">ca-app-pub-9884079525920738~5512678486</string>
 </resources>
